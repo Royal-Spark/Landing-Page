@@ -91,11 +91,32 @@
             display: none;
             gap: 1.5rem;
         }
-        @media (min-width: 768px) {
-            .desktop-nav {
-                display: flex;
-            }
-        }
+        /* Style for the navigation when it acts as a mobile menu */
+@media (max-width: 767px) {
+    .desktop-nav.is-open {
+        display: flex; /* Make it visible */
+        flex-direction: column; /* Stack links vertically */
+        position: absolute;
+        top: 4rem; /* Position it right below the header */
+        left: 0;
+        right: 0;
+        background-color: rgba(0, 0, 0, 0.95);
+        backdrop-filter: blur(8px);
+        padding: 1rem;
+        border-bottom: 1px solid var(--color-zinc-800);
+        z-index: 40; /* Ensure it's below the header but above other content */
+    }
+
+    .desktop-nav.is-open .nav-link {
+        padding: 0.75rem;
+        text-align: center;
+    }
+
+    .desktop-nav.is-open .nav-link:hover {
+        background-color: var(--color-zinc-800);
+        border-radius: 0.375rem;
+    }
+}
         .nav-link {
             font-size: 0.875rem;
             font-weight: 500;
@@ -679,7 +700,7 @@
                     <img src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts//Royal%20Spark%20D%20Logo%20-%20Mekvold%20V3.png" alt="Royal Spark Logo" class="logo">
                     <span class="logo-text">Royal Spark</span>
                 </div>
-                <nav class="desktop-nav">
+                <nav class="desktop-nav" id="mobile-menu">
                     <a href="#about" class="nav-link">About</a>
                     <a href="#features" class="nav-link">Features</a>
                     <a href="#tools" class="nav-link">Tools</a>
@@ -1076,6 +1097,7 @@
     </script>
 </body>
 </html>
+
 
 
 
