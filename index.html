@@ -91,32 +91,11 @@
             display: none;
             gap: 1.5rem;
         }
-        /* Style for the navigation when it acts as a mobile menu */
-@media (max-width: 767px) {
-    .desktop-nav.is-open {
-        display: flex; /* Make it visible */
-        flex-direction: column; /* Stack links vertically */
-        position: absolute;
-        top: 4rem; /* Position it right below the header */
-        left: 0;
-        right: 0;
-        background-color: rgba(0, 0, 0, 0.95);
-        backdrop-filter: blur(8px);
-        padding: 1rem;
-        border-bottom: 1px solid var(--color-zinc-800);
-        z-index: 40; /* Ensure it's below the header but above other content */
-    }
-
-    .desktop-nav.is-open .nav-link {
-        padding: 0.75rem;
-        text-align: center;
-    }
-
-    .desktop-nav.is-open .nav-link:hover {
-        background-color: var(--color-zinc-800);
-        border-radius: 0.375rem;
-    }
-}
+        @media (min-width: 768px) {
+            .desktop-nav {
+                display: flex;
+            }
+        }
         .nav-link {
             font-size: 0.875rem;
             font-weight: 500;
@@ -700,7 +679,7 @@
                     <img src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts//Royal%20Spark%20D%20Logo%20-%20Mekvold%20V3.png" alt="Royal Spark Logo" class="logo">
                     <span class="logo-text">Royal Spark</span>
                 </div>
-                <nav class="desktop-nav" id="mobile-menu">
+                <nav class="desktop-nav">
                     <a href="#about" class="nav-link">About</a>
                     <a href="#features" class="nav-link">Features</a>
                     <a href="#tools" class="nav-link">Tools</a>
@@ -878,7 +857,7 @@
             </div>
 
             <!-- Example downloadable tool (update as needed) -->
-            <a href="https://raw.githubusercontent.com/Royal-Spark/Landing-Page/main/file_forge.html" class="tool-button" download>
+            <a href="https://raw.githubusercontent.com/Royal-Spark/main/index.html" class="tool-button" download>
                 Download: PII-Safe Form Filler (Windows)
             </a>
             <!-- Add more download links as needed -->
@@ -1056,82 +1035,47 @@
         </footer>
     </div>
     <script>
-    const SAVINGS_DATA = {
-        dollarsSaved: 10605020,
-        hoursSaved: 5232
-    };
-
-    function animateCounter(element, start, end, duration, prefix = '', suffix = '') {
-        const startTime = performance.now();
-        function updateCounter(currentTime) {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const easeOut = 1 - Math.pow(1 - progress, 3);
-            const currentValue = Math.floor(start + (end - start) * easeOut);
-            const formattedValue = currentValue.toLocaleString();
-            element.textContent = prefix + formattedValue + suffix;
-            if (progress < 1) requestAnimationFrame(updateCounter);
-        }
-        requestAnimationFrame(updateCounter);
-    }
-
-    function initializeCounters() {
-        const dollarCounter = document.getElementById('dollar-counter');
-        const hoursCounter = document.getElementById('hours-counter');
-        if (dollarCounter && hoursCounter) {
-            animateCounter(dollarCounter, 0, SAVINGS_DATA.dollarsSaved, 2000, '$');
-            animateCounter(hoursCounter, 0, SAVINGS_DATA.hoursSaved, 2000);
-        }
-    }
-
-    function handleAudioLoad(audio) { /* ... */ }
-    function handleAudioError(audio) { /* ... */ }
-
-    // Wait for the page to fully load before running scripts
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize the animated counters
-        initializeCounters();
-
-        // --- START: Mobile Menu Toggle Logic ---
-        const menuButton = document.querySelector('.mobile-menu-button');
-        const mobileMenu = document.querySelector('#mobile-menu');
-
-        // Toggle menu when hamburger button is clicked
-        menuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('is-open');
-        });
-
-        // Close the mobile menu when one of its links is clicked
-        mobileMenu.addEventListener('click', (e) => {
-            if (e.target.classList.contains('nav-link')) {
-                mobileMenu.classList.remove('is-open');
+        const SAVINGS_DATA = {
+            dollarsSaved: 10605020,
+            hoursSaved: 5232
+        };
+        function animateCounter(element, start, end, duration, prefix = '', suffix = '') {
+            const startTime = performance.now();
+            function updateCounter(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                const currentValue = Math.floor(start + (end - start) * easeOut);
+                const formattedValue = currentValue.toLocaleString();
+                element.textContent = prefix + formattedValue + suffix;
+                if (progress < 1) requestAnimationFrame(updateCounter);
             }
+            requestAnimationFrame(updateCounter);
+        }
+        function initializeCounters() {
+            const dollarCounter = document.getElementById('dollar-counter');
+            const hoursCounter = document.getElementById('hours-counter');
+            if (dollarCounter && hoursCounter) {
+                animateCounter(dollarCounter, 0, SAVINGS_DATA.dollarsSaved, 2000, '$');
+                animateCounter(hoursCounter, 0, SAVINGS_DATA.hoursSaved, 2000);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCounters();
         });
-        // --- END: Mobile Menu Toggle Logic ---
-
-
-        // --- START: Smooth Scrolling Logic ---
-        const navLinks = document.querySelectorAll('a.nav-link[href^="#"]');
-        navLinks.forEach(link => {
-            link.addEventListener('click', function (e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                const targetSection = document.querySelector(targetId);
-                if (targetSection) {
-                    targetSection.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-        // --- END: Smooth Scrolling Logic ---
-    });
-</script>
+        // Audio error handling for podcasts
+        function handleAudioLoad(audio) {
+            // Optional: Add loading UI if desired
+        }
+        function handleAudioError(audio) {
+            const errorDiv = audio.parentElement.querySelector('.audio-error');
+            if (errorDiv) {
+                errorDiv.style.display = 'block';
+            }
+        }
+    </script>
 </body>
 </html>
-
-
 
 
 
