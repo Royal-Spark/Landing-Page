@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Royal Spark Innovation Lab</title>
     <link rel="icon" type="image/png" href="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts//Royal%20Spark%20D%20Logo%20-%20Mekvold%20V3.png">
@@ -31,7 +31,23 @@
             --color-cyan-900: #164e63;
             --color-green-400: #4ade80;
             --color-green-500: #22c55e;
+            --input-bg: rgba(24, 24, 27, 0.7);
         }
+
+        html[data-theme='light'] {
+            --color-black: #ffffff;
+            --color-white: #000000;
+            --color-zinc-200: #3f3f46;
+            --color-zinc-300: #52525b;
+            --color-zinc-400: #71717a;
+            --color-zinc-500: #a1a1aa;
+            --color-zinc-700: #d4d4d8;
+            --color-zinc-800: #e4e4e7;
+            --color-zinc-900: #f4f4f5;
+            --color-zinc-950: #fafafa;
+            --input-bg: #e4e4e7;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html {
             scroll-behavior: smooth;
@@ -41,6 +57,7 @@
             background-color: var(--color-black);
             color: var(--color-white);
             line-height: 1.5;
+            transition: background-color 0.3s, color 0.3s;
         }
         .container { width: 100%; }
         .sr-only {
@@ -67,6 +84,9 @@
             border-bottom: 1px solid var(--color-zinc-800);
             background-color: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(8px);
+        }
+        html[data-theme='light'] .header {
+            background-color: rgba(255, 255, 255, 0.8);
         }
         .header-container {
             max-width: 1200px;
@@ -95,30 +115,21 @@
             color: transparent;
         }
         
-        /* --- NAVIGATION STYLES --- */
-        /* Default state: nav is hidden on mobile, has a gap for links */
         .desktop-nav {
             display: none;
             gap: 1.5rem;
         }
-        /* Desktop View: Show nav as a horizontal row */
         @media (min-width: 768px) {
             .desktop-nav {
                 display: flex;
-                flex-direction: row;
-                position: static;
-                background-color: transparent;
-                padding: 0;
-                border-bottom: none;
             }
         }
-        /* Mobile View: Styles for when the menu is toggled open */
         @media (max-width: 767px) {
             .desktop-nav.is-open {
-                display: flex; /* Makes the menu visible */
-                flex-direction: column; /* Stacks links vertically */
+                display: flex;
+                flex-direction: column;
                 position: absolute;
-                top: 4rem; /* Position it right below the header */
+                top: 4rem;
                 left: 0;
                 right: 0;
                 background-color: rgba(0, 0, 0, 0.95);
@@ -126,6 +137,9 @@
                 padding: 1rem;
                 border-bottom: 1px solid var(--color-zinc-800);
                 z-index: 40;
+            }
+            html[data-theme='light'] .desktop-nav.is-open {
+                background-color: rgba(255, 255, 255, 0.95);
             }
             .desktop-nav.is-open .nav-link {
                 padding: 0.75rem;
@@ -136,7 +150,6 @@
                 border-radius: 0.375rem;
             }
         }
-
         .nav-link {
             font-size: 0.875rem;
             font-weight: 500;
@@ -164,6 +177,31 @@
                 display: none;
             }
         }
+
+        /* Theme Toggle Button */
+        .theme-toggle-btn {
+            background-color: var(--input-bg);
+            border: 1px solid var(--color-zinc-700);
+            color: var(--color-zinc-400);
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-left: 1rem;
+        }
+        .theme-toggle-btn:hover {
+            border-color: var(--color-purple-500);
+            color: var(--color-white);
+        }
+        .theme-toggle-btn svg {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
         .hero-section {
             position: relative;
             overflow: hidden;
@@ -179,6 +217,9 @@
             inset: 0;
             background: radial-gradient(ellipse at center, rgba(168, 85, 247, 0.2), rgba(0, 0, 0, 0));
             z-index: -2;
+        }
+        html[data-theme='light'] .hero-background {
+            background: radial-gradient(ellipse at center, rgba(168, 85, 247, 0.1), rgba(255, 255, 255, 0));
         }
         .hero-glow {
             position: absolute;
@@ -258,6 +299,9 @@
             flex-direction: column;
             align-items: center;
         }
+        html[data-theme='light'] .savings-tracker {
+            background: rgba(255, 255, 255, 0.6);
+        }
         .savings-tracker.money { border-color: rgba(34, 197, 94, 0.3); }
         .savings-tracker.hours { border-color: rgba(6, 182, 212, 0.3); }
         .savings-icon {
@@ -307,6 +351,12 @@
             background-clip: text;
             color: transparent;
         }
+        html[data-theme='light'] .hero-title {
+            background: linear-gradient(to right, #18181b, #581c87, #164e63);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
         @media (min-width: 640px) { .hero-title { font-size: 3rem; } }
         @media (min-width: 768px) { .hero-title { font-size: 3.75rem; } }
         .hero-description {
@@ -332,7 +382,7 @@
             font-weight: 500;
             border-radius: 0.375rem;
             background: linear-gradient(to right, var(--color-purple-600), var(--color-cyan-500));
-            color: var(--color-white);
+            color: #ffffff;
             border: none;
             cursor: pointer;
             transition: all 0.2s;
@@ -467,9 +517,15 @@
             padding: 1.5rem;
             transition: all 0.3s;
         }
+        html[data-theme='light'] .feature-card {
+            background-color: #f3e8ff; /* Light purple */
+        }
         .feature-card:hover {
             border-color: rgba(168, 85, 247, 0.5);
             box-shadow: 0 0 30px 4px rgba(168, 85, 247, 0.1);
+        }
+        html[data-theme='light'] .feature-card:hover {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
         }
         .feature-icon-container {
             display: flex;
@@ -496,6 +552,10 @@
             font-size: 1.25rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
+            color: var(--color-white);
+        }
+        html[data-theme='light'] .feature-title {
+            color: var(--color-white); /* This is black in light mode */
         }
         .feature-description {
             color: var(--color-zinc-400);
@@ -503,6 +563,9 @@
         /* Digital Tools Section */
         .tools-section {
             padding: 5rem 0;
+            background-color: var(--color-black);
+        }
+        .podcast-section, .cta-section, .footer {
             background-color: var(--color-black);
         }
         .tools-container {
@@ -523,10 +586,31 @@
                 justify-content: center;
             }
         }
+        
+        .disclaimer-box {
+            background:rgba(252,211,77,0.08);
+            border:1px solid #fbbf24;
+            padding:1rem 1.25rem;
+            margin-bottom:2rem;
+            border-radius:0.5rem;
+            color:#fde68a;
+        }
+        .notice-box {
+            background:rgba(34,197,94,0.07);
+            border:1px solid #22c55e;
+            padding:1rem 1.25rem;
+            margin-bottom:1.5rem;
+            border-radius:0.5rem;
+            color:#86efac;
+        }
+        html[data-theme='light'] .disclaimer-box,
+        html[data-theme='light'] .notice-box {
+            color: #000000;
+        }
+
         /* Podcast Section */
         .podcast-section {
             padding: 5rem 0;
-            background-color: var(--color-black);
         }
         .podcast-container {
             display: grid;
@@ -549,6 +633,9 @@
         .podcast-card:hover {
             border-color: rgba(168, 85, 247, 0.5);
             box-shadow: 0 0 30px 4px rgba(168, 85, 247, 0.1);
+        }
+        html[data-theme='light'] .podcast-card:hover {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
         }
         .podcast-thumbnail-container {
             position: relative;
@@ -666,6 +753,7 @@
             line-height: 1.2;
             letter-spacing: -0.025em;
             margin-bottom: 1rem;
+            color: var(--color-white);
         }
         @media (min-width: 640px) {
             .cta-title { font-size: 2.25rem; }
@@ -716,26 +804,31 @@
         <!-- Header Section -->
         <header class="header">
             <div class="header-container">
-                <a href="https://royal-spark.github.io/Landing-Page" style="text-decoration: none;">
                 <div class="logo-container">
                     <img src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts//Royal%20Spark%20D%20Logo%20-%20Mekvold%20V3.png" alt="Royal Spark Logo" class="logo">
                     <span class="logo-text">Royal Spark</span>
                 </div>
-                <nav class="desktop-nav" id="mobile-menu">
-                    <a href="#about" class="nav-link">About</a>
-                    <a href="#features" class="nav-link">Features</a>
-                    <a href="#tools" class="nav-link">Tools</a>
-                    <a href="#podcasts" class="nav-link">Podcasts</a>
-                    <a href="#contact" class="nav-link">Contact</a>
-                </nav>
-                <button class="mobile-menu-button">
-                    <span class="sr-only">Toggle menu</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="4" x2="20" y1="12" y2="12"></line>
-                        <line x1="4" x2="20" y1="6" y2="6"></line>
-                        <line x1="4" x2="20" y1="18" y2="18"></line>
-                    </svg>
-                </button>
+                <div style="display: flex; align-items: center;">
+                    <nav class="desktop-nav" id="mobile-menu">
+                        <a href="#about" class="nav-link">About</a>
+                        <a href="#features" class="nav-link">Features</a>
+                        <a href="#tools" class="nav-link">Tools</a>
+                        <a href="#podcasts" class="nav-link">Podcasts</a>
+                        <a href="#contact" class="nav-link">Contact</a>
+                    </nav>
+                    <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme">
+                        <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.25a.75.75 0 0 1 .75.75v2.25a.75.75 0 0 1-1.5 0V3a.75.75 0 0 1 .75-.75ZM7.5 12a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM18.894 6.106a.75.75 0 0 1 0 1.06l-1.591 1.59a.75.75 0 1 1-1.06-1.06l1.59-1.59a.75.75 0 0 1 1.06 0ZM21.75 12a.75.75 0 0 1-.75.75h-2.25a.75.75 0 0 1 0-1.5h2.25a.75.75 0 0 1 .75.75ZM17.894 17.894a.75.75 0 0 1-1.06 0l-1.59-1.591a.75.75 0 1 1 1.06-1.06l1.59 1.59a.75.75 0 0 1 0 1.061ZM12 18.75a.75.75 0 0 1 .75.75v2.25a.75.75 0 0 1-1.5 0v-2.25a.75.75 0 0 1 .75-.75ZM5.106 17.894a.75.75 0 0 1 0-1.06l1.59-1.591a.75.75 0 1 1 1.06 1.06l-1.59 1.59a.75.75 0 0 1-1.06 0ZM4.5 12a.75.75 0 0 1-.75.75H1.5a.75.75 0 0 1 0-1.5h2.25a.75.75 0 0 1 .75.75ZM6.106 5.106a.75.75 0 0 1 1.06 0l1.59 1.591a.75.75 0 0 1-1.06 1.06l-1.59-1.59a.75.75 0 0 1 0-1.061Z" /></svg>
+                        <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="display: none;"><path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 0 1 .162.819A8.97 8.97 0 0 0 9 6a9 9 0 0 0 9 9 8.97 8.97 0 0 0 3.463-.69.75.75 0 0 1 .981.981A10.503 10.503 0 0 1 18 19.5a10.5 10.5 0 0 1-10.5-10.5A10.503 10.503 0 0 1 9.528 1.718Z" clip-rule="evenodd" /></svg>
+                    </button>
+                    <button class="mobile-menu-button">
+                        <span class="sr-only">Toggle menu</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="4" x2="20" y1="12" y2="12"></line>
+                            <line x1="4" x2="20" y1="6" y2="6"></line>
+                            <line x1="4" x2="20" y1="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
             </div>
         </header>
         <main>
@@ -755,7 +848,7 @@
                                         <line x1="12" y1="1" x2="12" y2="23"></line>
                                         <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                                     </svg>
-                                    <div class="savings-amount money" id="dollar-counter"></div>
+                                    <div class="savings-amount money" id="dollar-counter">$10,605,020</div>
                                     <div class="savings-label">Cost Savings</div>
                                     <div class="savings-period">Since Jan 2025</div>
                                 </div>
@@ -767,14 +860,14 @@
                                         <circle cx="12" cy="12" r="10"></circle>
                                         <polyline points="12 6 12 12 16 14"></polyline>
                                     </svg>
-                                    <div class="savings-amount hours" id="hours-counter"></div>
+                                    <div class="savings-amount hours" id="hours-counter">5,232</div>
                                     <div class="savings-label">Man-Hours Saved</div>
                                     <div class="savings-period">Since Jan 2025</div>
                                 </div>
                             </div>
                         </div>
                         <p class="hero-description">
-                            Royal Spark Innovation Lab brings cutting-edge technology and creative solutions to shape the missions of the 100 ARW & 352 SOW.
+                            Royal Spark Innovation Lab brings cutting-edge technology and creative solutions to shape the missions of the 100 ARW &amp; 352 SOW.
                         </p>
                         <div class="hero-buttons">
                             <a href="https://usaf.dps.mil/sites/100ARW/CPI/SitePages/CPI.aspx" class="primary-button" target="_blank" rel="noopener noreferrer">
@@ -875,7 +968,7 @@
                 </div>
 
                 <!-- ONLINE TOOLS DISCLAIMER -->
-                <div style="background:rgba(252,211,77,0.08);border:1px solid #fbbf24;padding:1rem 1.25rem;margin-bottom:2rem;border-radius:0.5rem;color:#fde68a;">
+                <div class="disclaimer-box">
                     <strong>Disclaimer:</strong> The web tools provided below are hosted online and must <b>not</b> be used with any Personally Identifiable Information (PII), sensitive, or classified data. Please use only for general or unclassified workflows.
                 </div>
 
@@ -893,13 +986,13 @@
 
                 <!-- OFFLINE TOOLS SECTION -->
                 <div style="margin-top:3rem;">
-                    <h3 style="color:var(--color-purple-400);margin-bottom:0.75rem;">Tools Safe for PII (Download & Use Locally)</h3>
-                    <div style="background:rgba(34,197,94,0.07);border:1px solid #22c55e;padding:1rem 1.25rem;margin-bottom:1.5rem;border-radius:0.5rem;color:#86efac;">
+                    <h3 style="color:var(--color-purple-400);margin-bottom:0.75rem;">Tools Safe for PII (Download &amp; Use Locally)</h3>
+                    <div class="notice-box">
                         <strong>Notice:</strong> The downloadable tools below may be used with PII only when run from your own computer. No data is stored—your information is erased when you close the app.
                     </div>
 
                     <!-- Example downloadable tool (update as needed) -->
-                    <a href="https://raw.githubusercontent.com/Royal-Spark/Landing-Page/main/file_forge.html" class="tool-button disabled" download>
+                    <a href="https://raw.githubusercontent.com/Royal-Spark/Landing-Page/main/file_forge.html" class="tool-button disabled" download="">
                         Coming Soon! PII-Safe Form Filler
                     </a>
                     <!-- Add more download links as needed -->
@@ -918,7 +1011,7 @@
                     <div class="podcast-container">
                         <div class="podcast-card">
                              <div class="podcast-thumbnail-container">
-                                <img src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts//drone-thumbnail.jpg" alt="sUAS Drone" class="podcast-thumbnail" onerror="this.onerror=null;this.src='https://placehold.co/600x338/18181b/FFFFFF?text=Audio+Art';">
+                                <img src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts//drone-thumbnail.jpg" alt="sUAS Drone" class="podcast-thumbnail" onerror="this.onerror=null;this.src=&#39;https://placehold.co/600x338/18181b/FFFFFF?text=Audio+Art&#39;;">
                             </div>
                             <div class="podcast-content-wrapper">
                                 <h3 class="podcast-title">S1E1 Layered sUAS Defense</h3>
@@ -936,7 +1029,7 @@
                                     </span>
                                 </div>
                                 <div class="podcast-player">
-                                    <audio controls preload="metadata" onloadeddata="this.style.opacity=1" style="opacity:0.5; transition: opacity 0.3s;" onerror="handleAudioError(this)">
+                                    <audio controls="" preload="metadata" onloadeddata="this.style.opacity=1" style="opacity: 1; transition: opacity 0.3s;" onerror="handleAudioError(this)">
                                         <source src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts/S1E1%20Layered%20sUAS%20Defense%20(1).wav" type="audio/wav">
                                         <source src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts/S1E1%20Layered%20sUAS%20Defense%20(1).mp3" type="audio/mpeg">
                                         Your browser does not support the audio element.
@@ -947,7 +1040,7 @@
                         </div>
                         <div class="podcast-card">
                             <div class="podcast-thumbnail-container">
-                                <img src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts//OIP.jpg" alt="AI Policy" class="podcast-thumbnail" onerror="this.onerror=null;this.src='https://placehold.co/600x338/18181b/FFFFFF?text=Audio+Art';">
+                                <img src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts//OIP.jpg" alt="AI Policy" class="podcast-thumbnail" onerror="this.onerror=null;this.src=&#39;https://placehold.co/600x338/18181b/FFFFFF?text=Audio+Art&#39;;">
                             </div>
                             <div class="podcast-content-wrapper">
                                 <h3 class="podcast-title">S1E2 USAF AI Policy</h3>
@@ -965,7 +1058,7 @@
                                     </span>
                                 </div>
                                 <div class="podcast-player">
-                                    <audio controls preload="metadata" onloadeddata="this.style.opacity=1" style="opacity:0.5; transition: opacity 0.3s;" onerror="handleAudioError(this)">
+                                    <audio controls="" preload="metadata" onloadeddata="this.style.opacity=1" style="opacity: 1; transition: opacity 0.3s;" onerror="handleAudioError(this)">
                                         <source src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts/S1E2%20USAF%20AI%20Policy%20(1).wav" type="audio/wav">
                                         <source src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts/S1E2%20USAF%20AI%20Policy%20(1).mp3" type="audio/mpeg">
                                         Your browser does not support the audio element.
@@ -976,7 +1069,7 @@
                         </div>
                         <div class="podcast-card">
                              <div class="podcast-thumbnail-container">
-                                <img src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts//new-ideas.jpg" alt="AF-CII Guidance" class="podcast-thumbnail" onerror="this.onerror=null;this.src='https://placehold.co/600x338/18181b/FFFFFF?text=Audio+Art';">
+                                <img src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts//new-ideas.jpg" alt="AF-CII Guidance" class="podcast-thumbnail" onerror="this.onerror=null;this.src=&#39;https://placehold.co/600x338/18181b/FFFFFF?text=Audio+Art&#39;;">
                             </div>
                             <div class="podcast-content-wrapper">
                                 <h3 class="podcast-title">S1E3 AF-CII Guidance</h3>
@@ -994,7 +1087,7 @@
                                     </span>
                                 </div>
                                 <div class="podcast-player">
-                                    <audio controls preload="metadata" onloadeddata="this.style.opacity=1" style="opacity:0.5; transition: opacity 0.3s;" onerror="handleAudioError(this)">
+                                    <audio controls="" preload="metadata" onloadeddata="this.style.opacity=1" style="opacity: 1; transition: opacity 0.3s;" onerror="handleAudioError(this)">
                                         <source src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts/S1E3%20Air%20Force%20Continuous%20Improvement%20and%20Innovation%20Guidance%20(1).wav" type="audio/wav">
                                         <source src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts/S1E3%20Air%20Force%20Continuous%20Improvement%20and%20Innovation%20Guidance%20(1).mp3" type="audio/mpeg">
                                         Your browser does not support the audio element.
@@ -1005,7 +1098,7 @@
                         </div>
                         <div class="podcast-card">
                             <div class="podcast-thumbnail-container">
-                                <img src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts//SSgt%20Stripes.jpg" alt="SSgt Promotion Guide" class="podcast-thumbnail" onerror="this.onerror=null;this.src='https://placehold.co/600x338/18181b/FFFFFF?text=Audio+Art';">
+                                <img src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts//SSgt%20Stripes.jpg" alt="SSgt Promotion Guide" class="podcast-thumbnail" onerror="this.onerror=null;this.src=&#39;https://placehold.co/600x338/18181b/FFFFFF?text=Audio+Art&#39;;">
                             </div>
                             <div class="podcast-content-wrapper">
                                 <h3 class="podcast-title">S1E4 SSgt Promotion Guide</h3>
@@ -1023,7 +1116,7 @@
                                     </span>
                                 </div>
                                 <div class="podcast-player">
-                                    <audio controls preload="metadata" onloadeddata="this.style.opacity=1" style="opacity:0.5; transition: opacity 0.3s;" onerror="handleAudioError(this)">
+                                    <audio controls="" preload="metadata" onloadeddata="this.style.opacity=1" style="opacity: 1; transition: opacity 0.3s;" onerror="handleAudioError(this)">
                                         <source src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts/Air%20Force%20Staff%20Sergeant%20Promotion%20Guide%20(1).wav" type="audio/wav">
                                         <source src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts/Air%20Force%20Staff%20Sergeant%20Promotion%20Guide%20(1).mp3" type="audio/mpeg">
                                         Your browser does not support the audio element.
@@ -1039,7 +1132,7 @@
             <section id="contact" class="cta-section">
                 <div class="section-container">
                      <div class="cta-card">
-                        <div class="cta-background" style="background-image: url('https://placehold.co/1200x600/18181b/FFFFFF?text=Innovation');"></div>
+                        <div class="cta-background" style="background-image: url(&#39;https://placehold.co/1200x600/18181b/FFFFFF?text=Innovation&#39;);"></div>
                         <div class="cta-content">
                             <div class="cta-logo-container">
                                 <img src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts//Royal%20Spark%20D%20Logo%20-%20Mekvold%20V3.png" alt="Royal Spark Logo" class="cta-logo">
@@ -1061,7 +1154,7 @@
         <!-- Footer -->
         <footer class="footer">
             <div class="footer-container">
-                <p>&copy; 2025 Royal Spark Innovation Lab. All rights reserved.</p>
+                <p>© 2025 Royal Spark Innovation Lab. All rights reserved.</p>
                 <p>An initiative of the 100th Air Refueling Wing.</p>
             </div>
         </footer>
@@ -1111,6 +1204,43 @@
 
         // Wait for the page to fully load before running scripts
         document.addEventListener('DOMContentLoaded', function() {
+            // --- START: Theme Switcher Logic ---
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const sunIcon = document.getElementById('sun-icon');
+            const moonIcon = document.getElementById('moon-icon');
+
+            function applyTheme(theme) {
+                if (theme === 'light') {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                    sunIcon.style.display = 'none';
+                    moonIcon.style.display = 'block';
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    sunIcon.style.display = 'block';
+                    moonIcon.style.display = 'none';
+                }
+            }
+
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            let initialTheme = 'dark';
+            if (savedTheme) {
+                initialTheme = savedTheme;
+            } else {
+                initialTheme = prefersDark ? 'dark' : 'light';
+            }
+
+            applyTheme(initialTheme);
+
+            themeToggleBtn.addEventListener('click', () => {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                localStorage.setItem('theme', newTheme);
+                applyTheme(newTheme);
+            });
+            // --- END: Theme Switcher Logic ---
+
             // Initialize the animated counters
             initializeCounters();
 
@@ -1152,7 +1282,7 @@
             // --- END: Smooth Scrolling Logic ---
         });
     </script>
-</body>
-</html>
 
 
+
+</body></html>
