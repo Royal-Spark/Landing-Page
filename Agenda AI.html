@@ -107,7 +107,7 @@
         }
         .nav-link:hover { color: var(--color-white); }
         .theme-toggle-btn {
-            background-color: var(--input-bg);
+            background: var(--input-bg);
             border: 1px solid var(--color-zinc-700);
             color: var(--color-zinc-400);
             width: 2.5rem;
@@ -153,7 +153,7 @@
           resize:vertical;
         }
         .controls { display:flex; gap:.75rem; margin-top:1rem; flex-wrap:wrap;}
-        button { 
+        button.primary-btn { 
             background: linear-gradient(90deg, var(--color-purple-600), var(--color-cyan-500)); 
             border:none; 
             color:var(--color-white); 
@@ -163,13 +163,18 @@
             font-weight:600;
             transition: all 0.2s;
         }
-        button:hover {
+        button.primary-btn:hover {
             background: linear-gradient(to right, var(--color-purple-700), var(--color-cyan-600));
         }
         button.ghost { 
             background:transparent; 
             border:1px solid var(--color-zinc-700); 
             color:var(--color-zinc-300); 
+            padding:.75rem 1.25rem; 
+            border-radius:8px; 
+            cursor:pointer; 
+            font-weight:600;
+            transition: all 0.2s;
         }
         button.ghost:hover {
             background: var(--color-zinc-800);
@@ -179,6 +184,11 @@
              background: transparent;
              border: 1px solid var(--color-red-500);
              color: var(--color-red-500);
+             padding:.75rem 1.25rem; 
+             border-radius:8px; 
+             cursor:pointer; 
+             font-weight:600;
+             transition: all 0.2s;
         }
         button.danger:hover {
             background: rgba(239, 68, 68, 0.1);
@@ -191,13 +201,89 @@
           background: linear-gradient(90deg, var(--color-green-500), var(--color-green-400)) !important;
         }
 
+        /* Custom Date Picker */
+        .date-picker-wrapper { position: relative; }
+        #date-display {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .calendar-dropdown {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            top: calc(100% + 5px);
+            left: 0;
+            z-index: 100;
+            background: var(--color-zinc-900);
+            border: 1px solid var(--color-zinc-700);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            width: 300px;
+            transition: opacity 0.2s, visibility 0.2s;
+        }
+        .calendar-dropdown.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .calendar-header button {
+            background: none;
+            border: 1px solid var(--color-zinc-700);
+            color: var(--color-zinc-300);
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            padding: 0;
+        }
+        .calendar-header button:hover {
+            border-color: var(--color-purple-500);
+            color: var(--color-white);
+        }
+        #month-year { font-size: 1rem; font-weight: 600; }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.25rem;
+        }
+        .calendar-day, .weekday {
+            text-align: center;
+            padding: 0.5rem;
+            font-size: 0.875rem;
+        }
+        .weekday { color: var(--color-zinc-500); font-weight: 600; }
+        .calendar-day {
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        .calendar-day:not(.other-month):hover { background-color: var(--color-zinc-700); }
+        .calendar-day.selected {
+            background-color: var(--color-purple-500);
+            color: var(--color-white);
+        }
+        .calendar-day.today { border-color: var(--color-cyan-500); }
+        .calendar-day.other-month { color: var(--color-zinc-700); cursor: not-allowed; }
+
         /* Modal Dialog */
         .modal-overlay {
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(5px);
-            z-index: 100;
+            z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -292,7 +378,21 @@
             <input id="meetingTitle" type="text" placeholder="Weekly staff meeting — Q3 planning" />
 
             <label for="meetingDate" style="margin-top:.75rem">Meeting date</label>
-            <input id="meetingDate" type="date" />
+            <div class="date-picker-wrapper">
+                <input id="date-display" placeholder="Select a date" readonly />
+                <div id="calendar-dropdown" class="calendar-dropdown">
+                    <div class="calendar-header">
+                        <button id="prev-month">&lt;</button>
+                        <span id="month-year"></span>
+                        <button id="next-month">&gt;</button>
+                    </div>
+                    <div class="calendar-grid weekdays">
+                        <div class="weekday">S</div><div class="weekday">M</div><div class="weekday">T</div><div class="weekday">W</div><div class="weekday">T</div><div class="weekday">F</div><div class="weekday">S</div>
+                    </div>
+                    <div class="calendar-grid" id="calendar-days"></div>
+                </div>
+            </div>
+            <input id="meetingDate" type="hidden" />
 
             <label for="attendees" style="margin-top:.75rem">Attendees</label>
             <input id="attendees" type="text" placeholder="Smith, Johnson, Williams, Brown" />
@@ -301,17 +401,17 @@
             <textarea id="pasteArea" placeholder="Paste meeting transcript or notes here..." rows="10"></textarea>
 
             <div class="controls">
-                <button id="generateBtn">Generate AI Prompt</button>
+                <button id="generateBtn" class="primary-btn">Generate & Copy Prompt</button>
             </div>
             <p class="small" style="margin-top:.75rem">Tip: speaker labels like "Alice: ..." help extract action owners.</p>
         </section>
 
         <section class="card" aria-labelledby="prompt-heading">
             <h2 id="prompt-heading" class="section-title">Step 2: Use Generated Prompt</h2>
-            <textarea id="resultArea" placeholder="Click 'Generate AI Prompt' to create the prompt..." rows="12" readonly></textarea>
+            <textarea id="resultArea" placeholder="Click 'Generate & Copy Prompt' to create the prompt..." rows="12" readonly></textarea>
             <div class="controls">
-                <button id="copyBtn" disabled>Copy Prompt</button>
-                <button id="niprgptBtn" disabled>Open NIPRGPT</button>
+                <button id="copyBtn" class="primary-btn" disabled>Copy Again</button>
+                <button id="niprgptBtn" class="primary-btn" disabled>Open NIPRGPT</button>
             </div>
             <p class="small" style="margin-top:.75rem">Copy this entire prompt and paste it into NIPRGPT. <strong>Recommendation:</strong> Switch to Claude 4 Sonnet in NIPRGPT for best results.</p>
         </section>
@@ -321,7 +421,7 @@
             <label for="aiOutput">Paste NIPRGPT AI Text Here</label>
             <textarea id="aiOutput" placeholder="Paste the AI's result from NIPRGPT here..." rows="12"></textarea>
             <div class="controls">
-                <button id="downloadPdf" disabled>Download PDF</button>
+                <button id="downloadPdf" class="primary-btn" disabled>Download PDF</button>
             </div>
         </section>
 
@@ -360,7 +460,9 @@
         const fileInput = document.getElementById('fileInput');
         const pasteArea = document.getElementById('pasteArea');
         const meetingTitle = document.getElementById('meetingTitle');
-        const meetingDate = document.getElementById('meetingDate');
+        const hiddenDateInput = document.getElementById('meetingDate');
+        const dateDisplay = document.getElementById('date-display');
+        const calendarDropdown = document.getElementById('calendar-dropdown');
         const attendees = document.getElementById('attendees');
         const generateBtn = document.getElementById('generateBtn');
         const resultArea = document.getElementById('resultArea');
@@ -378,50 +480,103 @@
 
         // State
         let generatedPrompt = '';
+        let calendarDate = new Date();
 
-        // Set today's date as default
-        meetingDate.valueAsDate = new Date();
+        // --- Calendar Logic ---
+        const monthYearEl = document.getElementById('month-year');
+        const calendarDaysEl = document.getElementById('calendar-days');
+        const prevMonthBtn = document.getElementById('prev-month');
+        const nextMonthBtn = document.getElementById('next-month');
+        
+        function renderCalendar() {
+            calendarDaysEl.innerHTML = '';
+            const year = calendarDate.getFullYear();
+            const month = calendarDate.getMonth();
+            monthYearEl.textContent = `${calendarDate.toLocaleString('default', { month: 'long' })} ${year}`;
+            
+            const firstDayOfMonth = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-        // --- Theme Switcher Logic ---
-        function applyTheme(theme) {
-            if (theme === 'light') {
-                document.documentElement.setAttribute('data-theme', 'light');
-                sunIcon.style.display = 'none';
-                moonIcon.style.display = 'block';
-            } else {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                sunIcon.style.display = 'block';
-                moonIcon.style.display = 'none';
+            for (let i = 0; i < firstDayOfMonth; i++) {
+                calendarDaysEl.insertAdjacentHTML('beforeend', `<div class="calendar-day other-month"></div>`);
+            }
+
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayEl = document.createElement('div');
+                dayEl.className = 'calendar-day';
+                dayEl.textContent = i;
+                
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                
+                const thisDate = new Date(year, month, i);
+
+                if (thisDate.getTime() === today.getTime()) {
+                    dayEl.classList.add('today');
+                }
+                
+                const selectedDate = hiddenDateInput.value ? new Date(hiddenDateInput.value.replace(/-/g, '/')) : null;
+                if (selectedDate && thisDate.getTime() === selectedDate.getTime()) {
+                    dayEl.classList.add('selected');
+                }
+
+                dayEl.addEventListener('click', () => {
+                    const newSelectedDate = new Date(year, month, i);
+                    setDate(newSelectedDate);
+                    calendarDropdown.classList.remove('visible');
+                });
+                calendarDaysEl.appendChild(dayEl);
             }
         }
 
-        const savedTheme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        let initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
-        applyTheme(initialTheme);
+        function setDate(date) {
+            hiddenDateInput.value = date.toISOString().split('T')[0];
+            dateDisplay.value = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            calendarDate = date;
+            renderCalendar();
+        }
+
+        dateDisplay.addEventListener('click', () => calendarDropdown.classList.toggle('visible'));
+        prevMonthBtn.addEventListener('click', () => {
+            calendarDate.setMonth(calendarDate.getMonth() - 1);
+            renderCalendar();
+        });
+        nextMonthBtn.addEventListener('click', () => {
+            calendarDate.setMonth(calendarDate.getMonth() + 1);
+            renderCalendar();
+        });
+        document.addEventListener('click', (e) => {
+            if (!dateDisplay.parentElement.contains(e.target)) {
+                calendarDropdown.classList.remove('visible');
+            }
+        });
+        
+        // Initialize date
+        setDate(new Date());
+
+
+        // --- Theme Switcher Logic ---
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            sunIcon.style.display = theme === 'dark' ? 'block' : 'none';
+            moonIcon.style.display = theme === 'light' ? 'block' : 'none';
+        }
+
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        applyTheme(savedTheme);
 
         themeToggleBtn.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
             localStorage.setItem('theme', newTheme);
             applyTheme(newTheme);
         });
 
         // --- Reset Logic with Modal ---
-        resetBtn.addEventListener('click', () => {
-            modal.classList.add('visible');
-        });
-
-        cancelBtn.addEventListener('click', () => {
-            modal.classList.remove('visible');
-        });
-        
+        resetBtn.addEventListener('click', () => modal.classList.add('visible'));
+        cancelBtn.addEventListener('click', () => modal.classList.remove('visible'));
         modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                 modal.classList.remove('visible');
-            }
+            if (e.target === modal) modal.classList.remove('visible');
         });
-
         confirmBtn.addEventListener('click', () => {
             pasteArea.value = '';
             meetingTitle.value = '';
@@ -433,6 +588,7 @@
             downloadPdf.disabled = true;
             copyBtn.disabled = true;
             niprgptBtn.disabled = true;
+            setDate(new Date());
             modal.classList.remove('visible');
         });
 
@@ -443,11 +599,9 @@
 
             if (file.name.endsWith('.docx')) {
                 const reader = new FileReader();
-                reader.onload = function(event) {
+                reader.onload = (event) => {
                     mammoth.extractRawText({ arrayBuffer: event.target.result })
-                        .then(result => {
-                            pasteArea.value = result.value;
-                        })
+                        .then(result => { pasteArea.value = result.value; })
                         .catch(err => {
                             console.error("Error reading .docx file:", err);
                             alert("Error reading .docx file.");
@@ -456,28 +610,58 @@
                 reader.readAsArrayBuffer(file);
             } else if (file.name.endsWith('.txt')) {
                 const reader = new FileReader();
-                reader.onload = function(event) {
-                    pasteArea.value = event.target.result;
-                };
+                reader.onload = (event) => { pasteArea.value = event.target.result; };
                 reader.readAsText(file);
             } else {
                 alert('Unsupported file type. Please use .txt or .docx');
             }
         });
         
-        // --- Generate prompt (no API call, just create the prompt text) ---
+        function copyToClipboard(text, button) {
+            if (!text) return;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.classList.add('copy-success');
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copy-success');
+                }, 2000);
+            }).catch(err => {
+                console.warn('Async clipboard copy failed, falling back to execCommand.', err);
+                // Fallback for older browsers
+                resultArea.select();
+                resultArea.setSelectionRange(0, 99999); // For mobile devices
+                try {
+                    document.execCommand('copy');
+                    const originalText = button.textContent;
+                    button.textContent = 'Copied!';
+                    button.classList.add('copy-success');
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.classList.remove('copy-success');
+                    }, 2000);
+                } catch (e) {
+                    console.error('Fallback copy failed', e);
+                    alert('Failed to copy text.');
+                }
+            });
+        }
+
+        // --- Generate prompt and copy ---
         generateBtn.addEventListener('click', () => {
-            const notes = (pasteArea.value || '').trim();
-            if (!notes) {
-                alert('Please paste or upload notes before generating the prompt.');
-                return;
-            }
+            try {
+                const notes = (pasteArea.value || '').trim();
+                if (!notes) {
+                    alert('Please paste or upload notes before generating the prompt.');
+                    return;
+                }
 
-            const title = meetingTitle.value.trim() || 'Meeting Summary';
-            const date = meetingDate.value || new Date().toISOString().split('T')[0];
-            const attendeesList = attendees.value.trim() || 'Not specified';
+                const title = meetingTitle.value.trim() || 'Meeting Summary';
+                const date = hiddenDateInput.value || new Date().toISOString().split('T')[0];
+                const attendeesList = attendees.value.trim() || 'Not specified';
 
-            const systemPrompt = `You are Agenda AI, a professional meeting summary generator. Create a comprehensive briefing document based on the provided meeting notes.
+                const systemPrompt = `You are Agenda AI, a professional meeting summary generator. Create a comprehensive briefing document based on the provided meeting notes.
 
 Structure your response with these exact sections:
 
@@ -516,30 +700,23 @@ Attendees: ${attendeesList}
 
 Meeting Notes:
 ${notes}`;
-
-            generatedPrompt = systemPrompt;
-            resultArea.value = generatedPrompt;
-            copyBtn.disabled = false;
-            niprgptBtn.disabled = false;
+                
+                // Update UI and state
+                resultArea.value = systemPrompt;
+                generatedPrompt = systemPrompt;
+                copyBtn.disabled = false;
+                niprgptBtn.disabled = false;
+                
+                // Also copy to clipboard
+                copyToClipboard(generatedPrompt, generateBtn);
+            } catch (error) {
+                console.error("Error during prompt generation:", error);
+                alert("An error occurred while generating the prompt.");
+            }
         });
 
-        // --- Copy prompt ---
         copyBtn.addEventListener('click', () => {
-            navigator.clipboard?.writeText(generatedPrompt).then(() => {
-                const originalText = copyBtn.textContent;
-                copyBtn.textContent = 'Copied!';
-                copyBtn.classList.add('copy-success');
-                setTimeout(() => {
-                    copyBtn.textContent = originalText;
-                    copyBtn.classList.remove('copy-success');
-                }, 2000);
-            }).catch(() => {
-                resultArea.select();
-                document.execCommand('copy');
-                const originalText = copyBtn.textContent;
-                copyBtn.textContent = 'Copied!';
-                setTimeout(() => copyBtn.textContent = originalText, 2000);
-            });
+            if(generatedPrompt) copyToClipboard(generatedPrompt, copyBtn);
         });
 
         // --- Open NIPRGPT in new tab ---
@@ -561,7 +738,7 @@ ${notes}`;
             }
 
             const title = meetingTitle.value.trim() || 'Meeting Summary';
-            const date = meetingDate.value || new Date().toISOString().split('T')[0];
+            const date = hiddenDateInput.value || new Date().toISOString().split('T')[0];
             const attendeesList = attendees.value.trim() || 'Not specified';
 
             const { jsPDF } = window.jspdf;
@@ -589,7 +766,7 @@ ${notes}`;
                     doc.setFont(undefined, 'normal');
                     doc.setFontSize(11);
 
-                    if (line.startsWith('I. ') || line.startsWith('V. ') || line.startsWith('X.')) {
+                    if (line.match(/^[IVX]+\.\s/)) {
                         doc.setFont(undefined, 'bold');
                         doc.setFontSize(14);
                     }
@@ -612,7 +789,7 @@ ${notes}`;
             // Metadata
             doc.setFontSize(11);
             doc.setFont(undefined, 'normal');
-            doc.text(`Date: ${date}`, leftMargin, y);
+            doc.text(`Date: ${new Date(date).toLocaleDateString('en-US', { timeZone: 'UTC', year: 'numeric', month: 'long', day: 'numeric' })}`, leftMargin, y);
             y += 16;
             doc.text(`Attendees: ${attendeesList}`, leftMargin, y);
             y += sectionSpacing;
