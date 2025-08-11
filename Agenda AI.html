@@ -1,0 +1,831 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Agenda AI — Meeting Summary</title>
+
+  <!-- ===== User-provided theme CSS (unchanged) ===== -->
+  <style>
+        :root {
+            --color-black: #000000;
+            --color-white: #ffffff;
+            --color-zinc-200: #e4e4e7;
+            --color-zinc-300: #d4d4d8;
+            --color-zinc-400: #a1a1aa;
+            --color-zinc-500: #71717a;
+            --color-zinc-700: #3f3f46;
+            --color-zinc-800: #27272a;
+            --color-zinc-900: #18181b;
+            --color-zinc-950: #09090b;
+            --color-purple-300: #d8b4fe;
+            --color-purple-400: #c084fc;
+            --color-purple-500: #a855f7;
+            --color-purple-600: #9333ea;
+            --color-purple-700: #7e22ce;
+            --color-purple-900: #581c87;
+            --color-cyan-200: #a5f3fc;
+            --color-cyan-300: #67e8f9;
+            --color-cyan-400: #22d3ee;
+            --color-cyan-500: #06b6d4;
+            --color-cyan-600: #0891b2;
+            --color-cyan-900: #164e63;
+            --color-green-400: #4ade80;
+            --color-green-500: #22c55e;
+            --input-bg: rgba(24, 24, 27, 0.7);
+        }
+
+        html[data-theme='light'] {
+            --color-black: #ffffff;
+            --color-white: #000000;
+            --color-zinc-200: #3f3f46;
+            --color-zinc-300: #52525b;
+            --color-zinc-400: #71717a;
+            --color-zinc-500: #a1a1aa;
+            --color-zinc-700: #d4d4d8;
+            --color-zinc-800: #e4e4e7;
+            --color-zinc-900: #f4f4f5;
+            --color-zinc-950: #fafafa;
+            --input-bg: #e4e4e7;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--color-black);
+            color: var(--color-white);
+            line-height: 1.5;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .container { width: 100%; }
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+        .disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            width: 100%;
+            border-bottom: 1px solid var(--color-zinc-800);
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+        }
+        html[data-theme='light'] .header {
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            height: 4rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .logo {
+            height: 2.5rem;
+            width: auto;
+        }
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--color-purple-500), var(--color-cyan-400));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .desktop-nav {
+            display: none;
+            gap: 1.5rem;
+        }
+        @media (min-width: 768px) {
+            .desktop-nav {
+                display: flex;
+            }
+        }
+        @media (max-width: 767px) {
+            .desktop-nav.is-open {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 4rem;
+                left: 0;
+                right: 0;
+                background-color: rgba(0, 0, 0, 0.95);
+                backdrop-filter: blur(8px);
+                padding: 1rem;
+                border-bottom: 1px solid var(--color-zinc-800);
+                z-index: 40;
+            }
+            html[data-theme='light'] .desktop-nav.is-open {
+                background-color: rgba(255, 255, 255, 0.95);
+            }
+            .desktop-nav.is-open .nav-link {
+                padding: 0.75rem;
+                text-align: center;
+            }
+            .desktop-nav.is-open .nav-link:hover {
+                background-color: var(--color-zinc-800);
+                border-radius: 0.375rem;
+            }
+        }
+        .nav-link {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--color-zinc-300);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .nav-link:hover {
+            color: var(--color-white);
+        }
+        .mobile-menu-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border: 1px solid var(--color-zinc-700);
+            border-radius: 0.375rem;
+            background-color: transparent;
+            color: var(--color-white);
+            cursor: pointer;
+        }
+        @media (min-width: 768px) {
+            .mobile-menu-button {
+                display: none;
+            }
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle-btn {
+            background-color: var(--input-bg);
+            border: 1px solid var(--color-zinc-700);
+            color: var(--color-zinc-400);
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-left: 1rem;
+            margin-right: 1rem;
+        }
+        .theme-toggle-btn:hover {
+            border-color: var(--color-purple-500);
+            color: var(--color-white);
+        }
+        .theme-toggle-btn svg {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .hero-section {
+            position: relative;
+            overflow: hidden;
+            padding: 4rem 1rem;
+        }
+        .hero-background {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, rgba(168, 85, 247, 0.2), rgba(0, 0, 0, 0));
+            z-index: -2;
+        }
+        html[data-theme='light'] .hero-background {
+            background: radial-gradient(ellipse at center, rgba(168, 85, 247, 0.1), rgba(255, 255, 255, 0));
+        }
+        .hero-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            background-color: rgba(168, 85, 247, 0.3);
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1;
+        }
+        .hero-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            gap: 1.25rem;
+            position: relative;
+            z-index: 1;
+            justify-items: center;
+        }
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            text-align: center;
+            align-items: center;
+        }
+        .hero-logo-container {
+            margin: 0 auto 1rem;
+        }
+        .hero-logo {
+            height: auto;
+            width: 10rem;
+        }
+
+        /* App styles */
+        .main {
+          max-width: 1100px;
+          margin: 1.5rem auto;
+          padding: 1rem;
+        }
+        .card {
+          background: rgba(39,39,42,0.55);
+          border: 1px solid var(--color-zinc-800);
+          border-radius: 12px;
+          padding: 1rem;
+          margin-bottom: 1rem;
+        }
+        html[data-theme='light'] .card {
+          background: rgba(255,255,255,0.85);
+        }
+        label { display:block; margin-bottom:.5rem; color:var(--color-zinc-300); font-weight:600;}
+        textarea, input[type="file"], input[type="text"], select {
+          width:100%;
+          border-radius:8px;
+          padding:0.75rem;
+          background:var(--input-bg);
+          border:1px solid var(--color-zinc-700);
+          color:var(--color-white);
+          resize:vertical;
+        }
+        .controls { display:flex; gap:.5rem; margin-top:.5rem; flex-wrap:wrap;}
+        button { background: linear-gradient(90deg, var(--color-purple-600), var(--color-cyan-400)); border:none; color:var(--color-white); padding:.6rem .9rem; border-radius:8px; cursor:pointer; font-weight:600;}
+        button.ghost { background:transparent; border:1px solid var(--color-zinc-700); color:var(--color-zinc-300); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .section-title { font-size:0.95rem; color:var(--color-zinc-200); font-weight:700; margin-bottom:0.5rem; }
+        .small { font-size:.9rem; color:var(--color-zinc-400); }
+        #resultArea { width:100%; min-height:160px; background:transparent; border:1px dashed var(--color-zinc-700); padding:0.75rem; border-radius:8px; color:var(--color-zinc-200); overflow:auto; white-space:pre-wrap;}
+        .no-print { }
+        @media print {
+          .no-print { display:none !important; }
+        }
+        .loading {
+          display: inline-block;
+          width: 20px;
+          height: 20px;
+          border: 3px solid var(--color-zinc-700);
+          border-radius: 50%;
+          border-top-color: var(--color-purple-500);
+          animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+        .copy-success {
+          background: linear-gradient(90deg, var(--color-green-500), var(--color-green-400)) !important;
+        }
+  </style>
+</head>
+<body>
+  <header class="header no-print">
+    <div class="header-container">
+      <div class="logo-container">
+        <img class="logo" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 24 24' fill='none'><rect width='24' height='24' rx='6' fill='%23a855f7'/><path d='M7 9h10v2H7zM7 13h6v2H7z' fill='white'/></svg>" alt="Agenda AI">
+        <div class="logo-text">Agenda AI</div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:.4rem">
+        <button id="themeToggle" class="theme-toggle-btn" title="Toggle theme">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3v1M12 20v1M4.2 4.2l.7.7M18.8 18.8l.7.7M1 12h1M22 12h1M4.2 19.8l.7-.7M18.8 5.2l.7-.7M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="card no-print" aria-labelledby="input-heading">
+      <h2 id="input-heading" class="section-title">Input</h2>
+
+      <label for="fileInput">Upload file (.txt, .docx)</label>
+      <input id="fileInput" type="file" accept=".txt,.docx" />
+
+      <label for="meetingTitle" style="margin-top:.75rem">Meeting title</label>
+      <input id="meetingTitle" type="text" placeholder="Weekly staff meeting — Q3 planning" />
+
+      <label for="meetingDate" style="margin-top:.75rem">Meeting date</label>
+      <input id="meetingDate" type="date" />
+
+      <label for="attendees" style="margin-top:.75rem">Attendees</label>
+      <input id="attendees" type="text" placeholder="Smith, Johnson, Williams, Brown" />
+
+      <label for="pasteArea" style="margin-top:.75rem">Meeting notes / transcript</label>
+      <textarea id="pasteArea" placeholder="Paste meeting transcript or notes here..." rows="10"></textarea>
+
+      <div class="controls" style="margin-top:.75rem">
+        <button id="generateBtn">Generate AI Prompt</button>
+        <button id="clearBtn" class="ghost">Clear</button>
+      </div>
+
+      <p class="small" style="margin-top:.5rem">Tip: speaker labels like "Alice: ..." help extract action owners.</p>
+    </section>
+
+    <section class="card" aria-labelledby="prompt-heading">
+      <h2 id="prompt-heading" class="section-title">Generated Prompt for NIPRGPT</h2>
+      <textarea id="resultArea" placeholder="Click 'Generate AI Prompt' to create the prompt..." rows="12" readonly></textarea>
+      <div class="controls" style="margin-top:.75rem">
+        <button id="copyBtn" disabled>Copy Prompt</button>
+        <button id="niprgptBtn" disabled>Open NIPRGPT</button>
+      </div>
+      <p class="small" style="margin-top:.5rem">Copy this entire prompt and paste it into NIPRGPT. <strong>Recommendation:</strong> Switch to Claude 4 Sonnet in NIPRGPT for best results.</p>
+    </section>
+
+    <section class="card" aria-live="polite">
+      <h2 class="section-title">Paste NIPRGPT AI Text Here</h2>
+      <textarea id="aiOutput" placeholder="Paste the AI's result from NIPRGPT here..." rows="12" style="width:100%;"></textarea>
+      <div class="controls" style="margin-top:.75rem">
+        <button id="downloadPdf" disabled>Download PDF</button>
+      </div>
+    </section>
+
+    <div class="small no-print" style="margin-top:1rem">Workflow: 1) Click "Generate AI Prompt" to build the prompt. 2) Copy it and paste into NIPRGPT. 3) Paste NIPRGPT's output below. 4) Download PDF.</div>
+  </main>
+
+  <!-- libs -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script>
+  (function(){
+    // ===== UI refs =====
+    const fileInput = document.getElementById('fileInput');
+    const pasteArea = document.getElementById('pasteArea');
+    const meetingTitle = document.getElementById('meetingTitle');
+    const meetingDate = document.getElementById('meetingDate');
+    const attendees = document.getElementById('attendees');
+    const generateBtn = document.getElementById('generateBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const resultArea = document.getElementById('resultArea');
+    const copyBtn = document.getElementById('copyBtn');
+    const niprgptBtn = document.getElementById('niprgptBtn');
+    const aiOutput = document.getElementById('aiOutput');
+    const downloadPdf = document.getElementById('downloadPdf');
+    const themeToggle = document.getElementById('themeToggle');
+
+    // State
+    let generatedPrompt = '';
+
+    // Set today's date as default
+    meetingDate.valueAsDate = new Date();
+
+    // Theme toggle
+    themeToggle.addEventListener('click', () => {
+      const html = document.documentElement;
+      html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    });
+
+    // File input: .txt and .docx via mammoth
+    fileInput.addEventListener('change', async (e) => {
+      const f = e.target.files[0];
+      if (!f) return;
+      if (f.name.endsWith('.txt')) {
+        pasteArea.value = await f.text();
+      } else if (f.name.endsWith('.docx')) {
+        try {
+          const arrayBuffer = await f.arrayBuffer();
+          const result = await mammoth.extractRawText({ arrayBuffer });
+          pasteArea.value = result.value;
+        } catch (err) {
+          console.error(err);
+          alert('Error reading .docx file.');
+        }
+      } else {
+        alert('Unsupported file type. Use .txt or .docx');
+      }
+    });
+
+    clearBtn.addEventListener('click', () => {
+      pasteArea.value = '';
+      meetingTitle.value = '';
+      attendees.value = '';
+      resultArea.value = '';
+      aiOutput.value = '';
+      generatedPrompt = '';
+      downloadPdf.disabled = true;
+      copyBtn.disabled = true;
+      niprgptBtn.disabled = true;
+    });
+
+    // Generate prompt (no API call, just create the prompt text)
+    generateBtn.addEventListener('click', () => {
+      const notes = (pasteArea.value || '').trim();
+      if (!notes) {
+        alert('Please paste or upload notes before generating the prompt.');
+        return;
+      }
+
+      const title = meetingTitle.value.trim() || 'Meeting Summary';
+      const date = meetingDate.value || new Date().toISOString().split('T')[0];
+      const attendeesList = attendees.value.trim() || 'Not specified';
+
+      // Create the complete prompt
+      const systemPrompt = `You are Agenda AI, a professional meeting summary generator. Create a comprehensive briefing document based on the provided meeting notes.
+
+Structure your response with these exact sections:
+
+I. Executive Summary
+* Provide a concise overview of the meeting's main purpose and key outcomes
+* Highlight the most important decisions and action items
+
+II. Problem Statement & Current Challenges
+* Identify and describe the main issues or challenges discussed
+* Include relevant quotes from participants when available
+
+III. Key Discussion Points
+* Summarize the main topics covered during the meeting
+* Organize by theme or topic area
+* Include important details and context
+
+IV. Decisions Made
+* List all decisions that were made during the meeting
+* Be specific about what was decided and by whom if mentioned
+
+V. Action Items
+* List all action items with assigned owners when specified
+* Include deadlines or timeframes if mentioned
+* Format as clear, actionable tasks
+
+VI. Next Steps & Follow-up
+* Outline planned follow-up actions
+* Mention any scheduled future meetings or deadlines
+* Include any open questions or items requiring further discussion
+
+Use professional language and maintain the formal tone of a briefing document. Include relevant quotes from participants when they add value or context.
+
+Meeting Title: ${title}
+Date: ${date}
+Attendees: ${attendeesList}
+
+Meeting Notes:
+${notes}`;
+
+      generatedPrompt = systemPrompt;
+      resultArea.value = generatedPrompt;
+      copyBtn.disabled = false;
+      niprgptBtn.disabled = false;
+    });
+
+    // Copy prompt
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard?.writeText(generatedPrompt).then(() => {
+        const originalText = copyBtn.textContent;
+        const originalClass = copyBtn.className;
+        copyBtn.textContent = 'Copied!';
+        copyBtn.className = originalClass + ' copy-success';
+        setTimeout(() => {
+          copyBtn.textContent = originalText;
+          copyBtn.className = originalClass;
+        }, 2000);
+      }).catch(() => {
+        // Fallback for older browsers
+        resultArea.select();
+        document.execCommand('copy');
+        const originalText = copyBtn.textContent;
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => copyBtn.textContent = originalText, 2000);
+      });
+    });
+
+    // Open NIPRGPT in new tab
+    niprgptBtn.addEventListener('click', () => {
+      window.open('https://chat.niprgpt.mil/', '_blank');
+    });
+
+    // Enable PDF download when AI output is provided
+    aiOutput.addEventListener('input', () => {
+      downloadPdf.disabled = !aiOutput.value.trim();
+    });
+
+    // Download PDF with briefing document template
+    downloadPdf.addEventListener('click', () => {
+      const aiText = aiOutput.value.trim();
+      if (!aiText) {
+        alert('Please paste AI output before downloading PDF.');
+        return;
+      }
+
+      const title = meetingTitle.value.trim() || 'Meeting Summary';
+      const date = meetingDate.value || new Date().toISOString().split('T')[0];
+      const attendeesList = attendees.value.trim() || 'Not specified';
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: 'pt', format: 'letter' });
+      
+      let y = 60;
+      const leftMargin = 60;
+      const rightMargin = 552; // 612 - 60
+      const lineHeight = 16;
+      const sectionSpacing = 20;
+      const pageHeight = 792;
+      const bottomMargin = 60;
+
+      // Helper function to check if we need a new page
+      function checkNewPage(additionalSpace = 0) {
+        if (y + additionalSpace > pageHeight - bottomMargin) {
+          doc.addPage();
+          y = 60;
+        }
+      }
+
+      // Helper function to parse and add formatted text
+      function addFormattedText(text, baseFontSize = 11) {
+        const lines = text.split('\n');
+        
+        for (let line of lines) {
+          line = line.trim();
+          if (!line) {
+            y += lineHeight / 2; // Small space for empty lines
+            continue;
+          }
+
+          checkNewPage(lineHeight);
+
+          // Check for markdown headers
+          if (line.startsWith('## ')) {
+            // H2 header
+            const headerText = line.replace('## ', '');
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            const headerLines = doc.splitTextToSize(headerText, rightMargin - leftMargin);
+            for (const headerLine of headerLines) {
+              checkNewPage(lineHeight);
+              doc.text(headerLine, leftMargin, y);
+              y += lineHeight + 4;
+            }
+            y += 8; // Extra space after headers
+            continue;
+          }
+          
+          if (line.startsWith('# ')) {
+            // H1 header
+            const headerText = line.replace('# ', '');
+            doc.setFontSize(16);
+            doc.setFont(undefined, 'bold');
+            const headerLines = doc.splitTextToSize(headerText, rightMargin - leftMargin);
+            for (const headerLine of headerLines) {
+              checkNewPage(lineHeight);
+              doc.text(headerLine, leftMargin, y);
+              y += lineHeight + 4;
+            }
+            y += 10; // Extra space after H1
+            continue;
+          }
+
+          // Process line with bold formatting
+          processLineWithFormatting(line, baseFontSize);
+        }
+      }
+
+      // Helper function to process a line with bold formatting
+      function processLineWithFormatting(line, fontSize) {
+        doc.setFontSize(fontSize);
+        
+        // Split by bold markers (*** or **)
+        const parts = line.split(/(\*\*\*[^*]+\*\*\*|\*\*[^*]+\*\*)/);
+        
+        const maxWidth = rightMargin - leftMargin;
+        let lineSegments = [];
+
+        for (let part of parts) {
+          if (part.startsWith('***') && part.endsWith('***')) {
+            // Triple asterisk - bold
+            const boldText = part.slice(3, -3);
+            lineSegments.push({ text: boldText, bold: true });
+          } else if (part.startsWith('**') && part.endsWith('**')) {
+            // Double asterisk - bold
+            const boldText = part.slice(2, -2);
+            lineSegments.push({ text: boldText, bold: true });
+          } else if (part.trim()) {
+            // Regular text
+            lineSegments.push({ text: part, bold: false });
+          }
+        }
+
+        // If no formatting detected, handle as plain text with proper wrapping
+        if (lineSegments.length === 0 || (lineSegments.length === 1 && !lineSegments[0].bold)) {
+          doc.setFont(undefined, 'normal');
+          const wrappedLines = doc.splitTextToSize(line, maxWidth);
+          for (const wrappedLine of wrappedLines) {
+            checkNewPage(lineHeight);
+            doc.text(wrappedLine, leftMargin, y);
+            y += lineHeight;
+          }
+        } else {
+          // Handle mixed formatting with proper text wrapping
+          renderFormattedLineWithWrapping(lineSegments, maxWidth);
+        }
+        
+        y += 4; // Small space between paragraphs
+      }
+
+      // Helper function to render formatted text with proper wrapping
+      function renderFormattedLineWithWrapping(segments, maxWidth) {
+        let currentLineSegments = [];
+        let currentLineWidth = 0;
+        
+        for (const segment of segments) {
+          // Set font to measure width accurately
+          doc.setFont(undefined, segment.bold ? 'bold' : 'normal');
+          const segmentWidth = doc.getTextWidth(segment.text);
+          
+          // Check if this segment fits on current line
+          if (currentLineWidth + segmentWidth <= maxWidth) {
+            // Fits on current line
+            currentLineSegments.push(segment);
+            currentLineWidth += segmentWidth;
+          } else {
+            // Doesn't fit, need to handle wrapping
+            if (currentLineSegments.length > 0) {
+              // Render current line first
+              renderFormattedLine(currentLineSegments, leftMargin);
+              currentLineSegments = [];
+              currentLineWidth = 0;
+            }
+            
+            // Check if the segment itself needs to be broken up
+            if (segmentWidth > maxWidth) {
+              // Break up long text within the segment
+              const words = segment.text.split(' ');
+              let currentWords = [];
+              let currentWordWidth = 0;
+              
+              for (const word of words) {
+                const wordWidth = doc.getTextWidth(word + ' ');
+                if (currentWordWidth + wordWidth <= maxWidth && currentWords.length > 0) {
+                  currentWords.push(word);
+                  currentWordWidth += wordWidth;
+                } else {
+                  if (currentWords.length > 0) {
+                    // Render current words
+                    const lineText = currentWords.join(' ');
+                    renderFormattedLine([{ text: lineText, bold: segment.bold }], leftMargin);
+                  }
+                  currentWords = [word];
+                  currentWordWidth = wordWidth;
+                }
+              }
+              
+              // Handle remaining words
+              if (currentWords.length > 0) {
+                currentLineSegments.push({ text: currentWords.join(' '), bold: segment.bold });
+                currentLineWidth = doc.getTextWidth(currentWords.join(' '));
+              }
+            } else {
+              // Segment fits on a new line
+              currentLineSegments.push(segment);
+              currentLineWidth = segmentWidth;
+            }
+          }
+        }
+        
+        // Render any remaining segments
+        if (currentLineSegments.length > 0) {
+          renderFormattedLine(currentLineSegments, leftMargin);
+        }
+      }
+
+      // Helper function to render a line with mixed formatting
+      function renderFormattedLine(segments, startX) {
+        checkNewPage(lineHeight);
+        let currentX = startX;
+        
+        for (const segment of segments) {
+          if (segment.bold) {
+            doc.setFont(undefined, 'bold');
+          } else {
+            doc.setFont(undefined, 'normal');
+          }
+          
+          doc.text(segment.text, currentX, y);
+          currentX += doc.getTextWidth(segment.text);
+        }
+        
+        y += lineHeight;
+      }
+
+      // Document header
+      doc.setFontSize(16);
+      doc.setFont(undefined, 'bold');
+      const titleText = `Detailed Briefing Document: ${title}`;
+      const titleWidth = doc.getTextWidth(titleText);
+      const centerX = (612 - titleWidth) / 2;
+      doc.text(titleText, centerX, y);
+      y += 26;
+
+      // Metadata
+      doc.setFontSize(11);
+      doc.setFont(undefined, 'bold');
+      doc.text(`Date: ${date}`, leftMargin, y);
+      y += 16;
+      doc.text(`Attendees: ${attendeesList}`, leftMargin, y);
+      y += 16;
+      doc.text(`Subject: ${title}`, leftMargin, y);
+      y += sectionSpacing;
+
+      // Add a separator line
+      doc.setLineWidth(1);
+      doc.line(leftMargin, y, rightMargin, y);
+      y += sectionSpacing;
+
+      // Add the formatted AI output
+      addFormattedText(aiText, 11);
+
+      // Save the PDF
+      const filename = (meetingTitle.value || 'Meeting_Summary').replace(/[^a-zA-Z0-9]/g, '_') + '.pdf';
+      doc.save(filename);
+    });
+
+    // Parse summary into structured sections
+    function parseSummaryIntoSections(summary, title, date, attendeesList) {
+      const sections = {
+        title: title,
+        date: date,
+        attendees: attendeesList,
+        executiveSummary: '',
+        problemStatement: '',
+        keyPoints: '',
+        decisions: [],
+        actionItems: [],
+        nextSteps: ''
+      };
+
+      // Split summary into sections using Roman numerals and section headers
+      const sectionRegex = /(?:^|\n)([IVX]+\.\s+[^:\n]+:?)\s*\n([\s\S]*?)(?=\n[IVX]+\.|$)/gi;
+      let match;
+
+      while ((match = sectionRegex.exec(summary)) !== null) {
+        const sectionTitle = match[1].trim();
+        const sectionContent = match[2].trim();
+
+        if (sectionTitle.toLowerCase().includes('executive summary')) {
+          sections.executiveSummary = sectionContent;
+        } else if (sectionTitle.toLowerCase().includes('problem statement') || 
+                   sectionTitle.toLowerCase().includes('challenges')) {
+          sections.problemStatement = sectionContent;
+        } else if (sectionTitle.toLowerCase().includes('discussion') || 
+                   sectionTitle.toLowerCase().includes('key points')) {
+          sections.keyPoints = sectionContent;
+        } else if (sectionTitle.toLowerCase().includes('decisions')) {
+          sections.decisions = extractBulletPoints(sectionContent);
+        } else if (sectionTitle.toLowerCase().includes('action items')) {
+          sections.actionItems = extractBulletPoints(sectionContent);
+        } else if (sectionTitle.toLowerCase().includes('next steps') || 
+                   sectionTitle.toLowerCase().includes('follow')) {
+          sections.nextSteps = sectionContent;
+        }
+      }
+
+      return sections;
+    }
+
+    // Extract bullet points from text
+    function extractBulletPoints(text) {
+      const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+      const bullets = [];
+      
+      for (const line of lines) {
+        // Remove common bullet markers
+        const cleaned = line.replace(/^[-•*]\s*/, '').replace(/^\d+\.\s*/, '');
+        if (cleaned) {
+          bullets.push(cleaned);
+        }
+      }
+      
+      return bullets.length > 0 ? bullets : [text];
+    }
+
+  })();
+  </script>
+</body>
+</html>
