@@ -34,6 +34,57 @@
             --input-bg: rgba(24, 24, 27, 0.7);
         }
 
+/* --- Styles for the video popup --- */
+#video-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(9, 9, 11, 0.8); /* Semi-transparent background */
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: none; /* Hidden by default */
+    align-items: center;
+    justify-content: center;
+}
+#video-popup-container {
+    position: relative;
+    padding: 10px;
+    background: var(--color-zinc-900);
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    width: 90%;
+    max-width: 640px; /* Adjust max-width as needed */
+}
+#video-popup-container iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9; /* Ensures correct video proportions */
+    border: none;
+    border-radius: 8px;
+    display: block;
+}
+#close-popup-btn {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    width: 34px;
+    height: 34px;
+    background: var(--color-purple-600);
+    color: white;
+    border: 2px solid var(--color-white);
+    border-radius: 50%;
+    font-size: 22px;
+    font-weight: bold;
+    line-height: 30px;
+    text-align: center;
+    cursor: pointer;
+    z-index: 1001;
+    transition: transform 0.2s ease;
+}
+#close-popup-btn:hover {
+    transform: scale(1.1);
+}
         html[data-theme='light'] {
             --color-black: #ffffff;
             --color-white: #000000;
@@ -1184,6 +1235,20 @@
             </div>
         </footer>
     </div>
+	<div id="video-popup-overlay">
+    <div id="video-popup-container">
+        <button id="close-popup-btn">&times;</button>
+        <iframe id="youtube-player" 
+                width="560" 
+                height="315" 
+                src="" 
+                title="YouTube video player" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+        </iframe>
+    </div>
+</div>
     <script>
         const SAVINGS_DATA = {
             dollarsSaved: 10605020,
@@ -1306,6 +1371,41 @@
             });
             // --- END: Smooth Scrolling Logic ---
         });
+		
+		// --- START: Video Popup Logic (Double-Click Trigger) ---
+            const titleTrigger = document.querySelector('#tools .section-title');
+            const videoOverlay = document.getElementById('video-popup-overlay');
+            const closeBtn = document.getElementById('close-popup-btn');
+            const youtubePlayer = document.getElementById('youtube-player');
+            const videoSrc = 'https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&rel=0';
+
+            if (titleTrigger && videoOverlay && closeBtn && youtubePlayer) {
+                // Function to open the popup on double-click
+                titleTrigger.addEventListener('dblclick', () => {
+                    // This line prevents the title text from being selected on double-click
+                    window.getSelection().removeAllRanges();
+                    
+                    youtubePlayer.src = videoSrc;
+                    videoOverlay.style.display = 'flex';
+                });
+
+                // Function to close the popup
+                const closePopup = () => {
+                    youtubePlayer.src = ''; // Stop the video from playing in the background
+                    videoOverlay.style.display = 'none';
+                };
+
+                // Event listener for the close button
+                closeBtn.addEventListener('click', closePopup);
+
+                // Event listener to close popup if user clicks on the dark overlay
+                videoOverlay.addEventListener('click', (e) => {
+                    if (e.target === videoOverlay) {
+                        closePopup();
+                    }
+                });
+            }
+            // --- END: Video Popup Logic ---
     </script>
 
 
