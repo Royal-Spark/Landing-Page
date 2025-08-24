@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acquisition Compass</title>
+    <style>
+        /* This is where you would place the updated CSS inspired by the provided link */
+        :root {
+            --primary-color: #00d4ff;
+            --secondary-color: #ff6b35;
+            --background-start: #0f1419;
+            --background-end: #1a2332;
+            --text-primary: #ffffff;
+            --text-secondary: #cbd5e0;
+            --border-color: #4a5568;
+            --card-bg: rgba(45, 55, 72, 0.4);
+            --card-header-bg: linear-gradient(135deg, #2d3748, #4a5568);
+            --focus-glow: rgba(0, 212, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--background-start) 0%, var(--background-end) 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        *:focus-visible {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+            box-shadow: 0 0 0 4px var(--focus-glow);
+            border-radius: 4px;
+        }
+        
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(15, 20, 25, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a, .nav-links button {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.3s;
+            background: none;
+            border: none;
+            font-family: inherit;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover, .nav-links button:hover {
+            color: var(--primary-color);
+        }
+        
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            padding-top: 80px;
+            background: radial-gradient(circle at 50% 50%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+        }
+
+        .hero-content {
+            max-width: 1000px;
+            padding: 2rem;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .mission-statement {
+            font-size: 1.1rem;
+            color: #e2e8f0;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            padding: 2rem;
+            background: rgba(45, 55, 72, 0.3);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .step-container {
+            display: grid;
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .step-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .step-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
+        }
+
+        .step-header {
+            background: var(--card-header-bg);
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .step-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .step-number {
+            background: var(--primary-color);
+            color: var(--background-start);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(26, 35, 50, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            transition: border-color 0.3s;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            background: linear-gradient(135deg, var(--primary-color), #0ea5e9);
+            color: var(--text-primary);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 212, 255, 0.3);
+        }
+        
+        .callout {
+            background: rgba(0, 212, 255, 0.05);
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .callout-title {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 10000;
+        }
+        .modal.active { display: flex; align-items: center; justify-content: center; }
+        .modal-content {
+            background: var(--background-end);
+            border-radius: 12px; padding: 2rem;
+            max-width: 600px; width: 90%;
+            max-height: 80%; overflow-y: auto;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .modal-close {
+            position: absolute; top: 1rem; right: 1.5rem;
+            background: none; border: none; font-size: 2rem;
+            cursor: pointer; color: var(--secondary-color);
+        }
+
+        .fade-in-up {
+            animation: slideInUp 0.6s ease forwards;
+        }
+        @keyframes slideInUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .ai-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .ai-links a {
+            display: inline-block;
+            padding: 1rem 2rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.3s;
+        }
+
+        .ai-link-1 {
+            background: #4a90e2;
+            color: #fff;
+        }
+
+        .ai-link-2 {
+            background: #10a37f;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">Acquisition Compass</a>
+            <ul class="nav-links">
+                <li><a href="#hero">Home</a></li>
+                <li><a href="#process">Recommender</a></li>
+                <li><button type="button" class="nav-button" data-modal-target="glossary-modal">Glossary</button></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header id="hero" class="hero">
+        <div class="hero-content fade-in-up">
+            <h1>Acquisition Compass</h1>
+            <p class="hero-subtitle">Streamlining the Path from Idea to Impact</p>
+            <div class="mission-statement">
+                Our goal is to eliminate ambiguity in the funding process. Upload your innovation proposal, and we'll help you craft a precise prompt to get a clear funding recommendation from a trusted AI.
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section id="process" class="section">
+            <h2 class="section-title">Funding Recommender</h2>
+
+            <div class="step-container">
+                <div class="step-card">
+                    <div class="step-header">
+                        <span class="step-title">1. Input Your Innovation Details</span>
+                        <span class="step-number">1</span>
+                    </div>
+                    <div class="step-content">
+                        <div class="callout">
+                            <div class="callout-title">Pro Tip:</div>
+                            <p>For best results, use a completed <a href="https://www.afwerx.com/templates" target="_blank" style="color: var(--primary-color);">AFWERX One-Pager Template</a> as your source content for the fields above.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="core-problem">Problem, Solution & ROI:</label>
+                            <textarea class="form-control" id="core-problem" rows="3" placeholder="What specific problem is being solved?"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="justification">Project Summary:</label>
+                            <textarea class="form-control" id="justification" rows="3" placeholder="What makes this solution distinct and valuable?"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="additional-details">Additional Details: Market Summary, Project Future, Traction and Success</label>
+                            <textarea class="form-control" id="additional-details" rows="5" placeholder="Include your testable hypothesis, beneficiaries, and other key details from your one-pager."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="maturity-stage">Innovation Maturity Stage:</label>
+                            <select class="form-control" id="maturity-stage">
+                                <option value="" disabled selected>Select an option</option>
+                                <option value="Conceptual Idea">Conceptual Idea</option>
+                                <option value="Basic Research">Basic Research</option>
+                                <option value="Prototype">Prototype</option>
+                                <option value="Field-tested Solution">Field-tested Solution</option>
+                                <option value="Deployable Product">Deployable Product</option>
+                            </select>
+                        </div>
+                        <button class="btn" id="generate-prompt-btn">Generate and Copy AI Prompt</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="ai-prompt-output" style="display: none;">
+                <h3 style="color: var(--primary-color); margin-bottom: 1rem;">Your Custom AI Prompt:</h3>
+                <div class="callout">
+                    <div class="callout-title">Copy and Paste this into the AI</div>
+                    <div id="ai-prompt-text" style="white-space: pre-wrap;"></div>
+                </div>
+                <div class="ai-links">
+                    <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">Choose an AI to get your recommendation:</p>
+                    <a href="https://chat.niprgpt.mil/" target="_blank" class="ai-link-1">NIPRGPT (CUI Approved)</a>
+                    <a href="https://chatgpt.com/" target="_blank" class="ai-link-2">ChatGPT (Not CUI Approved)</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal" id="glossary-modal" role="dialog" aria-modal="true">
+        <div class="modal-content">
+            <button class="modal-close" aria-label="Close glossary">&times;</button>
+            <h2 id="glossary-title-id">Funding Glossary</h2>
+            <p><strong>RDT&E:</strong> Research, Development, Test, and Evaluation. Funds for developing new technologies and systems.</p>
+            <p><strong>Procurement:</strong> Funding for purchasing and deploying a complete, mature system.</p>
+            <p><strong>O&M:</strong> Operations and Maintenance. Funds for sustaining existing systems and operations.</p>
+            <p><strong>MILPERS:</strong> Military Personnel. Funds for military pay, allowances, and travel.</p>
+            <p><strong>MILCON:</strong> Military Construction. Funds for construction of military infrastructure.</p>
+            <p><strong>Revolving Funds:</strong> Finance cyclic business-type operations without repeated congressional approval.</p>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const generatePromptBtn = document.getElementById('generate-prompt-btn');
+            const promptOutputDiv = document.getElementById('ai-prompt-output');
+            const promptTextDiv = document.getElementById('ai-prompt-text');
+
+            generatePromptBtn.addEventListener('click', () => {
+                const coreProblem = document.getElementById('core-problem').value;
+                const maturityStage = document.getElementById('maturity-stage').value;
+                const justification = document.getElementById('justification').value;
+                const additionalDetails = document.getElementById('additional-details').value;
+
+                if (!coreProblem || !maturityStage) {
+                    alert('Please fill out the "Problem, Solution & ROI" and "Innovation Maturity Stage" fields.');
+                    return;
+                }
+
+                const prompt = `
+Instructions for the AI:
+
+You are an expert advisor on U.S. government defense innovation, funding, and acquisition. Your task is to analyze an innovation proposal based on the provided user input and provide a strategic recommendation.
+
+1. Role and Context:
+
+* Act as a guide to help the user navigate the complex defense budgeting process, specifically the "Colors of Money" framework.
+* Prioritize clarity, justification, and actionable steps.
+* The goal is to provide a recommendation that helps the innovation thrive by aligning it with the most appropriate funding stream and providing a clear path forward.
+* **Pro Tip:** When applicable, use content from a completed AFWERX One-Pager Template for a more robust analysis.
+
+2. User Input (Innovation Proposal):
+
+* Problem, Solution & ROI: ${coreProblem}
+* Project Summary: ${justification}
+* Additional Details: Market Summary, Project Future, Traction and Success: ${additionalDetails}
+* Innovation Maturity Stage: ${maturityStage}
+* Testable Hypothesis: (Not available in this form, but you can infer from the problem)
+* Beneficiaries: (Not available in this form, but you can infer from the problem)
+
+3. Reference Data (Your Knowledge Base):
+
+* RDT&E (Research, Development, Test & Evaluation):
+    * Description: "Invention money" for early-stage solutions.
+    * Obligation Period: 2 years.
+    * Justification (When to Use): Developing new technologies, major upgrades, prototypes, acquiring test articles, or R&D-related operations under $750,000.
+    * Avoid: Funding mature solutions or sustaining existing operations.
+* Procurement:
+    * Description: For mature solutions, purchases of end items over $250,000.
+    * Obligation Period: 3 years.
+    * Justification (When to Use): Acquiring and deploying a complete, approved system for operational use, or fully developed modification kits.
+    * Avoid: Early-stage R&D.
+* O&M (Operations & Maintenance):
+    * Description: Sustaining things that already exist.
+    * Obligation Period: 1 year.
+    * Justification (When to Use): Sustaining existing operations, routine maintenance, integrating mature solutions, or technology refreshment under $250,000.
+    * Avoid: Funding new inventions or major development.
+* MILPERS (Military Personnel):
+    * Description: Funding for military personnel.
+    * Obligation Period: 1 year.
+    * Justification (When to Use): Pay, allowances, and travel for military personnel.
+* MILCON (Military Construction):
+    * Description: Construction of military infrastructure.
+    * Obligation Period: 5 years.
+    * Justification (When to Use): Construction projects over $750,000 at R&D installations or Government-Owned, Government-Operated (GOGO) facilities.
+* Revolving Funds:
+    * Description: Finance cyclic business-type operations.
+    * Advantage: Available without repeated congressional approval.
+    * Justification (When to Use): Capital investments in equipment or software development over $100,000 with a useful life of two years or more.
+
+4. Task and Output Format:
+
+Based on the user's input and the provided reference data, perform the following tasks and structure your response as follows:
+
+* **Initial Assessment:** Provide a brief summary of the innovation's maturity stage and purpose as you understand it.
+* **Recommended Funding Stream:** State a single, primary "Color of Money" that is the most appropriate for this innovation at its current stage.
+* **Justification:** Explain *why* that funding stream is the best fit, referencing specific details from the user's input and the "Justification (When to Use)" criteria.
+* **Actionable Next Steps:** Based on your recommendation, provide a list of actionable next steps. This should include:
+    1.  **Contracting Pathways:** Suggest specific contracting vehicles (e.g., GPC, CSO, OTAs, SBIR/STTR) that align with the funding stream and innovation maturity.
+    2.  **Budget Process:** Recommend what part of the DoD's PPBS (e.g., POM, BES) the user should focus on for this type of funding.
+    3.  **Messaging & Justification:** Offer guidance on how the user can refine their problem statement and build a compelling case, using concepts like "First Principles Thinking" and the "Inverted Funnel Structure."
+    4.  **Pro Tips:** Include practical advice to avoid common pitfalls.
+
+* **Life Cycle Transition:** Advise the user on what the next likely funding stream would be as their innovation matures (e.g., from RDT&E to Procurement) and why this is a critical part of their financial plan.
+                `;
+
+                promptTextDiv.textContent = prompt.trim();
+                promptOutputDiv.style.display = 'block';
+
+                // Copy to clipboard
+                navigator.clipboard.writeText(prompt.trim()).then(() => {
+                    alert("AI prompt has been copied to your clipboard!");
+                }).catch(err => {
+                    console.error('Failed to copy text: ', err);
+                });
+            });
+
+            // --- Modal Logic ---
+            const openModal = (modal) => {
+                if (modal) modal.classList.add('active');
+            };
+
+            const closeModal = (modal) => {
+                if (modal) modal.classList.remove('active');
+            };
+
+            document.querySelectorAll('[data-modal-target]').forEach(trigger => {
+                trigger.addEventListener('click', () => {
+                    const modal = document.getElementById(trigger.dataset.modalTarget);
+                    openModal(modal);
+                });
+            });
+
+            document.querySelectorAll('.modal .modal-close').forEach(button => {
+                button.addEventListener('click', () => {
+                    const modal = button.closest('.modal');
+                    closeModal(modal);
+                });
+            });
+
+            window.addEventListener('keydown', (e) => {
+                if (e.key === "Escape") {
+                    const activeModal = document.querySelector('.modal.active');
+                    closeModal(activeModal);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
