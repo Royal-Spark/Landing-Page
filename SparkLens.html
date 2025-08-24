@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Problem Identification Expert | Royal Spark Innovation Lab</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #ffffff;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 0;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #ff6b6b, #ffa500);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 8px 32px rgba(255, 107, 107, 0.3);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #ff6b6b, #ffa500, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h2 {
+            color: #ff6b6b;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .card h3 {
+            color: #4ecdc4;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-section label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #ffa500;
+        }
+
+        .input-section textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            resize: vertical;
+            backdrop-filter: blur(5px);
+        }
+
+        .input-section textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .input-section textarea:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #ff6b6b, #ffa500);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .output-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .reset-btn {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            margin-left: 10px;
+        }
+
+        .reset-btn:hover {
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+        }
+
+        .principles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .principle-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .principle-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .ai-link-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            text-decoration: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+            text-align: center;
+            min-width: 140px;
+        }
+
+        .ai-link-btn.chatgpt {
+            background: linear-gradient(135deg, #6f42c1, #e83e8c);
+            box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
+        }
+
+        .ai-link-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🎯</div>
+            <h1>Problem Identification Expert</h1>
+            <p>Transform your challenges into precise, actionable problem statements using first principles thinking</p>
+        </div>
+
+        <div class="card">
+            <h2>Core Principles</h2>
+            <div class="principles">
+                <div class="principle-card">
+                    <span class="principle-icon">🔍</span>
+                    <h3>Detective Mindset</h3>
+                    <p>Investigate root causes and pain points</p>
+                </div>
+                <div class="principle-card">
+                    <span class="principle-icon">🧠</span>
+                    <h3>First Principles</h3>
+                    <p>Break down to fundamental elements</p>
+                </div>
+                <div class="principle-card">
+                    <span class="principle-icon">👥</span>
+                    <h3>User-Centered</h3>
+                    <p>Focus on beneficiary needs</p>
+                </div>
+                <div class="principle-card">
+                    <span class="principle-icon">🚀</span>
+                    <h3>Innovation Catalyst</h3>
+                    <p>Enable breakthrough solutions</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Describe Your Challenge</h2>
+            <p style="margin-bottom: 20px; opacity: 0.9;">
+                Share your raw problem description below. Don't worry about structure - just explain the challenge you're facing in your own words.
+            </p>
+            
+            <div class="input-section">
+                <label for="problemInput">Your Problem Description:</label>
+                <textarea id="problemInput" placeholder="Describe your challenge here... What's the situation you're dealing with? What's not working? What are you trying to achieve?"></textarea>
+            </div>
+            
+            <button class="btn" onclick="analyzeProblem()">Analyze Problem</button>
+            <button class="btn reset-btn" onclick="resetAnalysis()">Reset</button>
+        </div>
+
+        <div id="outputSection" class="output-section">
+            <div class="card">
+                <h2>Analysis Results</h2>
+                <div id="analysisOutput"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPrompt = '';
+
+        function analyzeProblem() {
+            const input = document.getElementById('problemInput').value.trim();
+            
+            if (!input) {
+                alert('Please describe your problem first.');
+                return;
+            }
+
+            const aiPrompt = generateAIPrompt(input);
+            currentPrompt = aiPrompt;
+            
+            copyToClipboard(aiPrompt);
+            displayResults(aiPrompt);
+            
+            document.getElementById('outputSection').style.display = 'block';
+            document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function generateAIPrompt(problemDescription) {
+            const prompt = [
+                "You are a highly skilled Problem Identification Expert, embodying the \"art and science of problem identification\" as discussed by Chad Powers and Stacy Max on the Aphare Spark Signal podcast. Your mission is to act as a compass, guiding users from their initial, raw problem descriptions (\"word vomit\") to precise, actionable, and innovative problem statements.",
+                "",
+                "CORE OBJECTIVE:",
+                "Transform this free-form problem description into a structured, clear, and compelling problem statement that defines the current state, the gap, and the desired future state, while adhering strictly to the fundamental rules of problem identification.",
+                "",
+                "PROBLEM STATEMENT RULES (MUST FOLLOW):",
+                "✅ Must define three key components precisely:",
+                "   1. Current State: Where they are now",
+                "   2. The Gap: The challenge being faced",
+                "   3. Desired Future State: Where they want to end up",
+                "",
+                "❌ Must NOT include:",
+                "   - Causes (no \"because,\" \"due to,\" \"caused by\")",
+                "   - Solutions (no \"should,\" \"need to,\" \"must implement\")",
+                "   - Assumptions or emotional language",
+                "   - These elements \"box you in too early\"",
+                "",
+                "✅ Must focus on the BENEFICIARY:",
+                "   - End users, stakeholders, or the organization",
+                "   - Their specific needs and frustrations",
+                "",
+                "FIRST PRINCIPLES APPROACH:",
+                "- Apply the \"hole in a plane\" mental model",
+                "- Ask \"why, why, why\" to get to absolute basics",
+                "- Break down into irreducible elements",
+                "- Identify fundamental, unshakable truths",
+                "- Rebuild understanding from first principles",
+                "",
+                "USER'S PROBLEM DESCRIPTION:",
+                "\"" + problemDescription + "\"",
+                "",
+                "YOUR ANALYSIS PROCESS:",
+                "1. INITIAL ASSESSMENT:",
+                "   - Identify any violations of the rules (causes, solutions, unclear beneficiaries)",
+                "   - Note assumptions or emotional language that needs addressing",
+                "",
+                "2. FIRST PRINCIPLES BREAKDOWN:",
+                "   - What are the core components of this challenge?",
+                "   - What are the basic, unshakable truths?",
+                "   - Who are the real beneficiaries affected?",
+                "",
+                "3. CLARIFYING QUESTIONS (if needed):",
+                "   - Ask targeted questions to separate symptoms from core issues",
+                "   - Focus on beneficiary needs without suggesting solutions",
+                "   - Use \"Five W's\" approach when helpful",
+                "",
+                "4. CRAFT PROBLEM STATEMENT:",
+                "   - Current State: [Clear description of existing situation]",
+                "   - The Gap: [Specific difficulty or unmet need]",
+                "   - Desired Future State: [Beneficiary-focused ideal outcome]",
+                "   - Combined Statement: \"The [beneficiary] is experiencing [current state/gap] resulting in [impact], preventing them from achieving [desired future state].\"",
+                "",
+                "OUTPUT FORMAT:",
+                "Provide your analysis in this structure:",
+                "- Initial observations about the problem description",
+                "- Key clarifying insights from first principles thinking",
+                "- The refined problem statement broken into components",
+                "- A single, coherent combined problem statement",
+                "- Reflection on how this enables better solution development",
+                "",
+                "Focus on precision, user-centeredness, and actionability while avoiding premature solutions or assumed causes."
+            ];
+            
+            return prompt.join('\n');
+        }
+
+        function displayResults(aiPrompt) {
+            let html = '';
+
+            html += '<div style="background: rgba(78, 205, 196, 0.1); border-left: 4px solid #4ecdc4; padding: 20px; border-radius: 0 10px 10px 0; margin: 20px 0;">';
+            html += '<h3>✅ AI Prompt Generated & Copied!</h3>';
+            html += '<p>A detailed problem identification prompt has been generated based on your description and copied to your clipboard. Use the links below to paste it into your preferred AI assistant.</p>';
+            html += '</div>';
+
+            html += '<div class="ai-links">';
+            html += '<h3>Choose Your AI Platform</h3>';
+            html += '<div style="display: flex; gap: 15px; margin: 20px 0; flex-wrap: wrap;">';
+            
+            html += '<a href="https://chat.niprgpt.mil/" target="_blank" class="ai-link-btn">';
+            html += '🔒 NIPRGPT<br><small style="opacity: 0.9;">CUI Approved</small>';
+            html += '</a>';
+            
+            html += '<a href="https://chatgpt.com/" target="_blank" class="ai-link-btn chatgpt">';
+            html += '🌐 ChatGPT<br><small style="opacity: 0.9;">Not CUI Approved</small>';
+            html += '</a>';
+            
+            html += '</div>';
+            html += '</div>';
+
+            html += '<div class="prompt-preview">';
+            html += '<h3>Generated Prompt Preview</h3>';
+            html += '<div style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 10px; margin: 15px 0; border: 1px solid rgba(255, 255, 255, 0.1); max-height: 300px; overflow-y: auto;">';
+            html += '<pre style="white-space: pre-wrap; font-family: \'Courier New\', monospace; font-size: 0.9rem; line-height: 1.4; margin: 0;">';
+            html += escapeHtml(aiPrompt);
+            html += '</pre>';
+            html += '</div>';
+            html += '<button class="btn" style="margin-top: 10px;" onclick="copyPromptAgain()">📋 Copy Prompt Again</button>';
+            html += '</div>';
+
+            html += '<div style="margin-top: 30px; padding: 20px; background: rgba(255, 255, 255, 0.05); border-radius: 10px;">';
+            html += '<h3>How to Use</h3>';
+            html += '<ol style="padding-left: 20px; line-height: 1.8;">';
+            html += '<li>The prompt has been automatically copied to your clipboard</li>';
+            html += '<li>Click on either AI platform link above</li>';
+            html += '<li>Paste the prompt (Ctrl+V or Cmd+V) into the AI chat</li>';
+            html += '<li>The AI will analyze your problem and provide a structured problem statement</li>';
+            html += '<li>Review and refine the output as needed</li>';
+            html += '</ol>';
+            html += '</div>';
+
+            document.getElementById('analysisOutput').innerHTML = html;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function copyPromptAgain() {
+            copyToClipboard(currentPrompt);
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                console.log('Prompt copied to clipboard successfully!');
+                showCopyFeedback();
+            }, function(err) {
+                console.error('Could not copy text: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    console.log('Prompt copied to clipboard using fallback method');
+                    showCopyFeedback();
+                } catch (err) {
+                    console.error('Fallback copy failed: ', err);
+                    alert('Could not copy to clipboard. Please manually select and copy the prompt text.');
+                }
+                document.body.removeChild(textArea);
+            });
+        }
+
+        function showCopyFeedback() {
+            const feedback = document.createElement('div');
+            feedback.innerHTML = '📋 Copied!';
+            feedback.style.cssText = 'position: fixed; top: 20px; right: 20px; background: rgba(78, 205, 196, 0.9); color: white; padding: 10px 20px; border-radius: 5px; z-index: 1000; animation: fadeInOut 2s forwards;';
+            document.body.appendChild(feedback);
+            
+            setTimeout(() => {
+                document.body.removeChild(feedback);
+            }, 2000);
+        }
+
+        function resetAnalysis() {
+            document.getElementById('problemInput').value = '';
+            document.getElementById('outputSection').style.display = 'none';
+            currentPrompt = '';
+        }
+    </script>
+
+    <style>
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateX(100px); }
+            20% { opacity: 1; transform: translateX(0); }
+            80% { opacity: 1; transform: translateX(0); }
+            100% { opacity: 0; transform: translateX(-100px); }
+        }
+    </style>
+</body>
+</html>
