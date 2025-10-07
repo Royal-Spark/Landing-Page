@@ -33,59 +33,61 @@
             --color-green-500: #22c55e;
             --input-bg: rgba(24, 24, 27, 0.7);
         }
-const SUPABASE_FUNCTION_URL = 'https://<project-ref>.supabase.co/functions/v1/finance-ai'
 		
-/* --- Styles for the video popup --- */
-#video-popup-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(9, 9, 11, 0.8); /* Semi-transparent background */
-    backdrop-filter: blur(8px);
-    z-index: 1000;
-    display: none; /* Hidden by default */
-    align-items: center;
-    justify-content: center;
-}
-#video-popup-container {
-    position: relative;
-    padding: 10px;
-    background: var(--color-zinc-900);
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-    width: 90%;
-    max-width: 640px; /* Adjust max-width as needed */
-}
-#video-popup-container iframe {
-    width: 100%;
-    aspect-ratio: 16 / 9; /* Ensures correct video proportions */
-    border: none;
-    border-radius: 8px;
-    display: block;
-}
-#close-popup-btn {
-    position: absolute;
-    top: -15px;
-    right: -15px;
-    width: 34px;
-    height: 34px;
-    background: var(--color-purple-600);
-    color: white;
-    border: 2px solid var(--color-white);
-    border-radius: 50%;
-    font-size: 22px;
-    font-weight: bold;
-    line-height: 30px;
-    text-align: center;
-    cursor: pointer;
-    z-index: 1001;
-    transition: transform 0.2s ease;
-}
-#close-popup-btn:hover {
-    transform: scale(1.1);
-}
+        /* --- Styles for the video popup --- */
+        #video-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(9, 9, 11, 0.8); /* Semi-transparent background */
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none; /* Hidden by default */
+            align-items: center;
+            justify-content: center;
+        }
+        #video-popup-overlay.is-visible {
+            display: flex;
+        }
+        #video-popup-container {
+            position: relative;
+            padding: 10px;
+            background: var(--color-zinc-900);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            width: 90%;
+            max-width: 640px; /* Adjust max-width as needed */
+        }
+        #video-popup-container iframe {
+            width: 100%;
+            aspect-ratio: 16 / 9; /* Ensures correct video proportions */
+            border: none;
+            border-radius: 8px;
+            display: block;
+        }
+        #close-popup-btn {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            width: 34px;
+            height: 34px;
+            background: var(--color-purple-600);
+            color: white;
+            border: 2px solid var(--color-white);
+            border-radius: 50%;
+            font-size: 22px;
+            font-weight: bold;
+            line-height: 30px;
+            text-align: center;
+            cursor: pointer;
+            z-index: 1001;
+            transition: transform 0.2s ease;
+        }
+        #close-popup-btn:hover {
+            transform: scale(1.1);
+        }
         html[data-theme='light'] {
             --color-black: #ffffff;
             --color-white: #000000;
@@ -863,7 +865,6 @@ const SUPABASE_FUNCTION_URL = 'https://<project-ref>.supabase.co/functions/v1/fi
             font-weight: 700;
             line-height: 1.2;
             letter-spacing: -0.025em;
-            margin-bottom: 1rem;
             color: var(--color-white);
         }
         @media (min-width: 640px) {
@@ -908,11 +909,86 @@ const SUPABASE_FUNCTION_URL = 'https://<project-ref>.supabase.co/functions/v1/fi
         @media (min-width: 640px) {
             .footer-container { flex-direction: row; }
         }
+
+        /* --- CTA QR Code Styles --- */
+        .cta-title-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem; /* Space between title and QR code */
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        .cta-qr-code {
+            height: 48px; /* Makes the QR code smaller */
+            width: 48px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            /* This creates the "feathered edge" effect with a soft white glow */
+            box-shadow: 0 0 15px 2px rgba(255, 255, 255, 0.15);
+        }
+        .cta-qr-code:hover {
+            transform: scale(1.15);
+            box-shadow: 0 0 20px 5px rgba(216, 180, 254, 0.3); /* Purple glow on hover */
+        }
+
+        /* --- Image Popup Styles (Corrected) --- */
+        #image-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(9, 9, 11, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none; /* This is the key rule that hides the popup initially */
+            align-items: center;
+            justify-content: center;
+        }
+        #image-popup-overlay.is-visible {
+            display: flex; /* This rule makes it visible when the class is added by JavaScript */
+        }
+        #image-popup-container {
+            position: relative;
+            padding: 10px;
+            background: var(--color-white);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 320px;
+        }
+        #image-popup-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+        }
+        #close-image-popup-btn {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            width: 34px;
+            height: 34px;
+            background: var(--color-purple-600);
+            color: white;
+            border: 2px solid var(--color-white);
+            border-radius: 50%;
+            font-size: 22px;
+            font-weight: bold;
+            line-height: 30px;
+            text-align: center;
+            cursor: pointer;
+            z-index: 1001;
+            transition: transform 0.2s ease;
+        }
+        #close-image-popup-btn:hover {
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header Section -->
         <header class="header">
             <div class="header-container">
                 <div class="logo-container">
@@ -944,7 +1020,6 @@ const SUPABASE_FUNCTION_URL = 'https://<project-ref>.supabase.co/functions/v1/fi
             </div>
         </header>
         <main>
-            <!-- Hero Section -->
             <section id="hero" class="hero-section">
                 <div class="hero-background"></div>
                 <div class="hero-glow"></div>
@@ -992,7 +1067,6 @@ const SUPABASE_FUNCTION_URL = 'https://<project-ref>.supabase.co/functions/v1/fi
                     </div>
                 </div>
             </section>
-            <!-- About Section -->
             <section id="about" class="about-section">
                 <div class="section-container">
                     <div class="section-header">
@@ -1016,7 +1090,6 @@ const SUPABASE_FUNCTION_URL = 'https://<project-ref>.supabase.co/functions/v1/fi
                     </div>
                 </div>
             </section>
-            <!-- Features Section -->
             <section id="features" class="features-section">
                 <div class="section-container">
                     <div class="section-header">
@@ -1069,8 +1142,7 @@ const SUPABASE_FUNCTION_URL = 'https://<project-ref>.supabase.co/functions/v1/fi
                     </div>
                 </div>
             </section>
-            <!-- Digital Innovation Tools Section -->
-           <section id="tools" class="tools-section">
+            <section id="tools" class="tools-section">
             <div class="section-container tools-container">
                 <div class="section-header">
                     <h2 class="section-title">Digital Innovation Tools</h2>
@@ -1079,8 +1151,7 @@ const SUPABASE_FUNCTION_URL = 'https://<project-ref>.supabase.co/functions/v1/fi
                         </p>
                 </div>
 
-               <!-- ONLINE TOOLS DISCLAIMER -->
-<div class="disclaimer-box">
+               <div class="disclaimer-box">
     <strong>Disclaimer:</strong> The web tools provided below are hosted online and must <b>not</b> be used with any Personally Identifiable Information (PII), sensitive, or classified data. Please use only for general or unclassified workflows.
 </div>
 <div class="tools-list">
@@ -1107,23 +1178,19 @@ const SUPABASE_FUNCTION_URL = 'https://<project-ref>.supabase.co/functions/v1/fi
 	</a>
 </div>
 
-<!-- OFFLINE TOOLS SECTION -->
 <div style="margin-top:3rem;">
     <h3 style="color:var(--color-purple-400);margin-bottom:0.75rem;">Tools Safe for PII (Download &amp; Use Locally)</h3>
     <div class="notice-box">
         <strong>Notice:</strong> The downloadable tools below may be used with PII only when run from your own computer. No data is stored—your information is erased when you close the app.
     </div>
-    <!-- Added tools-list wrapper and removed disabled class -->
     <div class="tools-list">
     <a class="tool-button disabled" 
        style="pointer-events: none; opacity: 0.5; cursor: not-allowed;">
         Coming Soon! PII-Safe Form Filler
     </a>
 </div>
-        <!-- Add more download links as needed -->
-    </div>
+        </div>
 </div>
-            <!-- Podcasts Section -->
             <section id="podcasts" class="podcast-section">
                 <div class="section-container">
                     <div class="section-header">
@@ -1252,7 +1319,6 @@ const SUPABASE_FUNCTION_URL = 'https://<project-ref>.supabase.co/functions/v1/fi
                     </div>
                 </div>
             </section>
-            <!-- CTA Section -->
             <section id="contact" class="cta-section">
                 <div class="section-container">
                      <div class="cta-card">
@@ -1261,7 +1327,10 @@ const SUPABASE_FUNCTION_URL = 'https://<project-ref>.supabase.co/functions/v1/fi
                             <div class="cta-logo-container">
                                 <img src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts//Royal%20Spark%20D%20Logo%20-%20Mekvold%20V3.png" alt="Royal Spark Logo" class="cta-logo">
                             </div>
-                            <h2 class="cta-title">Ready to Spark Innovation?</h2>
+                            <div class="cta-title-wrapper">
+                                <h2 class="cta-title">Ready to Spark Innovation?</h2>
+                                <img id="qr-code-trigger" src="https://raw.githubusercontent.com/Royal-Spark/Landing-Page/refs/heads/main/SparkQRCode.png" alt="Royal Spark QR Code" class="cta-qr-code">
+                            </div>
                             <p class="cta-description">
                                 Join Royal Spark Innovation Lab and be part of the future. Let's create groundbreaking solutions together.
                             </p>
@@ -1275,7 +1344,6 @@ const SUPABASE_FUNCTION_URL = 'https://<project-ref>.supabase.co/functions/v1/fi
                 </div>
             </section>
         </main>
-        <!-- Footer -->
         <footer class="footer">
             <div class="footer-container">
                 <p>© 2025 Royal Spark Innovation Lab. All rights reserved.</p>
@@ -1283,217 +1351,202 @@ const SUPABASE_FUNCTION_URL = 'https://<project-ref>.supabase.co/functions/v1/fi
             </div>
         </footer>
     </div>
-	<div id="video-popup-overlay">
-    <div id="video-popup-container">
-        <button id="close-popup-btn">&times;</button>
-        <iframe id="youtube-player" 
-                width="560" 
-                height="315" 
-                src="" 
-                title="YouTube video player" 
-                frameborder="0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen>
-        </iframe>
+    
+    <div id="video-popup-overlay">
+        <div id="video-popup-container">
+            <button id="close-popup-btn">&times;</button>
+            <iframe id="youtube-player" 
+                    width="560" 
+                    height="315" 
+                    src="" 
+                    title="YouTube video player" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+            </iframe>
+        </div>
     </div>
-</div>
+
+    <div id="image-popup-overlay">
+        <div id="image-popup-container">
+            <button id="close-image-popup-btn">&times;</button>
+            <img src="https://raw.githubusercontent.com/Royal-Spark/Landing-Page/refs/heads/main/SparkQRCode.png" alt="Royal Spark QR Code Large">
+        </div>
+    </div>
+
     <script>
-    // --- START: Global Functions & Variables ---
-    const SAVINGS_DATA = {
-        dollarsSaved: 10605020,
-        hoursSaved: 5232
-    };
+        document.addEventListener('DOMContentLoaded', function() {
 
-    function animateCounter(element, start, end, duration, prefix = '', suffix = '') {
-        const startTime = performance.now();
-        function updateCounter(currentTime) {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const easeOut = 1 - Math.pow(1 - progress, 3);
-            const currentValue = Math.floor(start + (end - start) * easeOut);
-            const formattedValue = currentValue.toLocaleString();
-            element.textContent = prefix + formattedValue + suffix;
-            if (progress < 1) requestAnimationFrame(updateCounter);
-        }
-        requestAnimationFrame(updateCounter);
-    }
-
-    function initializeCounters() {
-        const dollarCounter = document.getElementById('dollar-counter');
-        const hoursCounter = document.getElementById('hours-counter');
-        if (dollarCounter && hoursCounter) {
-            const observer = new IntersectionObserver((entries) => {
-                if (entries[0].isIntersecting) {
-                    animateCounter(dollarCounter, 0, SAVINGS_DATA.dollarsSaved, 2000, '$');
-                    animateCounter(hoursCounter, 0, SAVINGS_DATA.hoursSaved, 2000);
-                    observer.disconnect();
-                }
-            }, { threshold: 0.1 });
-            observer.observe(dollarCounter);
-        }
-    }
-
-    function handleAudioError(audio) {
-        const errorDiv = audio.parentElement.querySelector('.audio-error');
-        if (errorDiv) {
-            errorDiv.style.display = 'block';
-        }
-    }
-
-    function fitToolButtons() {
-        document.querySelectorAll('.tool-button').forEach(btn => {
-            if (btn.offsetParent === null) return;
-            let fontSize = 1.15;
-            btn.style.fontSize = fontSize + 'rem';
-            while (
-                btn.scrollWidth > btn.clientWidth &&
-                fontSize > 0.7
-            ) {
-                fontSize -= 0.02;
-                btn.style.fontSize = fontSize + 'rem';
-            }
-        });
-    }
-    // --- END: Global Functions & Variables ---
-
-
-    // --- Wait for the page to fully load before running scripts ---
-    document.addEventListener('DOMContentLoaded', function() {
-        
-        // --- Theme Switcher Logic ---
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const sunIcon = document.getElementById('sun-icon');
-        const moonIcon = document.getElementById('moon-icon');
-
-        function applyTheme(theme) {
-            if (theme === 'light') {
-                document.documentElement.setAttribute('data-theme', 'light');
-                sunIcon.style.display = 'none';
-                moonIcon.style.display = 'block';
-            } else {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                sunIcon.style.display = 'block';
-                moonIcon.style.display = 'none';
-            }
-        }
-        const savedTheme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        let initialTheme = savedTheme ? savedTheme : (prefersDark ? 'dark' : 'light');
-        applyTheme(initialTheme);
-
-        themeToggleBtn.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            localStorage.setItem('theme', newTheme);
-            applyTheme(newTheme);
-        });
-
-        // --- Mobile Menu Toggle Logic ---
-        const menuButton = document.querySelector('.mobile-menu-button');
-        const mobileMenu = document.querySelector('#mobile-menu');
-
-        if (menuButton && mobileMenu) {
-            menuButton.addEventListener('click', () => {
-                mobileMenu.classList.toggle('is-open');
-            });
-            mobileMenu.addEventListener('click', (e) => {
-                if (e.target.classList.contains('nav-link')) {
-                    mobileMenu.classList.remove('is-open');
-                }
-            });
-        }
-
-        // --- Smooth Scrolling Logic ---
-        const navLinks = document.querySelectorAll('a.nav-link[href^="#"]');
-        navLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                const targetSection = document.querySelector(targetId);
-                if (targetSection) {
-                    targetSection.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
-        // --- Video Popup Logic ---
-        const titleTrigger = document.querySelector('#tools .section-title');
-        const videoOverlay = document.getElementById('video-popup-overlay');
-        const closeBtn = document.getElementById('close-popup-btn');
-        const youtubePlayer = document.getElementById('youtube-player');
-        const videoSrc = 'https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&rel=0';
-
-        if (titleTrigger && videoOverlay && closeBtn && youtubePlayer) {
-            titleTrigger.addEventListener('dblclick', () => {
-                window.getSelection().removeAllRanges();
-                youtubePlayer.src = videoSrc;
-                videoOverlay.style.display = 'flex';
-            });
-            const closePopup = () => {
-                youtubePlayer.src = '';
-                videoOverlay.style.display = 'none';
+            // --- START: Global Variables ---
+            const SUPABASE_FUNCTION_URL = 'https://<project-ref>.supabase.co/functions/v1/finance-ai';
+            const SAVINGS_DATA = {
+                dollarsSaved: 10605020,
+                hoursSaved: 5232
             };
-            closeBtn.addEventListener('click', closePopup);
-            videoOverlay.addEventListener('click', (e) => {
-                if (e.target === videoOverlay) {
-                    closePopup();
+
+            // --- START: Function Definitions ---
+            function animateCounter(element, start, end, duration, prefix = '', suffix = '') {
+                const startTime = performance.now();
+                function updateCounter(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const easeOut = 1 - Math.pow(1 - progress, 3);
+                    const currentValue = Math.floor(start + (end - start) * easeOut);
+                    const formattedValue = currentValue.toLocaleString();
+                    element.textContent = prefix + formattedValue + suffix;
+                    if (progress < 1) requestAnimationFrame(updateCounter);
                 }
-            });
-        }
-        
-        // --- Initial Function Calls ---
-        initializeCounters();
-        fitToolButtons();
-    });
-
-    // --- Add resize listener for tool buttons ---
-    window.addEventListener('resize', fitToolButtons);
-
-    // Auto-shrink tool-button font size if text overflows
-    function fitToolButtons() {
-        document.querySelectorAll('.tool-button').forEach(btn => {
-            // Only apply to visible buttons (skip .disabled if you want)
-            if (btn.offsetParent === null) return;
-            // Reset font size to max for recalculation
-            let fontSize = 1.15;
-            btn.style.fontSize = fontSize + 'rem';
-            // Shrink font if text overflows (scrollWidth > clientWidth)
-            while (
-                btn.scrollWidth > btn.clientWidth &&
-                fontSize > 0.7
-            ) {
-                fontSize -= 0.02;
-                btn.style.fontSize = fontSize + 'rem';
+                requestAnimationFrame(updateCounter);
             }
-        });
-    }
-    // Run on DOM ready and on window resize for responsiveness
-    window.addEventListener('DOMContentLoaded', fitToolButtons);
-    window.addEventListener('resize', fitToolButtons);
-    </script>
 
+            function initializeCounters() {
+                const dollarCounter = document.getElementById('dollar-counter');
+                const hoursCounter = document.getElementById('hours-counter');
+                if (dollarCounter && hoursCounter) {
+                    const observer = new IntersectionObserver((entries) => {
+                        if (entries[0].isIntersecting) {
+                            animateCounter(dollarCounter, 0, SAVINGS_DATA.dollarsSaved, 2000, '$');
+                            animateCounter(hoursCounter, 0, SAVINGS_DATA.hoursSaved, 2000);
+                            observer.disconnect();
+                        }
+                    }, { threshold: 0.1 });
+                    observer.observe(dollarCounter);
+                }
+            }
+
+            function handleAudioError(audio) {
+                const errorDiv = audio.parentElement.querySelector('.audio-error');
+                if (errorDiv) {
+                    errorDiv.style.display = 'block';
+                }
+            }
+
+            function fitToolButtons() {
+                document.querySelectorAll('.tool-button').forEach(btn => {
+                    if (btn.offsetParent === null) return;
+                    let fontSize = 1.15;
+                    btn.style.fontSize = fontSize + 'rem';
+                    while (btn.scrollWidth > btn.clientWidth && fontSize > 0.7) {
+                        fontSize -= 0.02;
+                        btn.style.fontSize = fontSize + 'rem';
+                    }
+                });
+            }
+
+            // --- Theme Switcher Logic ---
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const sunIcon = document.getElementById('sun-icon');
+            const moonIcon = document.getElementById('moon-icon');
+
+            function applyTheme(theme) {
+                if (theme === 'light') {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                    sunIcon.style.display = 'none';
+                    moonIcon.style.display = 'block';
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    sunIcon.style.display = 'block';
+                    moonIcon.style.display = 'none';
+                }
+            }
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            let initialTheme = savedTheme ? savedTheme : (prefersDark ? 'dark' : 'light');
+            applyTheme(initialTheme);
+
+            themeToggleBtn.addEventListener('click', () => {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                localStorage.setItem('theme', newTheme);
+                applyTheme(newTheme);
+            });
+
+            // --- Mobile Menu Toggle Logic ---
+            const menuButton = document.querySelector('.mobile-menu-button');
+            const mobileMenu = document.querySelector('#mobile-menu');
+
+            if (menuButton && mobileMenu) {
+                menuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('is-open');
+                });
+                mobileMenu.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('nav-link')) {
+                        mobileMenu.classList.remove('is-open');
+                    }
+                });
+            }
+
+            // --- Smooth Scrolling Logic ---
+            const navLinks = document.querySelectorAll('a.nav-link[href^="#"]');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+                    if (targetSection) {
+                        targetSection.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // --- Video Popup Logic ---
+            const titleTrigger = document.querySelector('#tools .section-title');
+            const videoOverlay = document.getElementById('video-popup-overlay');
+            const closeBtn = document.getElementById('close-popup-btn');
+            const youtubePlayer = document.getElementById('youtube-player');
+            const videoSrc = 'https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&rel=0';
+
+            if (titleTrigger && videoOverlay && closeBtn && youtubePlayer) {
+                const openPopup = () => {
+                    window.getSelection().removeAllRanges();
+                    youtubePlayer.src = videoSrc;
+                    videoOverlay.classList.add('is-visible');
+                };
+                const closePopup = () => {
+                    youtubePlayer.src = ''; // Stop the video
+                    videoOverlay.classList.remove('is-visible');
+                };
+
+                titleTrigger.addEventListener('dblclick', openPopup);
+                closeBtn.addEventListener('click', closePopup);
+                videoOverlay.addEventListener('click', (e) => {
+                    if (e.target === videoOverlay) { 
+                        closePopup();
+                    }
+                });
+            }
+            
+            // --- Image Popup Logic ---
+            const qrCodeTrigger = document.getElementById('qr-code-trigger');
+            const imagePopupOverlay = document.getElementById('image-popup-overlay');
+            const closeImagePopupBtn = document.getElementById('close-image-popup-btn');
+
+            if (qrCodeTrigger && imagePopupOverlay && closeImagePopupBtn) {
+                const openImagePopup = () => {
+                    imagePopupOverlay.classList.add('is-visible');
+                };
+                const closeImagePopup = () => {
+                    imagePopupOverlay.classList.remove('is-visible');
+                };
+
+                qrCodeTrigger.addEventListener('click', openImagePopup);
+                closeImagePopupBtn.addEventListener('click', closeImagePopup);
+                imagePopupOverlay.addEventListener('click', (e) => {
+                    if (e.target === imagePopupOverlay) {
+                        closeImagePopup();
+                    }
+                });
+            }
+
+            // --- Initial Function Calls & Event Listeners ---
+            initializeCounters();
+            fitToolButtons();
+            window.addEventListener('resize', fitToolButtons);
+
+        });
+    </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
