@@ -906,7 +906,7 @@
                 </div>
                 <div style="display: flex; align-items: center;">
                     <nav class="desktop-nav" id="mobile-menu">
-                        <a href="#" class="nav-link">Submit an Idea</a>
+                        <a href="https://forms.osi.apps.mil/r/eG12pHbiSQ" class="nav-link" target="_blank" rel="noopener noreferrer">Submit an Idea</a>
                         <a href="#about" class="nav-link">About</a>
                         <a href="#features" class="nav-link">Features</a>
                         <a href="#tools" class="nav-link">Tools</a>
@@ -966,7 +966,7 @@
                         </p>
                         <div class="hero-buttons">
                             <a href="https://usaf.dps.mil/sites/100ARW/CPI/SitePages/CPI.aspx" class="primary-button" target="_blank" rel="noopener noreferrer">
-                                Royal Spark Sharepoint
+                                Internal Team Hub
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron-right">
                                     <polyline points="9 18 15 12 9 6"></polyline>
                                 </svg>
@@ -1119,8 +1119,11 @@
                                 <img src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts//Royal%20Spark%20D%20Logo%20-%20Mekvold%20V3.png" alt="Royal Spark Logo" class="cta-logo">
                             </div>
                             <div class="cta-title-wrapper">
+                                <img src="https://raw.githubusercontent.com/Royal-Spark/Landing-Page/main/QRCode%20for%20Royal%20Spark%20Idea%20Submission.png" alt="Submit Idea QR Code" class="cta-qr-code js-qr-trigger">
+                                
                                 <h2 class="cta-title">Ready to Spark Innovation?</h2>
-                                <img id="qr-code-trigger" src="https://raw.githubusercontent.com/Royal-Spark/Landing-Page/refs/heads/main/SparkQRCode.png" alt="Royal Spark QR Code" class="cta-qr-code">
+                                
+                                <img src="https://raw.githubusercontent.com/Royal-Spark/Landing-Page/refs/heads/main/SparkQRCode.png" alt="Royal Spark QR Code" class="cta-qr-code js-qr-trigger">
                             </div>
                             <p class="cta-description">
                                 Join Royal Spark Innovation Lab and be part of the future. Let's create groundbreaking solutions together.
@@ -1160,7 +1163,7 @@
     <div id="image-popup-overlay">
         <div id="image-popup-container">
             <button id="close-image-popup-btn">&times;</button>
-            <img src="https://raw.githubusercontent.com/Royal-Spark/Landing-Page/refs/heads/main/SparkQRCode.png" alt="Royal Spark QR Code Large">
+            <img id="popup-target-image" src="" alt="Royal Spark QR Code Large">
         </div>
     </div>
 
@@ -1309,20 +1312,28 @@
                 });
             }
             
-            // --- Image Popup Logic ---
-            const qrCodeTrigger = document.getElementById('qr-code-trigger');
+            // --- Image Popup Logic (Updated for Multiple QRs) ---
+            // Select all elements with the class 'js-qr-trigger'
+            const qrTriggers = document.querySelectorAll('.js-qr-trigger');
             const imagePopupOverlay = document.getElementById('image-popup-overlay');
             const closeImagePopupBtn = document.getElementById('close-image-popup-btn');
+            const popupTargetImage = document.getElementById('popup-target-image');
 
-            if (qrCodeTrigger && imagePopupOverlay && closeImagePopupBtn) {
-                const openImagePopup = () => {
-                    imagePopupOverlay.classList.add('is-visible');
-                };
+            if (qrTriggers.length > 0 && imagePopupOverlay && closeImagePopupBtn && popupTargetImage) {
+                
+                // Loop through each trigger and add the click event
+                qrTriggers.forEach(trigger => {
+                    trigger.addEventListener('click', function() {
+                        // Set the source of the popup image to the source of the clicked image
+                        popupTargetImage.src = this.src;
+                        imagePopupOverlay.classList.add('is-visible');
+                    });
+                });
+
                 const closeImagePopup = () => {
                     imagePopupOverlay.classList.remove('is-visible');
                 };
 
-                qrCodeTrigger.addEventListener('click', openImagePopup);
                 closeImagePopupBtn.addEventListener('click', closeImagePopup);
                 imagePopupOverlay.addEventListener('click', (e) => {
                     if (e.target === imagePopupOverlay) {
