@@ -449,6 +449,7 @@
             margin: 0 auto;
         }
         @media (min-width: 768px) { .hero-description { font-size: 1.25rem; } }
+        
         .hero-buttons {
             display: flex;
             flex-direction: column;
@@ -456,6 +457,30 @@
             justify-content: center;
         }
         @media (min-width: 640px) { .hero-buttons { flex-direction: row; } }
+        
+        /* --- NEW STYLES FOR RESPONSIVE BUTTON PLACEMENT --- */
+        /* Mobile Button (Shown by default, hidden on desktop) */
+        .mobile-hero-btn {
+            display: flex;
+            margin-bottom: 2rem; /* Space below the logo */
+        }
+        
+        /* Desktop Button (Hidden by default, shown on desktop) */
+        .desktop-hero-btn {
+            display: none;
+        }
+        
+        /* At 768px (Tablet/Desktop), swap them */
+        @media (min-width: 768px) {
+            .mobile-hero-btn {
+                display: none;
+            }
+            .desktop-hero-btn {
+                display: flex;
+            }
+        }
+        /* -------------------------------------------------- */
+
         .primary-button, .tool-button {
             display: inline-flex;
             align-items: center;
@@ -936,6 +961,15 @@
                         <div class="hero-logo-container">
                             <img src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts//Royal%20Spark%20D%20Logo%20-%20Mekvold%20V3.png" alt="Royal Spark Logo" class="hero-logo">
                         </div>
+                        
+                        <div class="hero-buttons mobile-hero-btn">
+                            <a href="https://forms.osi.apps.mil/r/eG12pHbiSQ" class="primary-button" target="_blank" rel="noopener noreferrer">
+                                Submit an Idea!
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron-right">
+                                    <polyline points="9 18 15 12 9 6"></polyline>
+                                </svg>
+                            </a>
+                        </div>
                         <div class="savings-hero-container">
                             <div class="savings-trackers">
                                 <div class="savings-tracker money">
@@ -964,7 +998,8 @@
                         <p class="hero-description">
                             Royal Spark Innovation Lab brings cutting-edge technology and creative solutions to shape the future of mission-critical operations for forward-thinking teams.
                         </p>
-                        <div class="hero-buttons">
+                        
+                        <div class="hero-buttons desktop-hero-btn">
                             <a href="https://forms.osi.apps.mil/r/eG12pHbiSQ" class="primary-button" target="_blank" rel="noopener noreferrer">
                                 Submit an Idea!
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron-right">
@@ -972,7 +1007,7 @@
                                 </svg>
                             </a>
                         </div>
-                    </div>
+                        </div>
                 </div>
             </section>
             <section id="about" class="about-section">
@@ -1376,4 +1411,3 @@
     </script>
 </body>
 </html>
-
