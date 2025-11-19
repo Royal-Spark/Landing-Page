@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Royal Spark | BAH Calculator</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'zinc-950': '#09090b',
+                        'zinc-900': '#18181b',
+                        'zinc-800': '#27272a',
+                        'zinc-700': '#3f3f46',
+                        'purple-600': '#9333ea',
+                        'purple-500': '#a855f7',
+                        'purple-400': '#c084fc',
+                        'emerald-500': '#10b981',
+                        'emerald-400': '#34d399',
+                        'red-400': '#f87171',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #3f3f46; border-radius: 20px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #3f3f46; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+
+        /* Range Slider Styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #a855f7;
+            cursor: pointer;
+            margin-top: -6px; 
+            box-shadow: 0 0 2px rgba(0,0,0,0.5);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #e4e4e7; /* zinc-200 for light */
+            border-radius: 2px;
+        }
+        .dark input[type=range]::-webkit-slider-runnable-track {
+            background: #27272a; /* zinc-800 for dark */
+        }
+        
+        /* Specific Slider Colors */
+        .utility-slider::-webkit-slider-thumb { background: #10b981; }
+        .interest-slider::-webkit-slider-thumb { background: #f59e0b; } /* Amber */
+
+        /* Mobile Input Optimization: Prevent auto-zoom on iOS */
+        input, select {
+            font-size: 16px !important;
+        }
+
+    </style>
+</head>
+<body class="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-200 font-sans transition-colors duration-300">
+    
+    <!-- HEADER -->
+    <header class="border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/50 backdrop-blur-md sticky top-0 z-50 transition-colors duration-300">
+        <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+            <!-- Brand / Logo -->
+            <a href="https://royal-spark.github.io/Landing-Page/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                <img src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts//Royal%20Spark%20D%20Logo%20-%20Mekvold%20V3.png" alt="Royal Spark Logo" class="w-8 h-8 rounded shadow-lg shadow-purple-500/20">
+                <h1 class="font-semibold text-lg text-zinc-900 dark:text-zinc-100">Royal Spark <span class="text-zinc-500 font-normal">| BAH Calculator</span></h1>
+            </a>
+            
+            <!-- Right Controls -->
+            <div class="flex items-center gap-4">
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400 transition-colors">
+                    <!-- Sun Icon (for dark mode) -->
+                    <svg id="sun-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <!-- Moon Icon (for light mode) -->
+                    <svg id="moon-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+                <a href="https://royal-spark.github.io/Landing-Page/" class="text-xs font-medium text-zinc-500 hover:text-purple-600 dark:hover:text-purple-400 transition-colors hidden sm:block">
+                    Back to Tools
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 py-8 space-y-8">
+        
+        <!-- INTRO TEXT -->
+        <div class="text-center space-y-2">
+            <h2 class="text-3xl font-bold text-zinc-900 dark:text-white">2025 Housing Planner</h2>
+            <p class="text-zinc-600 dark:text-zinc-400 max-w-xl mx-auto">
+                Calculate your Basic Allowance for Housing (BAH) and estimate your living budget at your next duty station.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+            <!-- LEFT COLUMN: CONTROLS -->
+            <div class="lg:col-span-5 space-y-6">
+                
+                <!-- SELECTION CARD -->
+                <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 shadow-xl dark:shadow-none space-y-6 relative transition-colors duration-300">
+                    
+                    <!-- Loading Overlay -->
+                    <div id="loading-overlay" class="absolute inset-0 bg-white/90 dark:bg-zinc-900/90 z-50 rounded-2xl flex flex-col items-center justify-center transition-colors duration-300">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mb-2"></div>
+                        <span class="text-sm text-zinc-500 dark:text-zinc-400">Loading 2025 Rates...</span>
+                    </div>
+
+                    <div class="flex items-center gap-2 text-purple-600 dark:text-purple-400 mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <span class="text-xs font-bold uppercase tracking-wider">Configuration</span>
+                    </div>
+
+                    <!-- DUTY STATION SEARCH -->
+                    <div class="relative" id="dropdown-container">
+                        <label class="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1.5">Duty Station (MHA)</label>
+                        <div class="relative">
+                            <input 
+                                type="text"
+                                id="mha-search-input"
+                                autocomplete="off"
+                                class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all"
+                                placeholder="Search base (e.g. San Antonio, Ketchikan)"
+                                disabled
+                            >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute right-3 top-3.5 w-5 h-5 text-zinc-400 dark:text-zinc-600 pointer-events-none"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </div>
+
+                        <!-- CUSTOM DROPDOWN LIST -->
+                        <div id="mha-dropdown" class="absolute left-0 right-0 mt-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl max-h-64 overflow-y-auto z-20 custom-scrollbar hidden">
+                            <!-- Options populated via JS -->
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- RANK SELECT -->
+                        <div>
+                            <label class="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1.5">Pay Grade</label>
+                            <div class="relative">
+                                <select 
+                                    id="rank-select"
+                                    class="w-full appearance-none bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all"
+                                >
+                                    <!-- Options populated via JS -->
+                                </select>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute right-3 top-3.5 w-5 h-5 text-zinc-400 dark:text-zinc-600 pointer-events-none"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </div>
+                        </div>
+
+                        <!-- DEPENDENTS TOGGLE -->
+                        <div>
+                            <label class="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1.5">Dependents?</label>
+                            <button 
+                                id="dependents-toggle"
+                                class="w-full h-[48px] rounded-xl px-1 py-1 flex items-center relative transition-colors duration-300 border bg-purple-100 dark:bg-purple-900/20 border-purple-500/30"
+                            >
+                                <div class="flex w-full justify-between px-4 text-xs font-bold z-10">
+                                    <span class="text-zinc-400 dark:text-zinc-500">NO</span>
+                                    <span class="text-purple-900 dark:text-white">YES</span>
+                                </div>
+                                <div 
+                                    id="dependents-slider"
+                                    class="absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-lg bg-purple-600 transition-all duration-300 shadow-sm translate-x-[100%]"
+                                ></div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- INFO ALERT -->
+                <div class="bg-blue-50 dark:bg-zinc-900/50 border border-blue-100 dark:border-zinc-800/50 rounded-xl p-4 flex gap-3 items-start transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-blue-500 dark:text-blue-400 mt-0.5 shrink-0"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    <div class="space-y-1">
+                        <p class="text-sm font-medium text-zinc-800 dark:text-zinc-300">2025 BAH Data</p>
+                        <p class="text-xs text-zinc-600 dark:text-zinc-500 leading-relaxed">
+                            Rates are loaded from the 2025 repository. Official entitlements should be verified with your finance office. This information is for planning and should not be used as an official source.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- HOUSE HUNTING LINKS -->
+                <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 shadow-sm space-y-3">
+                    <p class="text-xs font-bold uppercase tracking-wider text-zinc-400">Find Housing - Opens the site to your selected city. Not officially endorsed.</p>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="openHousingSearch('zillow')" class="px-3 py-2 rounded-lg bg-zinc-50 dark:bg-zinc-950 hover:bg-purple-50 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 text-xs font-medium text-zinc-600 dark:text-zinc-400 transition-colors flex flex-col items-center gap-1">
+                            <span class="font-bold text-blue-600">Zillow</span>
+                        </button>
+                        <button onclick="openHousingSearch('realtor')" class="px-3 py-2 rounded-lg bg-zinc-50 dark:bg-zinc-950 hover:bg-purple-50 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 text-xs font-medium text-zinc-600 dark:text-zinc-400 transition-colors flex flex-col items-center gap-1">
+                            <span class="font-bold text-red-600">Realtor</span>
+                        </button>
+                        <button onclick="openHousingSearch('homes')" class="px-3 py-2 rounded-lg bg-zinc-50 dark:bg-zinc-950 hover:bg-purple-50 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 text-xs font-medium text-zinc-600 dark:text-zinc-400 transition-colors flex flex-col items-center gap-1">
+                            <span class="font-bold text-orange-500">Homes</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: CALCULATOR & RESULTS -->
+            <div class="lg:col-span-7 space-y-6">
+
+                <!-- 1. MAIN BAH DISPLAY -->
+                <div class="relative overflow-hidden bg-gradient-to-br from-purple-800 to-zinc-800 dark:from-purple-900 dark:to-zinc-900 border border-purple-500/20 rounded-2xl p-8 text-center shadow-2xl transition-colors duration-300">
+                    <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none" style="background-image: radial-gradient(circle at 50% 50%, #a855f7 1px, transparent 1px); background-size: 24px 24px;"></div>
+                    
+                    <h3 class="text-purple-200 font-medium text-sm uppercase tracking-widest mb-2">Monthly Allowance</h3>
+                    <div class="text-5xl md:text-6xl font-bold text-white tracking-tight" id="bah-display">$0</div>
+                    <div class="mt-3 text-purple-200/80 text-sm" id="info-display">
+                        Select a location • E-5 • w/ Dep
+                    </div>
+                </div>
+
+                <!-- 2. BUDGET CALCULATOR -->
+                <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 shadow-xl dark:shadow-none space-y-6 transition-colors duration-300">
+                    
+                    <!-- Rent vs Buy Toggle -->
+                    <div class="flex border-b border-zinc-100 dark:border-zinc-800 pb-4 mb-4">
+                        <button id="mode-rent" onclick="setCalculatorMode('rent')" class="flex-1 pb-2 text-sm font-bold text-purple-600 border-b-2 border-purple-600 transition-colors">
+                            RENTING
+                        </button>
+                        <button id="mode-buy" onclick="setCalculatorMode('buy')" class="flex-1 pb-2 text-sm font-medium text-zinc-400 border-b-2 border-transparent hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors">
+                            BUYING
+                        </button>
+                    </div>
+
+                    <!-- RENT MODE INPUTS -->
+                    <div id="inputs-rent" class="space-y-6">
+                        <!-- SLIDER: RENT -->
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-end">
+                                <label class="flex items-center gap-2 text-sm font-medium text-zinc-600 dark:text-zinc-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-zinc-400"><path d="M12 20h9"></path><path d="M12 12V4h6V12"></path><path d="M8 7v6"></path><path d="M4 14v6"></path><path d="M12 22v-2"></path><path d="M16 22v-2"></path><path d="M8 22v-2"></path></svg>
+                                    Monthly Rent
+                                </label>
+                                <div class="text-xl font-bold text-zinc-900 dark:text-white bg-zinc-50 dark:bg-zinc-950 px-3 py-1 rounded border border-zinc-200 dark:border-zinc-800" id="rent-display">$0</div>
+                            </div>
+                            <input type="range" id="rent-slider" min="0" max="5000" step="50" value="0" class="w-full">
+                        </div>
+                    </div>
+
+                    <!-- BUY MODE INPUTS -->
+                    <div id="inputs-buy" class="space-y-6 hidden">
+                        <!-- Home Price -->
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-end">
+                                <label class="flex items-center gap-2 text-sm font-medium text-zinc-600 dark:text-zinc-300">
+                                    Home Price
+                                </label>
+                                <div class="text-xl font-bold text-zinc-900 dark:text-white bg-zinc-50 dark:bg-zinc-950 px-3 py-1 rounded border border-zinc-200 dark:border-zinc-800" id="price-display">$350,000</div>
+                            </div>
+                            <input type="range" id="price-slider" min="50000" max="1000000" step="1000" value="350000" class="w-full">
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Interest Rate -->
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <label class="text-xs font-medium text-zinc-500">Interest Rate</label>
+                                    <span class="text-sm font-bold text-amber-500" id="rate-display">6.5%</span>
+                                </div>
+                                <input type="range" id="rate-slider" min="2.0" max="10.0" step="0.1" value="6.5" class="w-full interest-slider">
+                            </div>
+                            
+                            <!-- Down Payment -->
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <label class="text-xs font-medium text-zinc-500">Down Payment</label>
+                                    <span class="text-sm font-bold text-zinc-700 dark:text-zinc-300" id="down-display">$0</span>
+                                </div>
+                                <input type="range" id="down-slider" min="0" max="100000" step="1000" value="0" class="w-full">
+                                <div class="text-[10px] text-zinc-400 text-right">VA Loan Default: $0</div>
+                            </div>
+                        </div>
+
+                        <!-- Mortgage Estimate Summary (NEW) -->
+                        <div class="bg-purple-50 dark:bg-zinc-800/50 border border-purple-100 dark:border-zinc-700 rounded-xl p-4 flex justify-between items-center">
+                            <div>
+                                <p class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">Est. Mortgage</p>
+                                <p id="est-mortgage-main" class="text-xl font-bold text-zinc-900 dark:text-white">$0/mo</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs text-zinc-500">After Expenses</p>
+                                <p id="est-mortgage-remaining" class="text-sm font-bold text-emerald-500">$0 remaining</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- COMMON INPUTS (Utilities) -->
+                    <div class="space-y-4 pt-2">
+                        <div class="flex justify-between items-end">
+                            <label class="flex items-center gap-2 text-sm font-medium text-zinc-600 dark:text-zinc-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-zinc-400"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                                Est. Utilities
+                            </label>
+                            <div class="text-xl font-bold text-zinc-900 dark:text-white bg-zinc-50 dark:bg-zinc-950 px-3 py-1 rounded border border-zinc-200 dark:border-zinc-800" id="utilities-display">$250</div>
+                        </div>
+                        <input type="range" id="utilities-slider" min="0" max="1000" step="10" value="250" class="w-full utility-slider">
+                    </div>
+
+                    <!-- 3. RESULT BAR -->
+                    <div class="pt-6 border-t border-zinc-100 dark:border-zinc-800">
+                         <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm text-zinc-500 dark:text-zinc-400">Net Monthly Impact</span>
+                            <span id="remaining-text" class="text-sm font-medium text-emerald-500 dark:text-emerald-400">Under Budget</span>
+                         </div>
+                         <div id="result-bar" class="w-full p-4 rounded-xl flex items-center justify-between border bg-emerald-50 dark:bg-emerald-900/10 border-emerald-200 dark:border-emerald-500/20 transition-colors">
+                             <div class="flex items-center gap-3">
+                                <div id="result-icon-container" class="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-emerald-600 dark:text-emerald-400"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-xs text-zinc-500 uppercase font-bold tracking-wider">Remaining</span>
+                                    <span id="remaining-display" class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">$0</span>
+                                </div>
+                             </div>
+                             <div class="text-right hidden sm:block">
+                                <div class="text-xs text-zinc-500">BAH: <span id="bah-small-display">$0</span></div>
+                                <div class="text-xs text-zinc-500">Total Cost: -<span id="costs-small-display">$0</span></div>
+                             </div>
+                         </div>
+                         <div id="mortgage-breakdown" class="hidden mt-3 text-xs text-zinc-400 text-right">
+                            (Principal & Interest: <span id="pi-display">$0</span> + Tax/Ins Est: <span id="tax-display">$0</span>)
+                         </div>
+                    </div>
+
+                </div>
+                
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        // --- CONFIG ---
+        const WITH_URL = "https://raw.githubusercontent.com/Royal-Spark/Landing-Page/main/With.csv";
+        const WITHOUT_URL = "https://raw.githubusercontent.com/Royal-Spark/Landing-Page/main/Without.csv";
+        
+        let RAW_BAH_DATA = [];
+
+        const RANKS = [
+            { label: "E-1", value: "E01" }, { label: "E-2", value: "E02" }, { label: "E-3", value: "E03" },
+            { label: "E-4", value: "E04" }, { label: "E-5", value: "E05" }, { label: "E-6", value: "E06" },
+            { label: "E-7", value: "E07" }, { label: "E-8", value: "E08" }, { label: "E-9", value: "E09" },
+            { label: "W-1", value: "W01" }, { label: "W-2", value: "W02" }, { label: "W-3", value: "W03" },
+            { label: "W-4", value: "W04" }, { label: "W-5", value: "W05" },
+            { label: "O-1E", value: "O01E" }, { label: "O-2E", value: "O02E" }, { label: "O-3E", value: "O03E" },
+            { label: "O-1", value: "O01" }, { label: "O-2", value: "O02" }, { label: "O-3", value: "O03" },
+            { label: "O-4", value: "O04" }, { label: "O-5", value: "O05" }, { label: "O-6", value: "O06" },
+            { label: "O-7", value: "O07" }
+        ];
+
+        // --- STATE ---
+        let selectedMHA = null;
+        let selectedRank = "E05";
+        let hasDependents = true;
+        let mode = 'rent'; // 'rent' or 'buy'
+
+        // Costs
+        let rent = 0;
+        let utilities = 250;
+        let homePrice = 350000;
+        let interestRate = 6.5;
+        let downPayment = 0;
+        
+        let currentBAH = 0;
+        let maxRent = 5000;
+        
+        const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
+
+        // --- CSV PARSING ---
+        function parseCSV(csvData) {
+            const lines = csvData.trim().split('\n').filter(line => line.trim().length > 0);
+            if (lines.length < 2) return { headers: [], data: {} };
+
+            let headerIndex = -1;
+            for(let i = 0; i < lines.length; i++) {
+                if(lines[i].includes('MHA_NAME')) { headerIndex = i; break; }
+            }
+            if (headerIndex === -1) return { headers: [], data: {} };
+
+            const headers = lines[headerIndex].split(',').map(h => h.trim().replace(/['"]+/g, ''));
+            const data = {};
+            
+            for (let i = headerIndex + 1; i < lines.length; i++) {
+                const values = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/^"|"$/g, ''));
+                if (values.length < 2 || !values[0]) continue;
+                
+                const mhaName = values[0];
+                const rates = {};
+                for (let j = 1; j < headers.length; j++) {
+                    if (headers[j] && values[j]) {
+                        const val = parseInt(values[j], 10);
+                        if (!isNaN(val)) rates[headers[j]] = val;
+                    }
+                }
+                data[mhaName] = rates;
+            }
+            return { headers, data };
+        }
+
+        async function initializeData() {
+            try {
+                const [withRes, withoutRes] = await Promise.all([fetch(WITH_URL), fetch(WITHOUT_URL)]);
+                if (!withRes.ok || !withoutRes.ok) throw new Error("Failed to fetch data");
+
+                const withText = await withRes.text();
+                const withoutText = await withoutRes.text();
+                const withDeps = parseCSV(withText);
+                const withoutDeps = parseCSV(withoutText);
+
+                const combinedData = [];
+                const mhaNames = new Set([...Object.keys(withDeps.data), ...Object.keys(withoutDeps.data)]);
+                let idCounter = 1;
+
+                mhaNames.forEach(name => {
+                    const ratesWith = withDeps.data[name] || {};
+                    const ratesWithout = withoutDeps.data[name] || {};
+                    const stateMatch = name.match(/ [A-Z]{2}$/); 
+                    const statePrefix = stateMatch ? stateMatch[0].trim() : 'GEN';
+                    const id = statePrefix + String(idCounter++).padStart(3, '0');
+
+                    if (Object.keys(ratesWith).length > 0 || Object.keys(ratesWithout).length > 0) {
+                        combinedData.push({ id, name, rates: { with: ratesWith, without: ratesWithout } });
+                    }
+                });
+
+                RAW_BAH_DATA = combinedData;
+                document.getElementById('loading-overlay').style.display = 'none';
+                document.getElementById('mha-search-input').disabled = false;
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loading-overlay').innerHTML = `<div class="text-red-400">Error loading data.</div>`;
+            }
+        }
+
+        // --- LOGIC ---
+        const calculateMortgage = () => {
+            const principal = homePrice - downPayment;
+            const monthlyRate = (interestRate / 100) / 12;
+            const numPayments = 30 * 12; 
+            
+            let monthlyPI = 0;
+            if (interestRate === 0) monthlyPI = principal / numPayments;
+            else {
+                monthlyPI = principal * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+            }
+            const taxIns = (homePrice * 0.015) / 12;
+            return { pi: monthlyPI, taxIns: taxIns, total: monthlyPI + taxIns };
+        };
+
+        const updateBAHRates = () => {
+            if (!selectedMHA) {
+                currentBAH = 0;
+            } else {
+                const type = hasDependents ? 'with' : 'without';
+                currentBAH = selectedMHA.rates[type][selectedRank] || 0;
+            }
+
+            maxRent = currentBAH > 0 ? Math.floor(currentBAH * 1.8) : 6000;
+            const rentSlider = document.getElementById('rent-slider');
+            rentSlider.max = maxRent;
+            
+            if (rent === 0 && currentBAH > 0) {
+                rent = Math.floor(currentBAH * 0.8);
+                rentSlider.value = rent;
+            }
+            if (rent > maxRent) { rent = maxRent; rentSlider.value = rent; }
+
+            updateDisplay();
+        };
+
+        const updateDisplay = () => {
+            let totalCost = 0;
+            let mortgageData = { pi: 0, taxIns: 0, total: 0 };
+
+            if (mode === 'rent') {
+                totalCost = rent + utilities;
+                document.getElementById('mortgage-breakdown').classList.add('hidden');
+            } else {
+                mortgageData = calculateMortgage();
+                totalCost = mortgageData.total + utilities;
+                document.getElementById('mortgage-breakdown').classList.remove('hidden');
+                document.getElementById('pi-display').textContent = formatCurrency(mortgageData.pi);
+                document.getElementById('tax-display').textContent = formatCurrency(mortgageData.taxIns);
+            }
+
+            const remaining = currentBAH - totalCost;
+
+            // Update Main Displays
+            document.getElementById('bah-display').textContent = formatCurrency(currentBAH);
+            document.getElementById('info-display').textContent = `${selectedMHA ? selectedMHA.name : 'Select a location'} • ${RANKS.find(r => r.value === selectedRank)?.label} • ${hasDependents ? 'w/ Dep' : 'w/o Dep'}`;
+            
+            document.getElementById('rent-display').textContent = formatCurrency(rent);
+            document.getElementById('utilities-display').textContent = formatCurrency(utilities);
+            document.getElementById('price-display').textContent = formatCurrency(homePrice);
+            document.getElementById('rate-display').textContent = interestRate + '%';
+            document.getElementById('down-display').textContent = formatCurrency(downPayment);
+
+            // Update Mortgage Summary Box
+            if(mode === 'buy') {
+                document.getElementById('est-mortgage-main').textContent = formatCurrency(mortgageData.total) + '/mo';
+                
+                const remainEl = document.getElementById('est-mortgage-remaining');
+                const remainVal = remaining; // remaining after all expenses
+                const absVal = Math.abs(remainVal);
+                
+                if(remainVal >= 0) {
+                    remainEl.textContent = `(${formatCurrency(absVal)} remaining)`;
+                    remainEl.className = "text-sm font-bold text-emerald-500";
+                } else {
+                    remainEl.textContent = `(${formatCurrency(absVal)} over)`;
+                    remainEl.className = "text-sm font-bold text-red-500";
+                }
+            }
+
+            // Result Bar Styling
+            const resultBar = document.getElementById('result-bar');
+            const remainingText = document.getElementById('remaining-text');
+            const remainingDisplay = document.getElementById('remaining-display');
+            const iconContainer = document.getElementById('result-icon-container');
+
+            resultBar.className = resultBar.className.replace(/bg-(emerald|red)-.+/g, '');
+            remainingDisplay.className = remainingDisplay.className.replace(/text-(emerald|red)-.+/g, '');
+            remainingText.className = remainingText.className.replace(/text-(emerald|red)-.+/g, '');
+            iconContainer.className = iconContainer.className.replace(/bg-(emerald|red)-.+/g, '');
+
+            resultBar.classList.add('border', 'transition-colors');
+            iconContainer.classList.add('flex', 'items-center', 'justify-center', 'rounded-full');
+
+            if (remaining >= 0) {
+                resultBar.classList.add('bg-emerald-50', 'dark:bg-emerald-900/10', 'border-emerald-200', 'dark:border-emerald-500/20');
+                remainingDisplay.classList.add('text-emerald-600', 'dark:text-emerald-400');
+                remainingText.classList.add('text-emerald-600', 'dark:text-emerald-400');
+                remainingText.textContent = 'Under Budget (Pocket)';
+                iconContainer.classList.add('bg-emerald-100', 'dark:bg-emerald-500/20');
+                iconContainer.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-emerald-600 dark:text-emerald-400"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+            } else {
+                resultBar.classList.add('bg-red-50', 'dark:bg-red-900/10', 'border-red-200', 'dark:border-red-500/20');
+                remainingDisplay.classList.add('text-red-500', 'dark:text-red-400');
+                remainingText.classList.add('text-red-500', 'dark:text-red-400');
+                remainingText.textContent = 'Over Budget (Out of Pocket)';
+                iconContainer.classList.add('bg-red-100', 'dark:bg-red-500/20');
+                iconContainer.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-red-500 dark:text-red-400"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+            }
+
+            // Updated to allow negative sign (removed Math.abs)
+            remainingDisplay.textContent = formatCurrency(remaining);
+            
+            document.getElementById('bah-small-display').textContent = formatCurrency(currentBAH);
+            document.getElementById('costs-small-display').textContent = formatCurrency(totalCost);
+        };
+
+        // --- INTERACTIONS ---
+        const setCalculatorMode = (newMode) => {
+            mode = newMode;
+            const rentBtn = document.getElementById('mode-rent');
+            const buyBtn = document.getElementById('mode-buy');
+            const rentInputs = document.getElementById('inputs-rent');
+            const buyInputs = document.getElementById('inputs-buy');
+
+            if (mode === 'rent') {
+                rentBtn.classList.add('text-purple-600', 'border-purple-600');
+                rentBtn.classList.remove('text-zinc-400', 'border-transparent');
+                buyBtn.classList.remove('text-purple-600', 'border-purple-600');
+                buyBtn.classList.add('text-zinc-400', 'border-transparent');
+                rentInputs.classList.remove('hidden');
+                buyInputs.classList.add('hidden');
+            } else {
+                buyBtn.classList.add('text-purple-600', 'border-purple-600');
+                buyBtn.classList.remove('text-zinc-400', 'border-transparent');
+                rentBtn.classList.remove('text-purple-600', 'border-purple-600');
+                rentBtn.classList.add('text-zinc-400', 'border-transparent');
+                buyInputs.classList.remove('hidden');
+                rentInputs.classList.add('hidden');
+            }
+            updateDisplay();
+        };
+
+        const openHousingSearch = (site) => {
+            if (!selectedMHA) {
+                alert("Please select a Duty Station first!");
+                return;
+            }
+            const searchTerm = selectedMHA.name;
+            const cityState = searchTerm.split(',').map(s => s.trim());
+            const city = cityState[0];
+            const state = cityState[1] || '';
+
+            let url = '';
+            if (site === 'zillow') {
+                url = `https://www.zillow.com/homes/${city}-${state}_rb/`;
+            } else if (site === 'realtor') {
+                url = `https://www.realtor.com/realestateandhomes-search/${city.replace(/ /g, '-')}_${state}`;
+            } else if (site === 'homes') {
+                url = `https://www.homes.com/${city.toLowerCase()}-${state.toLowerCase()}/`;
+            }
+            window.open(url, '_blank');
+        };
+
+        // Theme Toggle
+        const toggleTheme = () => {
+            const html = document.documentElement;
+            const isDark = html.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateThemeIcons();
+        }
+
+        const updateThemeIcons = () => {
+            const isDark = document.documentElement.classList.contains('dark');
+            document.getElementById('sun-icon').classList.toggle('hidden', !isDark);
+            document.getElementById('moon-icon').classList.toggle('hidden', isDark);
+        }
+
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.documentElement.classList.remove('dark');
+            } else {
+                document.documentElement.classList.add('dark');
+            }
+            updateThemeIcons();
+
+            const rankSelect = document.getElementById('rank-select');
+            RANKS.forEach(r => {
+                const opt = document.createElement('option');
+                opt.value = r.value; opt.textContent = r.label;
+                rankSelect.appendChild(opt);
+            });
+            rankSelect.value = selectedRank;
+
+            // --- DEPENDENTS TOGGLE LOGIC ---
+            document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+            document.getElementById('dependents-toggle').addEventListener('click', () => {
+                hasDependents = !hasDependents;
+                const btn = document.getElementById('dependents-toggle');
+                const slider = document.getElementById('dependents-slider');
+                const yes = btn.querySelector('span:nth-child(2)');
+                const no = btn.querySelector('span:nth-child(1)');
+                
+                if (hasDependents) {
+                    slider.classList.add('translate-x-[100%]', 'bg-purple-600');
+                    slider.classList.remove('translate-x-0', 'bg-zinc-400');
+                    
+                    // Active state styles
+                    btn.classList.add('bg-purple-100', 'dark:bg-purple-900/20', 'border-purple-500/30');
+                    btn.classList.remove('bg-zinc-100', 'border-zinc-300', 'dark:bg-zinc-800', 'dark:border-zinc-700');
+                    
+                    yes.classList.replace('text-zinc-400', 'text-purple-900');
+                    yes.classList.add('dark:text-white');
+                    no.classList.replace('text-zinc-600', 'text-zinc-400');
+                } else {
+                    slider.classList.remove('translate-x-[100%]', 'bg-purple-600');
+                    slider.classList.add('translate-x-0', 'bg-zinc-400');
+                    
+                    // Inactive state styles (FIXED: Now uses dark:bg-zinc-800)
+                    btn.classList.remove('bg-purple-100', 'dark:bg-purple-900/20', 'border-purple-500/30');
+                    btn.classList.add('bg-zinc-100', 'border-zinc-300', 'dark:bg-zinc-800', 'dark:border-zinc-700');
+                    
+                    yes.classList.replace('text-purple-900', 'text-zinc-400');
+                    yes.classList.remove('dark:text-white');
+                    no.classList.replace('text-zinc-400', 'text-zinc-600');
+                }
+                updateBAHRates();
+            });
+
+            rankSelect.addEventListener('change', (e) => { selectedRank = e.target.value; updateBAHRates(); });
+            
+            const bindSlider = (id, setter) => {
+                document.getElementById(id).addEventListener('input', (e) => {
+                    setter(parseFloat(e.target.value));
+                    updateDisplay();
+                });
+            };
+            bindSlider('rent-slider', (v) => rent = v);
+            bindSlider('utilities-slider', (v) => utilities = v);
+            bindSlider('price-slider', (v) => homePrice = v);
+            bindSlider('rate-slider', (v) => interestRate = v);
+            bindSlider('down-slider', (v) => downPayment = v);
+
+            // --- DROPDOWN LOGIC ---
+            const mhaInput = document.getElementById('mha-search-input');
+            const mhaDropdown = document.getElementById('mha-dropdown');
+            
+            const renderDropdown = (q) => {
+                mhaDropdown.innerHTML = '';
+                // If filtering (query exists), show matches. If no query, show all.
+                const filtered = q ? RAW_BAH_DATA.filter(l => l.name.toLowerCase().includes(q.toLowerCase())) : RAW_BAH_DATA;
+                
+                if(filtered.length === 0) {
+                    mhaDropdown.innerHTML = '<div class="px-4 py-3 text-sm text-zinc-500">No locations found.</div>';
+                } else {
+                    filtered.forEach(loc => {
+                        const d = document.createElement('div');
+                        
+                        // Highlight logic
+                        const isSelected = selectedMHA && selectedMHA.id === loc.id;
+                        let baseClasses = 'px-4 py-3 cursor-pointer text-sm border-b border-zinc-100 dark:border-zinc-800/50 last:border-0 transition-colors ';
+                        
+                        if (isSelected) {
+                            baseClasses += 'bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 font-medium';
+                            d.id = 'selected-mha-item'; // Tag for scrolling
+                        } else {
+                            baseClasses += 'hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300';
+                        }
+                        
+                        d.className = baseClasses;
+                        d.textContent = loc.name;
+                        
+                        d.onclick = (e) => {
+                            e.stopPropagation(); // Keep dropdown open
+                            selectedMHA = loc;
+                            
+                            // UPDATED: Set input value to name (don't clear)
+                            mhaInput.value = loc.name;
+                            // mhaInput.focus(); // Optional: keep focus? usually better for keyboard flow
+                            
+                            // Refresh dropdown to show highlight (pass empty string to show ALL neighbors)
+                            renderDropdown(''); 
+                            updateBAHRates();
+                            
+                            // Scroll selected item into view
+                            setTimeout(() => {
+                                const selectedEl = document.getElementById('selected-mha-item');
+                                if(selectedEl) selectedEl.scrollIntoView({ block: 'nearest' });
+                            }, 0);
+                        };
+                        mhaDropdown.appendChild(d);
+                    });
+                }
+            };
+
+            mhaInput.addEventListener('focus', () => { 
+                mhaDropdown.classList.remove('hidden'); 
+                // Pass empty string if text matches selected item to show full list?
+                // Or just pass current val. Passing current val might filter to 1 item.
+                // Let's pass '' if the value matches the selected MHA name to show context.
+                if(selectedMHA && mhaInput.value === selectedMHA.name) {
+                    renderDropdown('');
+                } else {
+                    renderDropdown(mhaInput.value);
+                }
+                
+                // Scroll to selection if exists
+                setTimeout(() => {
+                    const selectedEl = document.getElementById('selected-mha-item');
+                    if(selectedEl) selectedEl.scrollIntoView({ block: 'nearest' });
+                }, 0);
+            });
+
+            mhaInput.addEventListener('input', (e) => {
+                mhaDropdown.classList.remove('hidden');
+                renderDropdown(e.target.value);
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!document.getElementById('dropdown-container').contains(e.target)) mhaDropdown.classList.add('hidden');
+            });
+
+            initializeData();
+        });
+    </script>
+</body>
+</html>
