@@ -625,8 +625,10 @@
                 let localName = "Local Site";
                 let localColor = "emerald"; 
 
+                // UPDATE: Link to HOMEPAGE if city cannot be reliably appended
+                
                 if (country === "United Kingdom") {
-                    localLink = `https://www.rightmove.co.uk/property-to-rent/search.html?searchLocation=${encodeURIComponent(city)}`;
+                    localLink = "https://www.rightmove.co.uk/";
                     localName = "Rightmove (UK)";
                 } 
                 else if (country === "Germany") {
@@ -645,12 +647,14 @@
                     localColor = "purple";
                 }
                 else if (country === "Japan") {
-                    localLink = `https://realestate.co.jp/en/rent/listing?listing_search_form_res[keyword]=${encodeURIComponent(city)}`;
+                    // RealEstate.co.jp allows simple keyword search
+                    localLink = "https://realestate.co.jp/en/";
                     localName = "RealEstate.co.jp";
                     localColor = "red";
                 }
                 else if (country === "Bahrain") {
-                    localLink = `https://www.propertyfinder.bh/en/search?q=${encodeURIComponent(city)}`;
+                     // PropertyFinder allows simple search
+                    localLink = "https://www.propertyfinder.bh/";
                     localName = "PropertyFinder (BH)";
                     localColor = "pink";
                 }
