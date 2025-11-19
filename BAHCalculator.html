@@ -63,19 +63,73 @@
         .interest-slider::-webkit-slider-thumb { background: #f59e0b; }
         input, select { font-size: 16px !important; }
 
-        /* BESPOKE DROPDOWN STYLING */
-        .dropdown-enter {
-            animation: dropIn 0.1s ease-out forwards;
+        /* --- MOBILE BOTTOM SHEET STYLES --- */
+        
+        /* Backdrop for mobile */
+        #mobile-backdrop {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
         }
-        @keyframes dropIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+        #mobile-backdrop.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Dropdown Animation Base */
+        #mha-dropdown {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Mobile Specific Override */
+        @media (max-width: 1024px) {
+            #mha-dropdown {
+                position: fixed !important;
+                top: auto !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                width: 100% !important;
+                max-height: 50vh !important; /* Half screen height */
+                height: 50vh !important;
+                border-radius: 24px 24px 0 0 !important;
+                transform: translateY(110%);
+                z-index: 60 !important; /* Above backdrop */
+                box-shadow: 0 -10px 40px rgba(0,0,0,0.2) !important;
+                border-top: 1px solid rgba(255,255,255,0.1);
+                display: flex !important; /* Needed for flex column layout */
+                flex-direction: column;
+            }
+            
+            #mha-dropdown.mobile-active {
+                transform: translateY(0);
+                display: flex !important;
+            }
+
+            /* "Wheel" Feel */
+            .mobile-scroll-snap {
+                scroll-snap-type: y mandatory;
+                padding-bottom: 50px; /* Space for bottom safe area */
+            }
+            .mobile-scroll-item {
+                scroll-snap-align: start;
+                padding-top: 16px !important;
+                padding-bottom: 16px !important;
+            }
+        }
+
+        /* Desktop Only Animation */
+        @media (min-width: 1025px) {
+            .dropdown-enter { animation: dropIn 0.1s ease-out forwards; }
+            @keyframes dropIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         }
     </style>
 </head>
 <body class="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-200 font-sans transition-colors duration-300">
     
-    <header class="border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/50 backdrop-blur-md sticky top-0 z-50 transition-colors duration-300">
+    <div id="mobile-backdrop" class="fixed inset-0 bg-black/60 z-50 backdrop-blur-sm" onclick="closeDropdown()"></div>
+
+    <header class="border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/50 backdrop-blur-md sticky top-0 z-40 transition-colors duration-300">
         <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
             <a href="https://royal-spark.github.io/Landing-Page/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
                 <img src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts//Royal%20Spark%20D%20Logo%20-%20Mekvold%20V3.png" alt="Royal Spark Logo" class="w-8 h-8 rounded shadow-lg shadow-purple-500/20">
@@ -123,7 +177,13 @@
 
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute right-2 top-3.5 w-5 h-5 text-zinc-400 dark:text-zinc-600 pointer-events-none"><polyline points="6 9 12 15 18 9"></polyline></svg>
                         </div>
-                        <div id="mha-dropdown" class="absolute left-0 right-0 mt-2 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl max-h-[300px] overflow-y-auto z-50 custom-scrollbar hidden dropdown-enter"></div>
+                        
+                        <div id="mha-dropdown" class="absolute left-0 right-0 mt-2 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl max-h-[300px] z-50 custom-scrollbar hidden dropdown-enter overflow-hidden flex flex-col">
+                            <div class="lg:hidden w-full flex justify-center pt-3 pb-1 shrink-0 bg-white dark:bg-zinc-900 sticky top-0 z-10 border-b border-zinc-100 dark:border-zinc-800/50">
+                                <div class="w-12 h-1.5 bg-zinc-300 dark:bg-zinc-700 rounded-full"></div>
+                            </div>
+                            <div id="mha-list-container" class="overflow-y-auto custom-scrollbar flex-1 mobile-scroll-snap"></div>
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
@@ -665,36 +725,60 @@
         const mhaInput = document.getElementById('mha-search-input');
         const mhaDropdown = document.getElementById('mha-dropdown');
         const clearBtn = document.getElementById('clear-search-btn');
+        const backdrop = document.getElementById('mobile-backdrop');
+        const listContainer = document.getElementById('mha-list-container');
 
         function clearSearch(e) {
             if(e) e.stopPropagation();
             mhaInput.value = '';
             selectedLocation = null;
-            mhaDropdown.classList.add('hidden');
-            clearBtn.classList.add('hidden');
+            closeDropdown();
             rent = 0;
             updateDisplay();
             mhaInput.focus();
         }
 
-        // IMPROVED: AUTO-HIGHLIGHT and FULL LIST ON CLICK
-        mhaInput.addEventListener('click', function() {
-            this.select(); // Highlight text for easy replacement
-            mhaDropdown.classList.remove('hidden');
-            renderList(getDataList(), true); // true = scroll to active
-        });
+        function closeDropdown() {
+            mhaDropdown.classList.add('hidden');
+            mhaDropdown.classList.remove('mobile-active');
+            backdrop.classList.remove('active');
+            document.body.style.overflow = ''; // restore scrolling
+            clearBtn.classList.add('hidden');
+        }
 
-        mhaInput.addEventListener('focus', function() {
-            this.select();
+        // --- DROPDOWN LOGIC UPDATED FOR BOTTOM SHEET ---
+
+        function openDropdown() {
+            mhaInput.select(); 
             mhaDropdown.classList.remove('hidden');
+            
+            // Check if mobile to add animation class
+            if (window.innerWidth <= 1024) {
+                // Small delay to allow display:flex to apply before transform
+                setTimeout(() => {
+                    mhaDropdown.classList.add('mobile-active');
+                    backdrop.classList.add('active');
+                    document.body.style.overflow = 'hidden'; // lock body scroll
+                }, 10);
+            }
+
             renderList(getDataList(), true);
-        });
+        }
+
+        mhaInput.addEventListener('click', openDropdown);
+        mhaInput.addEventListener('focus', openDropdown);
 
         mhaInput.addEventListener('input', (e) => {
             const q = e.target.value.toLowerCase();
             if(q.length > 0) clearBtn.classList.remove('hidden'); else clearBtn.classList.add('hidden');
             
+            // Ensure it's open if they type
             mhaDropdown.classList.remove('hidden');
+            if (window.innerWidth <= 1024 && !mhaDropdown.classList.contains('mobile-active')) {
+                mhaDropdown.classList.add('mobile-active');
+                backdrop.classList.add('active');
+            }
+
             const list = getDataList().filter(item => {
                  if(REGION === 'conus') return item.name.toLowerCase().includes(q);
                  return (item.location + item.country).toLowerCase().includes(q);
@@ -706,7 +790,6 @@
             if(REGION === 'conus') {
                 return DATA_BAH;
             } else {
-                 // Return unique items for OHA
                  const seen = new Set();
                  return DATA_OHA.filter(i => {
                     const key = i.location + i.country;
@@ -717,15 +800,13 @@
         }
 
         function renderList(list, scrollToActive) {
-            mhaDropdown.innerHTML = '';
+            // Empty the CONTAINER, not the whole dropdown (to keep the pull bar)
+            listContainer.innerHTML = '';
+            
             if(list.length === 0) {
-                mhaDropdown.innerHTML = '<div class="px-4 py-3 text-sm text-zinc-500">No results found.</div>';
+                listContainer.innerHTML = '<div class="px-4 py-3 text-sm text-zinc-500">No results found.</div>';
                 return;
             }
-            
-            // Limit rendering to ~500 to prevent freezing if list is massive, 
-            // but BAH list is usually small enough (<400) to render all.
-            // We removed the hard .slice(0,50) here to fix the Colorado bug.
             
             const fragment = document.createDocumentFragment();
             
@@ -738,7 +819,7 @@
                     if(REGION === 'oconus' && item.location === selectedLocation.location && item.country === selectedLocation.country) isSelected = true;
                 }
                 
-                div.className = `px-4 py-3 cursor-pointer text-sm border-b border-zinc-100 dark:border-zinc-800/50 hover:bg-purple-50 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 transition-colors ${isSelected ? 'bg-purple-100 dark:bg-purple-900/30 font-bold text-purple-700 dark:text-purple-200' : ''}`;
+                div.className = `px-4 py-3 mobile-scroll-item cursor-pointer text-sm border-b border-zinc-100 dark:border-zinc-800/50 hover:bg-purple-50 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 transition-colors ${isSelected ? 'bg-purple-100 dark:bg-purple-900/30 font-bold text-purple-700 dark:text-purple-200' : ''}`;
                 
                 if(isSelected) div.id = 'selected-item';
 
@@ -760,24 +841,25 @@
                 fragment.appendChild(div);
             });
             
-            mhaDropdown.appendChild(fragment);
+            listContainer.appendChild(fragment);
 
             if(scrollToActive) {
                 const sel = document.getElementById('selected-item');
                 if(sel) {
-                    setTimeout(() => sel.scrollIntoView({block: 'center', behavior: 'smooth'}), 10);
+                    // Wait for UI render
+                    setTimeout(() => sel.scrollIntoView({block: 'center', behavior: 'smooth'}), 50);
                 }
             }
         }
 
         function finalizeSelection() {
-            mhaDropdown.classList.add('hidden');
+            closeDropdown();
             updateDisplay();
         }
 
         document.addEventListener('click', (e) => {
-            if (!document.getElementById('dropdown-container').contains(e.target)) {
-                mhaDropdown.classList.add('hidden');
+            if (!document.getElementById('dropdown-container').contains(e.target) && !backdrop.contains(e.target)) {
+                closeDropdown();
             }
         });
 
