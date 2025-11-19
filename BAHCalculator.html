@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-M9GS3PQFCV"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M9GS3PQFCV"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -13,7 +12,6 @@
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Royal Spark | BAH Calculator</title>
-    <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -48,6 +46,8 @@
             -webkit-appearance: none;
             background: transparent;
         }
+        
+        /* UPDATED: Slider Thumb Styling with Hover Effect */
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
             height: 16px;
@@ -57,7 +57,15 @@
             cursor: pointer;
             margin-top: -6px; 
             box-shadow: 0 0 2px rgba(0,0,0,0.5);
+            /* Added transition for smooth grow effect */
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
         }
+
+        /* Grow effect on hover */
+        input[type=range]:hover::-webkit-slider-thumb {
+            transform: scale(1.9); 
+        }
+
         input[type=range]::-webkit-slider-runnable-track {
             width: 100%;
             height: 4px;
@@ -82,21 +90,16 @@
 </head>
 <body class="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-200 font-sans transition-colors duration-300">
     
-    <!-- HEADER -->
     <header class="border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/50 backdrop-blur-md sticky top-0 z-50 transition-colors duration-300">
         <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-            <!-- Brand / Logo -->
             <a href="https://royal-spark.github.io/Landing-Page/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
                 <img src="https://dwtymuzolmglgyejxuve.supabase.co/storage/v1/object/public/podcasts//Royal%20Spark%20D%20Logo%20-%20Mekvold%20V3.png" alt="Royal Spark Logo" class="w-8 h-8 rounded shadow-lg shadow-purple-500/20">
                 <h1 class="font-semibold text-lg text-zinc-900 dark:text-zinc-100">Royal Spark <span class="text-zinc-500 font-normal">| BAH Calculator</span></h1>
             </a>
             
-            <!-- Right Controls -->
             <div class="flex items-center gap-4">
                 <button id="theme-toggle" class="p-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400 transition-colors">
-                    <!-- Sun Icon (for dark mode) -->
                     <svg id="sun-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                    <!-- Moon Icon (for light mode) -->
                     <svg id="moon-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                 </button>
                 <a href="https://royal-spark.github.io/Landing-Page/" class="text-xs font-medium text-zinc-500 hover:text-purple-600 dark:hover:text-purple-400 transition-colors hidden sm:block">
@@ -108,7 +111,6 @@
 
     <main class="max-w-5xl mx-auto px-4 py-8 space-y-8">
         
-        <!-- INTRO TEXT -->
         <div class="text-center space-y-2">
             <h2 class="text-3xl font-bold text-zinc-900 dark:text-white">2025 Housing Planner</h2>
             <p class="text-zinc-600 dark:text-zinc-400 max-w-xl mx-auto">
@@ -118,13 +120,10 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
-            <!-- LEFT COLUMN: CONTROLS -->
             <div class="lg:col-span-5 space-y-6">
                 
-                <!-- SELECTION CARD -->
                 <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 shadow-xl dark:shadow-none space-y-6 relative transition-colors duration-300">
                     
-                    <!-- Loading Overlay -->
                     <div id="loading-overlay" class="absolute inset-0 bg-white/90 dark:bg-zinc-900/90 z-50 rounded-2xl flex flex-col items-center justify-center transition-colors duration-300">
                         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mb-2"></div>
                         <span class="text-sm text-zinc-500 dark:text-zinc-400">Loading 2025 Rates...</span>
@@ -135,7 +134,6 @@
                         <span class="text-xs font-bold uppercase tracking-wider">Configuration</span>
                     </div>
 
-                    <!-- DUTY STATION SEARCH -->
                     <div class="relative" id="dropdown-container">
                         <label class="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1.5">Duty Station (MHA)</label>
                         <div class="relative">
@@ -150,14 +148,11 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute right-3 top-3.5 w-5 h-5 text-zinc-400 dark:text-zinc-600 pointer-events-none"><polyline points="6 9 12 15 18 9"></polyline></svg>
                         </div>
 
-                        <!-- CUSTOM DROPDOWN LIST -->
                         <div id="mha-dropdown" class="absolute left-0 right-0 mt-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl max-h-64 overflow-y-auto z-20 custom-scrollbar hidden">
-                            <!-- Options populated via JS -->
-                        </div>
+                            </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
-                        <!-- RANK SELECT -->
                         <div>
                             <label class="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1.5">Pay Grade</label>
                             <div class="relative">
@@ -165,13 +160,11 @@
                                     id="rank-select"
                                     class="w-full appearance-none bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all"
                                 >
-                                    <!-- Options populated via JS -->
-                                </select>
+                                    </select>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute right-3 top-3.5 w-5 h-5 text-zinc-400 dark:text-zinc-600 pointer-events-none"><polyline points="6 9 12 15 18 9"></polyline></svg>
                             </div>
                         </div>
 
-                        <!-- DEPENDENTS TOGGLE -->
                         <div>
                             <label class="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1.5">Dependents?</label>
                             <button 
@@ -191,7 +184,6 @@
                     </div>
                 </div>
                 
-                <!-- INFO ALERT -->
                 <div class="bg-blue-50 dark:bg-zinc-900/50 border border-blue-100 dark:border-zinc-800/50 rounded-xl p-4 flex gap-3 items-start transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-blue-500 dark:text-blue-400 mt-0.5 shrink-0"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
                     <div class="space-y-1">
@@ -202,8 +194,7 @@
                     </div>
                 </div>
 
-                <!-- HOUSE HUNTING LINKS -->
-                <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 shadow-sm space-y-3">
+                <div class="hidden lg:block bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 shadow-sm space-y-3">
                     <p class="text-xs font-bold uppercase tracking-wider text-zinc-400">Find Housing - Opens the site to your selected city. Not officially endorsed.</p>
                     <div class="grid grid-cols-3 gap-2">
                         <button onclick="openHousingSearch('zillow')" class="px-3 py-2 rounded-lg bg-zinc-50 dark:bg-zinc-950 hover:bg-purple-50 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 text-xs font-medium text-zinc-600 dark:text-zinc-400 transition-colors flex flex-col items-center gap-1">
@@ -220,10 +211,8 @@
 
             </div>
 
-            <!-- RIGHT COLUMN: CALCULATOR & RESULTS -->
             <div class="lg:col-span-7 space-y-6">
 
-                <!-- 1. MAIN BAH DISPLAY -->
                 <div class="relative overflow-hidden bg-gradient-to-br from-purple-800 to-zinc-800 dark:from-purple-900 dark:to-zinc-900 border border-purple-500/20 rounded-2xl p-8 text-center shadow-2xl transition-colors duration-300">
                     <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none" style="background-image: radial-gradient(circle at 50% 50%, #a855f7 1px, transparent 1px); background-size: 24px 24px;"></div>
                     
@@ -234,10 +223,8 @@
                     </div>
                 </div>
 
-                <!-- 2. BUDGET CALCULATOR -->
                 <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 shadow-xl dark:shadow-none space-y-6 transition-colors duration-300">
                     
-                    <!-- Rent vs Buy Toggle -->
                     <div class="flex border-b border-zinc-100 dark:border-zinc-800 pb-4 mb-4">
                         <button id="mode-rent" onclick="setCalculatorMode('rent')" class="flex-1 pb-2 text-sm font-bold text-purple-600 border-b-2 border-purple-600 transition-colors">
                             RENTING
@@ -247,9 +234,7 @@
                         </button>
                     </div>
 
-                    <!-- RENT MODE INPUTS -->
                     <div id="inputs-rent" class="space-y-6">
-                        <!-- SLIDER: RENT -->
                         <div class="space-y-4">
                             <div class="flex justify-between items-end">
                                 <label class="flex items-center gap-2 text-sm font-medium text-zinc-600 dark:text-zinc-300">
@@ -262,9 +247,7 @@
                         </div>
                     </div>
 
-                    <!-- BUY MODE INPUTS -->
                     <div id="inputs-buy" class="space-y-6 hidden">
-                        <!-- Home Price -->
                         <div class="space-y-4">
                             <div class="flex justify-between items-end">
                                 <label class="flex items-center gap-2 text-sm font-medium text-zinc-600 dark:text-zinc-300">
@@ -276,7 +259,6 @@
                         </div>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Interest Rate -->
                             <div class="space-y-2">
                                 <div class="flex justify-between items-center">
                                     <label class="text-xs font-medium text-zinc-500">Interest Rate</label>
@@ -285,7 +267,6 @@
                                 <input type="range" id="rate-slider" min="2.0" max="10.0" step="0.1" value="6.5" class="w-full interest-slider">
                             </div>
                             
-                            <!-- Down Payment -->
                             <div class="space-y-2">
                                 <div class="flex justify-between items-center">
                                     <label class="text-xs font-medium text-zinc-500">Down Payment</label>
@@ -296,7 +277,6 @@
                             </div>
                         </div>
 
-                        <!-- Mortgage Estimate Summary (NEW) -->
                         <div class="bg-purple-50 dark:bg-zinc-800/50 border border-purple-100 dark:border-zinc-700 rounded-xl p-4 flex justify-between items-center">
                             <div>
                                 <p class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">Est. Mortgage</p>
@@ -310,7 +290,6 @@
 
                     </div>
 
-                    <!-- COMMON INPUTS (Utilities) -->
                     <div class="space-y-4 pt-2">
                         <div class="flex justify-between items-end">
                             <label class="flex items-center gap-2 text-sm font-medium text-zinc-600 dark:text-zinc-300">
@@ -322,7 +301,6 @@
                         <input type="range" id="utilities-slider" min="0" max="1000" step="10" value="250" class="w-full utility-slider">
                     </div>
 
-                    <!-- 3. RESULT BAR -->
                     <div class="pt-6 border-t border-zinc-100 dark:border-zinc-800">
                          <div class="flex justify-between items-center mb-2">
                             <span class="text-sm text-zinc-500 dark:text-zinc-400">Net Monthly Impact</span>
@@ -348,6 +326,21 @@
                          </div>
                     </div>
 
+                </div>
+
+                 <div class="block lg:hidden bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 shadow-sm space-y-3">
+                    <p class="text-xs font-bold uppercase tracking-wider text-zinc-400">Find Housing - Opens the site to your selected city. Not officially endorsed.</p>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="openHousingSearch('zillow')" class="px-3 py-2 rounded-lg bg-zinc-50 dark:bg-zinc-950 hover:bg-purple-50 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 text-xs font-medium text-zinc-600 dark:text-zinc-400 transition-colors flex flex-col items-center gap-1">
+                            <span class="font-bold text-blue-600">Zillow</span>
+                        </button>
+                        <button onclick="openHousingSearch('realtor')" class="px-3 py-2 rounded-lg bg-zinc-50 dark:bg-zinc-950 hover:bg-purple-50 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 text-xs font-medium text-zinc-600 dark:text-zinc-400 transition-colors flex flex-col items-center gap-1">
+                            <span class="font-bold text-red-600">Realtor</span>
+                        </button>
+                        <button onclick="openHousingSearch('homes')" class="px-3 py-2 rounded-lg bg-zinc-50 dark:bg-zinc-950 hover:bg-purple-50 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 text-xs font-medium text-zinc-600 dark:text-zinc-400 transition-colors flex flex-col items-center gap-1">
+                            <span class="font-bold text-orange-500">Homes</span>
+                        </button>
+                    </div>
                 </div>
                 
             </div>
@@ -702,6 +695,36 @@
             bindSlider('rate-slider', (v) => interestRate = v);
             bindSlider('down-slider', (v) => downPayment = v);
 
+            // --- MOUSE WHEEL SUPPORT FOR SLIDERS ---
+            document.querySelectorAll('input[type="range"]').forEach(slider => {
+                slider.addEventListener('wheel', (e) => {
+                    // Only active if element is focused or hovered (redundant check but safe)
+                    if (document.activeElement === slider || slider.matches(':hover')) {
+                        e.preventDefault(); // Stop page scrolling
+                        
+                        // Determine direction
+                        const delta = e.deltaY > 0 ? -1 : 1;
+                        const step = parseFloat(slider.step) || 1; // Get the specific step of this slider
+                        const currentVal = parseFloat(slider.value);
+                        const min = parseFloat(slider.min);
+                        const max = parseFloat(slider.max);
+                        
+                        // Calculate new value
+                        let newValue = currentVal + (delta * step);
+                        
+                        // Clamp
+                        if (newValue < min) newValue = min;
+                        if (newValue > max) newValue = max;
+                        
+                        // Apply
+                        slider.value = newValue;
+                        
+                        // Dispatch input event to trigger existing logic
+                        slider.dispatchEvent(new Event('input'));
+                    }
+                }, { passive: false }); // passive: false required to use preventDefault
+            });
+
             // --- DROPDOWN LOGIC ---
             const mhaInput = document.getElementById('mha-search-input');
             const mhaDropdown = document.getElementById('mha-dropdown');
@@ -786,4 +809,3 @@
     </script>
 </body>
 </html>
-
