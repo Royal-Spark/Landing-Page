@@ -63,62 +63,27 @@
         .interest-slider::-webkit-slider-thumb { background: #f59e0b; }
         input, select { font-size: 16px !important; }
 
-        /* --- MOBILE BOTTOM SHEET STYLES --- */
+        /* --- MOBILE OVERLAY STYLES --- */
+        #mobile-search-overlay {
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        #mobile-search-overlay.open {
+            transform: translateY(0%);
+        }
         
-        /* Backdrop for mobile */
-        #mobile-backdrop {
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
+        /* Mobile "Wheel" Feel */
+        .mobile-scroll-snap {
+            scroll-snap-type: y mandatory;
+            padding-bottom: 300px; /* Extra space at bottom so keyboard doesn't cover last item */
         }
-        #mobile-backdrop.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        /* Dropdown Animation Base */
-        #mha-dropdown {
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        .mobile-scroll-item {
+            scroll-snap-align: start;
+            padding-top: 16px !important;
+            padding-bottom: 16px !important;
         }
 
-        /* Mobile Specific Override */
-        @media (max-width: 1024px) {
-            #mha-dropdown {
-                position: fixed !important;
-                top: auto !important;
-                bottom: 0 !important;
-                left: 0 !important;
-                right: 0 !important;
-                width: 100% !important;
-                max-height: 50vh !important; /* Half screen height */
-                height: 50vh !important;
-                border-radius: 24px 24px 0 0 !important;
-                transform: translateY(110%);
-                z-index: 60 !important; /* Above backdrop */
-                box-shadow: 0 -10px 40px rgba(0,0,0,0.2) !important;
-                border-top: 1px solid rgba(255,255,255,0.1);
-                display: flex !important; /* Needed for flex column layout */
-                flex-direction: column;
-            }
-            
-            #mha-dropdown.mobile-active {
-                transform: translateY(0);
-                display: flex !important;
-            }
-
-            /* "Wheel" Feel */
-            .mobile-scroll-snap {
-                scroll-snap-type: y mandatory;
-                padding-bottom: 50px; /* Space for bottom safe area */
-            }
-            .mobile-scroll-item {
-                scroll-snap-align: start;
-                padding-top: 16px !important;
-                padding-bottom: 16px !important;
-            }
-        }
-
-        /* Desktop Only Animation */
+        /* Desktop Animation */
         @media (min-width: 1025px) {
             .dropdown-enter { animation: dropIn 0.1s ease-out forwards; }
             @keyframes dropIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
@@ -127,7 +92,21 @@
 </head>
 <body class="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-200 font-sans transition-colors duration-300">
     
-    <div id="mobile-backdrop" class="fixed inset-0 bg-black/60 z-50 backdrop-blur-sm" onclick="closeDropdown()"></div>
+    <div id="mobile-search-overlay" class="fixed inset-0 z-[100] bg-zinc-50 dark:bg-zinc-950 flex flex-col lg:hidden">
+        <div class="px-4 py-3 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex gap-3 items-center shadow-sm shrink-0 pt-safe-top">
+            <button onclick="closeMobileSearch()" class="p-2 -ml-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </button>
+            <div class="relative flex-1">
+                <input id="mobile-search-input" type="text" class="w-full bg-zinc-100 dark:bg-zinc-800 border-none rounded-xl pl-4 pr-10 py-3 text-zinc-900 dark:text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 font-medium" placeholder="Search base or city..." autocomplete="off">
+                <button id="mobile-clear-btn" class="absolute right-3 top-3 text-zinc-400 hidden" onclick="clearMobileSearch()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-list-container" class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1 mobile-scroll-snap bg-zinc-50 dark:bg-zinc-950">
+            </div>
+    </div>
 
     <header class="border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/50 backdrop-blur-md sticky top-0 z-40 transition-colors duration-300">
         <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
@@ -178,12 +157,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute right-2 top-3.5 w-5 h-5 text-zinc-400 dark:text-zinc-600 pointer-events-none"><polyline points="6 9 12 15 18 9"></polyline></svg>
                         </div>
                         
-                        <div id="mha-dropdown" class="absolute left-0 right-0 mt-2 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl max-h-[300px] z-50 custom-scrollbar hidden dropdown-enter overflow-hidden flex flex-col">
-                            <div class="lg:hidden w-full flex justify-center pt-3 pb-1 shrink-0 bg-white dark:bg-zinc-900 sticky top-0 z-10 border-b border-zinc-100 dark:border-zinc-800/50">
-                                <div class="w-12 h-1.5 bg-zinc-300 dark:bg-zinc-700 rounded-full"></div>
-                            </div>
-                            <div id="mha-list-container" class="overflow-y-auto custom-scrollbar flex-1 mobile-scroll-snap"></div>
-                        </div>
+                        <div id="mha-dropdown" class="absolute left-0 right-0 mt-2 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl max-h-[300px] z-50 custom-scrollbar hidden dropdown-enter overflow-y-auto hidden lg:block"></div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
@@ -651,8 +625,6 @@
                 let localName = "Local Site";
                 let localColor = "emerald"; 
 
-                // UPDATE: Link to HOMEPAGE if city cannot be reliably appended
-                
                 if (country === "United Kingdom") {
                     localLink = `https://www.rightmove.co.uk/property-to-rent/search.html?searchLocation=${encodeURIComponent(city)}`;
                     localName = "Rightmove (UK)";
@@ -673,13 +645,11 @@
                     localColor = "purple";
                 }
                 else if (country === "Japan") {
-                    // RealEstate.co.jp allows simple keyword search
                     localLink = `https://realestate.co.jp/en/rent/listing?listing_search_form_res[keyword]=${encodeURIComponent(city)}`;
                     localName = "RealEstate.co.jp";
                     localColor = "red";
                 }
                 else if (country === "Bahrain") {
-                     // PropertyFinder allows simple search
                     localLink = `https://www.propertyfinder.bh/en/search?q=${encodeURIComponent(city)}`;
                     localName = "PropertyFinder (BH)";
                     localColor = "pink";
@@ -722,70 +692,99 @@
         }
 
 
+        // --- INPUT & DROPDOWN HANDLERS ---
+        
         const mhaInput = document.getElementById('mha-search-input');
         const mhaDropdown = document.getElementById('mha-dropdown');
         const clearBtn = document.getElementById('clear-search-btn');
-        const backdrop = document.getElementById('mobile-backdrop');
-        const listContainer = document.getElementById('mha-list-container');
+        
+        // Mobile Elements
+        const mobileOverlay = document.getElementById('mobile-search-overlay');
+        const mobileInput = document.getElementById('mobile-search-input');
+        const mobileList = document.getElementById('mobile-list-container');
+        const mobileClearBtn = document.getElementById('mobile-clear-btn');
 
+        // CLEAR
         function clearSearch(e) {
             if(e) e.stopPropagation();
             mhaInput.value = '';
             selectedLocation = null;
-            closeDropdown();
+            mhaDropdown.classList.add('hidden');
+            clearBtn.classList.add('hidden');
             rent = 0;
             updateDisplay();
             mhaInput.focus();
         }
-
-        function closeDropdown() {
-            mhaDropdown.classList.add('hidden');
-            mhaDropdown.classList.remove('mobile-active');
-            backdrop.classList.remove('active');
-            document.body.style.overflow = ''; // restore scrolling
-            clearBtn.classList.add('hidden');
+        
+        function clearMobileSearch() {
+            mobileInput.value = '';
+            mobileClearBtn.classList.add('hidden');
+            mobileInput.focus();
+            renderList(getDataList(), mobileList, false);
         }
 
-        // --- DROPDOWN LOGIC UPDATED FOR BOTTOM SHEET ---
-
-        function openDropdown() {
-            mhaInput.select(); 
-            mhaDropdown.classList.remove('hidden');
-            
-            // Check if mobile to add animation class
-            if (window.innerWidth <= 1024) {
-                // Small delay to allow display:flex to apply before transform
-                setTimeout(() => {
-                    mhaDropdown.classList.add('mobile-active');
-                    backdrop.classList.add('active');
-                    document.body.style.overflow = 'hidden'; // lock body scroll
-                }, 10);
+        // DESKTOP LOGIC
+        mhaInput.addEventListener('focus', () => {
+            if (window.innerWidth >= 1024) {
+                mhaDropdown.classList.remove('hidden');
+                renderList(getDataList(), mhaDropdown, true);
             }
-
-            renderList(getDataList(), true);
-        }
-
-        mhaInput.addEventListener('click', openDropdown);
-        mhaInput.addEventListener('focus', openDropdown);
+        });
 
         mhaInput.addEventListener('input', (e) => {
             const q = e.target.value.toLowerCase();
             if(q.length > 0) clearBtn.classList.remove('hidden'); else clearBtn.classList.add('hidden');
             
-            // Ensure it's open if they type
             mhaDropdown.classList.remove('hidden');
-            if (window.innerWidth <= 1024 && !mhaDropdown.classList.contains('mobile-active')) {
-                mhaDropdown.classList.add('mobile-active');
-                backdrop.classList.add('active');
-            }
-
             const list = getDataList().filter(item => {
                  if(REGION === 'conus') return item.name.toLowerCase().includes(q);
                  return (item.location + item.country).toLowerCase().includes(q);
             });
-            renderList(list, false);
+            renderList(list, mhaDropdown, false);
+        });
+        
+        // MOBILE LOGIC
+        mhaInput.addEventListener('click', (e) => {
+            if (window.innerWidth < 1024) {
+                e.preventDefault(); // Stop default focus
+                openMobileSearch();
+            }
         });
 
+        function openMobileSearch() {
+            mobileOverlay.classList.add('open');
+            document.body.style.overflow = 'hidden'; // lock scroll
+            
+            // Pre-fill if value exists
+            mobileInput.value = mhaInput.value;
+            if(mobileInput.value) mobileClearBtn.classList.remove('hidden');
+            
+            // Render full list initially
+            renderList(getDataList(), mobileList, true);
+            
+            // Focus input after transition starts
+            setTimeout(() => mobileInput.focus(), 50);
+        }
+
+        function closeMobileSearch() {
+            mobileOverlay.classList.remove('open');
+            document.body.style.overflow = '';
+            mobileInput.blur();
+        }
+
+        mobileInput.addEventListener('input', (e) => {
+            const q = e.target.value.toLowerCase();
+            if(q.length > 0) mobileClearBtn.classList.remove('hidden'); else mobileClearBtn.classList.add('hidden');
+            
+            const list = getDataList().filter(item => {
+                 if(REGION === 'conus') return item.name.toLowerCase().includes(q);
+                 return (item.location + item.country).toLowerCase().includes(q);
+            });
+            renderList(list, mobileList, false);
+        });
+
+
+        // SHARED LOGIC
         function getDataList() {
             if(REGION === 'conus') {
                 return DATA_BAH;
@@ -799,12 +798,10 @@
             }
         }
 
-        function renderList(list, scrollToActive) {
-            // Empty the CONTAINER, not the whole dropdown (to keep the pull bar)
-            listContainer.innerHTML = '';
-            
+        function renderList(list, container, scrollToActive) {
+            container.innerHTML = '';
             if(list.length === 0) {
-                listContainer.innerHTML = '<div class="px-4 py-3 text-sm text-zinc-500">No results found.</div>';
+                container.innerHTML = '<div class="px-4 py-3 text-sm text-zinc-500">No results found.</div>';
                 return;
             }
             
@@ -819,80 +816,55 @@
                     if(REGION === 'oconus' && item.location === selectedLocation.location && item.country === selectedLocation.country) isSelected = true;
                 }
                 
-                div.className = `px-4 py-3 mobile-scroll-item cursor-pointer text-sm border-b border-zinc-100 dark:border-zinc-800/50 hover:bg-purple-50 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 transition-colors ${isSelected ? 'bg-purple-100 dark:bg-purple-900/30 font-bold text-purple-700 dark:text-purple-200' : ''}`;
+                // Mobile items are taller for easier tapping
+                const isMobile = container === mobileList;
+                const padding = isMobile ? 'py-4' : 'py-3';
                 
-                if(isSelected) div.id = 'selected-item';
+                div.className = `px-4 ${padding} cursor-pointer text-sm border-b border-zinc-100 dark:border-zinc-800/50 hover:bg-purple-50 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 transition-colors ${isSelected ? 'bg-purple-100 dark:bg-purple-900/30 font-bold text-purple-700 dark:text-purple-200' : ''} ${isMobile ? 'mobile-scroll-item' : ''}`;
+                
+                if(isSelected) div.id = isMobile ? 'selected-item-mobile' : 'selected-item-desktop';
 
-                if(REGION === 'conus') {
-                    div.textContent = item.name;
-                    div.onclick = () => { 
-                        selectedLocation = item; 
-                        mhaInput.value = item.name; 
-                        finalizeSelection(); 
-                    };
-                } else {
-                    div.textContent = `${item.location}, ${item.country}`;
-                    div.onclick = () => { 
-                        selectedLocation = item; 
-                        mhaInput.value = `${item.location}, ${item.country}`; 
-                        finalizeSelection(); 
-                    };
-                }
+                const display = (REGION === 'conus') ? item.name : `${item.location}, ${item.country}`;
+                div.textContent = display;
+                
+                div.onclick = () => { 
+                    selectedLocation = item; 
+                    mhaInput.value = display; 
+                    
+                    if (isMobile) {
+                        closeMobileSearch();
+                        updateDisplay();
+                    } else {
+                        mhaDropdown.classList.add('hidden');
+                        updateDisplay();
+                    }
+                };
                 fragment.appendChild(div);
             });
             
-            listContainer.appendChild(fragment);
+            container.appendChild(fragment);
 
             if(scrollToActive) {
-                const sel = document.getElementById('selected-item');
+                const id = container === mobileList ? 'selected-item-mobile' : 'selected-item-desktop';
+                const sel = document.getElementById(id);
                 if(sel) {
-                    // Wait for UI render
                     setTimeout(() => sel.scrollIntoView({block: 'center', behavior: 'smooth'}), 50);
                 }
             }
         }
 
-        function finalizeSelection() {
-            closeDropdown();
-            updateDisplay();
-        }
-
         document.addEventListener('click', (e) => {
-            if (!document.getElementById('dropdown-container').contains(e.target) && !backdrop.contains(e.target)) {
-                closeDropdown();
+            if (!document.getElementById('dropdown-container').contains(e.target) && window.innerWidth >= 1024) {
+                mhaDropdown.classList.add('hidden');
             }
         });
 
         document.getElementById('rank-select').addEventListener('change', (e) => { selectedRank = e.target.value; updateDisplay(); });
-        
-        document.getElementById('rent-slider').addEventListener('input', (e) => { 
-            rent = parseFloat(e.target.value); 
-            updateDisplay(); 
-        });
-        
-        document.getElementById('utilities-slider').addEventListener('input', (e) => { 
-            utilities = parseFloat(e.target.value);
-            document.getElementById('utilities-display').textContent = formatCurrency(utilities);
-            updateDisplay(); 
-        });
-
-        document.getElementById('price-slider').addEventListener('input', (e) => { 
-            homePrice = parseFloat(e.target.value);
-            document.getElementById('price-display').textContent = formatCurrency(homePrice);
-            updateDisplay(); 
-        });
-
-        document.getElementById('rate-slider').addEventListener('input', (e) => { 
-            interestRate = parseFloat(e.target.value);
-            document.getElementById('rate-display').textContent = interestRate.toFixed(1) + "%";
-            updateDisplay(); 
-        });
-
-        document.getElementById('down-slider').addEventListener('input', (e) => { 
-            downPayment = parseFloat(e.target.value);
-            document.getElementById('down-display').textContent = formatCurrency(downPayment);
-            updateDisplay(); 
-        });
+        document.getElementById('rent-slider').addEventListener('input', (e) => { rent = parseFloat(e.target.value); updateDisplay(); });
+        document.getElementById('utilities-slider').addEventListener('input', (e) => { utilities = parseFloat(e.target.value); document.getElementById('utilities-display').textContent = formatCurrency(utilities); updateDisplay(); });
+        document.getElementById('price-slider').addEventListener('input', (e) => { homePrice = parseFloat(e.target.value); document.getElementById('price-display').textContent = formatCurrency(homePrice); updateDisplay(); });
+        document.getElementById('rate-slider').addEventListener('input', (e) => { interestRate = parseFloat(e.target.value); document.getElementById('rate-display').textContent = interestRate.toFixed(1) + "%"; updateDisplay(); });
+        document.getElementById('down-slider').addEventListener('input', (e) => { downPayment = parseFloat(e.target.value); document.getElementById('down-display').textContent = formatCurrency(downPayment); updateDisplay(); });
         
         document.querySelectorAll('input[type="range"]').forEach(sl => {
             sl.addEventListener('wheel', e => {
