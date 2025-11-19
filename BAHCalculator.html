@@ -242,404 +242,455 @@
     </main>
     
     <script>
-        const BAH_WITH_URL = "https://raw.githubusercontent.com/Royal-Spark/Landing-Page/main/With.csv";
-        const BAH_WITHOUT_URL = "https://raw.githubusercontent.com/Royal-Spark/Landing-Page/main/Without.csv";
-        const OHA_URL = "https://raw.githubusercontent.com/Royal-Spark/Landing-Page/main/MasterOHA.csv";
+    const BAH_WITH_URL = "https://raw.githubusercontent.com/Royal-Spark/Landing-Page/main/With.csv";
+    const BAH_WITHOUT_URL = "https://raw.githubusercontent.com/Royal-Spark/Landing-Page/main/Without.csv";
+    const OHA_URL = "https://raw.githubusercontent.com/Royal-Spark/Landing-Page/main/MasterOHA.csv";
+    
+    const CURRENCY_SYMBOLS = {
+        "United Kingdom": "£", "Germany": "€", "Italy": "€", "France": "€",
+        "Spain": "€", "Belgium": "€", "Netherlands": "€", "Portugal": "€", 
+        "Greece": "€", "Turkey": "₺", "Japan": "¥", "Korea": "₩", 
+        "Bahrain": "BHD", "Australia": "A$", "Canada": "C$", "Denmark": "kr",
+        "Norway": "kr", "Poland": "zł", "Romania": "lei", "Hungary": "Ft",
+        "Singapore": "S$", "Thailand": "฿", "Philippines": "₱"
+    };
+
+    const RANKS = [
+        { label: "E-1", value: "E01" }, { label: "E-2", value: "E02" }, { label: "E-3", value: "E03" },
+        { label: "E-4", value: "E04" }, { label: "E-5", value: "E05" }, { label: "E-6", value: "E06" },
+        { label: "E-7", value: "E07" }, { label: "E-8", value: "E08" }, { label: "E-9", value: "E09" },
+        { label: "W-1", value: "W01" }, { label: "W-2", value: "W02" }, { label: "W-3", value: "W03" },
+        { label: "W-4", value: "W04" }, { label: "W-5", value: "W05" },
+        { label: "O-1E", value: "O01E" }, { label: "O-2E", value: "O02E" }, { label: "O-3E", value: "O03E" },
+        { label: "O-1", value: "O01" }, { label: "O-2", value: "O02" }, { label: "O-3", value: "O03" },
+        { label: "O-4", value: "O04" }, { label: "O-5", value: "O05" }, { label: "O-6", value: "O06" },
+    ];
+
+    let REGION = 'conus';
+    let DATA_BAH = [], DATA_OHA = [];
+    let selectedLocation = null;
+    let selectedRank = "E05";
+    let hasDependents = true;
+    let mode = 'rent';
+    let rent = 0, utilities = 250;
+    let homePrice = 350000, interestRate = 6.5, downPayment = 0;
+
+    const getSymbol = () => {
+        if (REGION === 'conus') return '$';
+        if (selectedLocation && selectedLocation.country) {
+            return CURRENCY_SYMBOLS[selectedLocation.country] || '¤';
+        }
+        return '¤';
+    };
+
+    const formatCurrency = (val, type = 'USD') => {
+        if (type === 'LOCAL') {
+            const sym = getSymbol();
+            return sym + new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(val);
+        }
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
+    };
+
+    function parseCSV(csvText) {
+        const lines = csvText.trim().split('\n');
+        if (lines.length < 2) return [];
+        return lines.map(line => line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/^"|"$/g, '')));
+    }
+
+    async function initializeData() {
+        try {
+            const [withRes, withoutRes, ohaRes] = await Promise.all([
+                fetch(BAH_WITH_URL), fetch(BAH_WITHOUT_URL), fetch(OHA_URL)
+            ]);
+            const wTxt = await withRes.text();
+            const woTxt = await withoutRes.text();
+            const ohaTxt = await ohaRes.text();
+
+            processBAH(wTxt, woTxt);
+            processOHA(ohaTxt);
+            
+            document.getElementById('loading-overlay').classList.add('hidden');
+            document.getElementById('mha-search-input').disabled = false;
+        } catch (err) {
+            console.error(err);
+            document.getElementById('loading-text').textContent = "Error loading data.";
+        }
+    }
+
+    function processBAH(withTxt, withoutTxt) {
+        const wRows = parseCSV(withTxt);
+        const woRows = parseCSV(withoutTxt);
+        let wHeadIdx = wRows.findIndex(r => r[0].includes('MHA_NAME'));
+        let wHeaders = wRows[wHeadIdx];
+        const combined = [];
+        for(let i = wHeadIdx + 1; i < wRows.length; i++) {
+            const row = wRows[i];
+            if(row.length < 2) continue;
+            const name = row[0];
+            const ratesW = {}, ratesWO = {};
+            wHeaders.forEach((h, idx) => { if(idx > 0) ratesW[h] = parseInt(row[idx]) || 0; });
+            const woRow = woRows.find(r => r[0] === name);
+            if(woRow) wHeaders.forEach((h, idx) => { if(idx > 0) ratesWO[h] = parseInt(woRow[idx]) || 0; });
+            combined.push({ name: name, rates: { with: ratesW, without: ratesWO } });
+        }
+        DATA_BAH = combined;
+    }
+
+    function processOHA(csvText) {
+        const rows = parseCSV(csvText);
+        const data = [];
+        for(let i = 1; i < rows.length; i++) {
+            const r = rows[i];
+            if(r.length < 8) continue;
+            data.push({
+                country: r[0], location: r[1], rank: r[3],
+                rentWith: parseFloat(r[4]) || 0,
+                rentWithout: parseFloat(r[5]) || 0,
+                utility: parseFloat(r[6]) || 0,
+                miha: parseFloat(r[7]) || 0,
+                rate: parseFloat(r[8]) || 1.0
+            });
+        }
+        DATA_OHA = data;
+    }
+
+    function setRegion(reg) {
+        REGION = reg;
+        const btnConus = document.getElementById('btn-conus');
+        const btnOconus = document.getElementById('btn-oconus');
+        const bahLabel = document.getElementById('allowance-label');
+        const rentLabel = document.getElementById('rent-label-text');
+        const utilBlock = document.getElementById('utility-block');
+        const ohaBlock = document.getElementById('oha-breakdown');
+        const secDisp = document.getElementById('oha-secondary-display');
+
+        if (reg === 'conus') {
+            btnConus.className = "px-6 py-2 rounded-lg text-sm font-bold shadow-sm bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white transition-all";
+            btnOconus.className = "px-6 py-2 rounded-lg text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 transition-all";
+            bahLabel.textContent = "Monthly Allowance (BAH)";
+            rentLabel.textContent = "Monthly Rent";
+            utilBlock.classList.remove('hidden');
+            ohaBlock.classList.add('hidden');
+            secDisp.classList.add('hidden');
+            document.getElementById('calc-mode-tabs').classList.remove('hidden');
+        } else {
+            btnOconus.className = "px-6 py-2 rounded-lg text-sm font-bold shadow-sm bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white transition-all";
+            btnConus.className = "px-6 py-2 rounded-lg text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 transition-all";
+            bahLabel.textContent = "Max Rental Allowance (OHA)";
+            rentLabel.textContent = "Rent (Local Currency)";
+            utilBlock.classList.add('hidden');
+            ohaBlock.classList.remove('hidden');
+            secDisp.classList.remove('hidden');
+            document.getElementById('calc-mode-tabs').classList.add('hidden');
+            setCalculatorMode('rent');
+        }
+        clearSearch();
+        updateDisplay();
+    }
+
+    function updateDisplay() {
+        if(REGION === 'conus') updateBAH(); else updateOHA();
+    }
+
+    function updateBAH() {
+        let amount = 0;
+        if (selectedLocation) {
+            const type = hasDependents ? 'with' : 'without';
+            amount = selectedLocation.rates[type][selectedRank] || 0;
+        }
+        document.getElementById('bah-display').textContent = formatCurrency(amount);
+        document.getElementById('info-display').textContent = selectedLocation ? `${selectedLocation.name} • ${selectedRank}` : "Select a location";
+
+        const slider = document.getElementById('rent-slider');
+        if(slider.max > 10000) { slider.max = 5000; slider.value = 0; rent = 0; } 
+
+        let cost = 0;
         
-        const CURRENCY_SYMBOLS = {
-            "United Kingdom": "£", "Germany": "€", "Italy": "€", "France": "€",
-            "Spain": "€", "Belgium": "€", "Netherlands": "€", "Portugal": "€", 
-            "Greece": "€", "Turkey": "₺", "Japan": "¥", "Korea": "₩", 
-            "Bahrain": "BHD", "Australia": "A$", "Canada": "C$", "Denmark": "kr",
-            "Norway": "kr", "Poland": "zł", "Romania": "lei", "Hungary": "Ft",
-            "Singapore": "S$", "Thailand": "฿", "Philippines": "₱"
-        };
-
-        const RANKS = [
-            { label: "E-1", value: "E01" }, { label: "E-2", value: "E02" }, { label: "E-3", value: "E03" },
-            { label: "E-4", value: "E04" }, { label: "E-5", value: "E05" }, { label: "E-6", value: "E06" },
-            { label: "E-7", value: "E07" }, { label: "E-8", value: "E08" }, { label: "E-9", value: "E09" },
-            { label: "W-1", value: "W01" }, { label: "W-2", value: "W02" }, { label: "W-3", value: "W03" },
-            { label: "W-4", value: "W04" }, { label: "W-5", value: "W05" },
-            { label: "O-1E", value: "O01E" }, { label: "O-2E", value: "O02E" }, { label: "O-3E", value: "O03E" },
-            { label: "O-1", value: "O01" }, { label: "O-2", value: "O02" }, { label: "O-3", value: "O03" },
-            { label: "O-4", value: "O04" }, { label: "O-5", value: "O05" }, { label: "O-6", value: "O06" },
-        ];
-
-        let REGION = 'conus';
-        let DATA_BAH = [], DATA_OHA = [];
-        let selectedLocation = null;
-        let selectedRank = "E05";
-        let hasDependents = true;
-        let mode = 'rent';
-        let rent = 0, utilities = 250;
-        let homePrice = 350000, interestRate = 6.5, downPayment = 0;
-
-        const getSymbol = () => {
-            if (REGION === 'conus') return '$';
-            if (selectedLocation && selectedLocation.country) {
-                return CURRENCY_SYMBOLS[selectedLocation.country] || '¤';
-            }
-            return '¤';
-        };
-
-        const formatCurrency = (val, type = 'USD') => {
-            if (type === 'LOCAL') {
-                const sym = getSymbol();
-                return sym + new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(val);
-            }
-            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
-        };
-
-        function parseCSV(csvText) {
-            const lines = csvText.trim().split('\n');
-            if (lines.length < 2) return [];
-            return lines.map(line => line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/^"|"$/g, '')));
-        }
-
-        async function initializeData() {
-            try {
-                const [withRes, withoutRes, ohaRes] = await Promise.all([
-                    fetch(BAH_WITH_URL), fetch(BAH_WITHOUT_URL), fetch(OHA_URL)
-                ]);
-                const wTxt = await withRes.text();
-                const woTxt = await withoutRes.text();
-                const ohaTxt = await ohaRes.text();
-
-                processBAH(wTxt, woTxt);
-                processOHA(ohaTxt);
-                
-                document.getElementById('loading-overlay').classList.add('hidden');
-                document.getElementById('mha-search-input').disabled = false;
-            } catch (err) {
-                console.error(err);
-                document.getElementById('loading-text').textContent = "Error loading data.";
-            }
-        }
-
-        function processBAH(withTxt, withoutTxt) {
-            const wRows = parseCSV(withTxt);
-            const woRows = parseCSV(withoutTxt);
-            let wHeadIdx = wRows.findIndex(r => r[0].includes('MHA_NAME'));
-            let wHeaders = wRows[wHeadIdx];
-            const combined = [];
-            for(let i = wHeadIdx + 1; i < wRows.length; i++) {
-                const row = wRows[i];
-                if(row.length < 2) continue;
-                const name = row[0];
-                const ratesW = {}, ratesWO = {};
-                wHeaders.forEach((h, idx) => { if(idx > 0) ratesW[h] = parseInt(row[idx]) || 0; });
-                const woRow = woRows.find(r => r[0] === name);
-                if(woRow) wHeaders.forEach((h, idx) => { if(idx > 0) ratesWO[h] = parseInt(woRow[idx]) || 0; });
-                combined.push({ name: name, rates: { with: ratesW, without: ratesWO } });
-            }
-            DATA_BAH = combined;
-        }
-
-        function processOHA(csvText) {
-            const rows = parseCSV(csvText);
-            const data = [];
-            for(let i = 1; i < rows.length; i++) {
-                const r = rows[i];
-                if(r.length < 8) continue;
-                data.push({
-                    country: r[0], location: r[1], rank: r[3],
-                    rentWith: parseFloat(r[4]) || 0,
-                    rentWithout: parseFloat(r[5]) || 0,
-                    utility: parseFloat(r[6]) || 0,
-                    miha: parseFloat(r[7]) || 0,
-                    rate: parseFloat(r[8]) || 1.0
-                });
-            }
-            DATA_OHA = data;
-        }
-
-        function setRegion(reg) {
-            REGION = reg;
-            const btnConus = document.getElementById('btn-conus');
-            const btnOconus = document.getElementById('btn-oconus');
-            const bahLabel = document.getElementById('allowance-label');
-            const rentLabel = document.getElementById('rent-label-text');
-            const utilBlock = document.getElementById('utility-block');
-            const ohaBlock = document.getElementById('oha-breakdown');
-            const secDisp = document.getElementById('oha-secondary-display');
-
-            if (reg === 'conus') {
-                btnConus.className = "px-6 py-2 rounded-lg text-sm font-bold shadow-sm bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white transition-all";
-                btnOconus.className = "px-6 py-2 rounded-lg text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 transition-all";
-                bahLabel.textContent = "Monthly Allowance (BAH)";
-                rentLabel.textContent = "Monthly Rent";
-                utilBlock.classList.remove('hidden');
-                ohaBlock.classList.add('hidden');
-                secDisp.classList.add('hidden');
-                document.getElementById('calc-mode-tabs').classList.remove('hidden');
-            } else {
-                btnOconus.className = "px-6 py-2 rounded-lg text-sm font-bold shadow-sm bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white transition-all";
-                btnConus.className = "px-6 py-2 rounded-lg text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 transition-all";
-                bahLabel.textContent = "Max Rental Allowance (OHA)";
-                rentLabel.textContent = "Rent (Local Currency)";
-                utilBlock.classList.add('hidden');
-                ohaBlock.classList.remove('hidden');
-                secDisp.classList.remove('hidden');
-                document.getElementById('calc-mode-tabs').classList.add('hidden');
-                setCalculatorMode('rent');
-            }
-            clearSearch();
-            updateDisplay();
-        }
-
-        function updateDisplay() {
-            if(REGION === 'conus') updateBAH(); else updateOHA();
-        }
-
-        function updateBAH() {
-            let amount = 0;
-            if (selectedLocation) {
-                const type = hasDependents ? 'with' : 'without';
-                amount = selectedLocation.rates[type][selectedRank] || 0;
-            }
-            document.getElementById('bah-display').textContent = formatCurrency(amount);
-            document.getElementById('info-display').textContent = selectedLocation ? `${selectedLocation.name} • ${selectedRank}` : "Select a location";
-
-            const slider = document.getElementById('rent-slider');
-            if(slider.max > 10000) { slider.max = 5000; slider.value = 0; rent = 0; } 
-
-            let cost = (mode === 'rent') ? rent + utilities : 0; 
-            updateResult(amount - cost, amount, cost, true);
+        if (mode === 'rent') {
+            cost = rent + utilities;
             document.getElementById('rent-display').textContent = formatCurrency(rent);
-        }
-
-        function updateOHA() {
-            let rentCap = 0, util = 0, miha = 0, rate = 1.0;
+        } else {
+            // Standard Mortgage Formula: M = P [ i(1 + i)^n ] / [ (1 + i)^n – 1 ]
+            const principal = homePrice - downPayment;
+            const monthlyRate = interestRate / 100 / 12;
+            const numPayments = 360; // 30 Years Fixed
             
-            if (selectedLocation) {
-                const simpleRank = selectedRank.replace(/0/g, ''); 
-                const row = DATA_OHA.find(d => d.country === selectedLocation.country && d.location === selectedLocation.location && d.rank === simpleRank);
-                
-                if (row) {
-                    rentCap = hasDependents ? row.rentWith : row.rentWithout;
-                    util = row.utility;
-                    miha = row.miha;
-                    rate = row.rate;
-                }
-            }
-
-            const slider = document.getElementById('rent-slider');
-            const newMax = rentCap > 0 ? rentCap * 2 : 5000;
-            if(Math.abs(slider.max - newMax) > 100) {
-                slider.max = newMax;
-                if(selectedLocation && rent === 0) { 
-                    slider.value = rentCap;
-                    rent = rentCap;
-                }
-            }
-
-            document.getElementById('bah-display').textContent = formatCurrency(rentCap, 'LOCAL');
-            
-            let usdVal = (rate > 10) ? rentCap / rate : rentCap * rate;
-            document.getElementById('oha-secondary-display').textContent = `≈ ${formatCurrency(usdVal)}`;
-            
-            document.getElementById('info-display').textContent = selectedLocation ? `${selectedLocation.location}, ${selectedLocation.country}` : "Select a location";
-            
-            let utilUSD = (rate > 10) ? util / rate : util * rate;
-            let mihaUSD = (rate > 10) ? miha / rate : miha * rate;
-            
-            document.getElementById('oha-util-disp').textContent = formatCurrency(utilUSD);
-            document.getElementById('oha-miha-disp').textContent = formatCurrency(mihaUSD);
-            document.getElementById('rent-display').textContent = formatCurrency(rent, 'LOCAL');
-
-            let overCapLocal = Math.max(0, rent - rentCap);
-            let overCapUSD = (rate > 10) ? overCapLocal / rate : overCapLocal * rate;
-            
-            updateResult(-overCapUSD, usdVal, overCapUSD, false);
-        }
-
-        function updateResult(diff, allow, cost, isBAH) {
-            const bar = document.getElementById('result-bar');
-            const val = document.getElementById('remaining-display');
-            const label = document.getElementById('remaining-text');
-            const icon = document.getElementById('result-icon-container');
-
-            bar.className = "w-full p-4 rounded-xl flex items-center justify-between border transition-colors";
-            
-            if (diff >= -0.99) { 
-                bar.classList.add('bg-emerald-50', 'dark:bg-emerald-900/10', 'border-emerald-200', 'dark:border-emerald-500/20');
-                val.className = "text-2xl font-bold text-emerald-600 dark:text-emerald-400";
-                label.textContent = isBAH ? "Under Budget" : "Fully Covered";
-                label.className = "text-sm font-medium text-emerald-500";
-                icon.className = "w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600";
-                icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
-                val.textContent = isBAH ? formatCurrency(diff) : "$0"; 
-            } else {
-                bar.classList.add('bg-red-50', 'dark:bg-red-900/10', 'border-red-200', 'dark:border-red-500/20');
-                val.className = "text-2xl font-bold text-red-500 dark:text-red-400";
-                label.textContent = "Out of Pocket";
-                label.className = "text-sm font-medium text-red-500";
-                icon.className = "w-10 h-10 rounded-full bg-red-100 dark:bg-red-500/20 flex items-center justify-center text-red-500";
-                icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
-                val.textContent = formatCurrency(diff);
-            }
-        }
-
-        const mhaInput = document.getElementById('mha-search-input');
-        const mhaDropdown = document.getElementById('mha-dropdown');
-        const clearBtn = document.getElementById('clear-search-btn');
-
-        function clearSearch() {
-            mhaInput.value = '';
-            selectedLocation = null;
-            mhaDropdown.classList.add('hidden');
-            clearBtn.classList.add('hidden');
-            rent = 0;
-            updateDisplay();
-            mhaInput.focus();
-        }
-
-        mhaInput.addEventListener('focus', () => {
-            mhaDropdown.classList.remove('hidden');
-            let list = [];
-            if(REGION === 'conus') {
-                list = mhaInput.value ? DATA_BAH.filter(i => i.name.toLowerCase().includes(mhaInput.value.toLowerCase())).slice(0,50) : DATA_BAH.slice(0,50);
-            } else {
-                const seen = new Set();
-                if(!mhaInput.value) {
-                   list = DATA_OHA.filter(i => { const k = i.location+i.country; if(!seen.has(k)){ seen.add(k); return true;} return false;}).slice(0,50); 
+            let mortgage = 0;
+            if (principal > 0) {
+                if (monthlyRate === 0) {
+                    mortgage = principal / numPayments;
                 } else {
-                   const q = mhaInput.value.toLowerCase();
-                   list = DATA_OHA.filter(i => {
-                        const key = i.location + i.country;
-                        if(seen.has(key)) return false;
-                        if(i.location.toLowerCase().includes(q) || i.country.toLowerCase().includes(q)) { seen.add(key); return true; }
-                        return false;
-                    }).slice(0,50);
+                    mortgage = principal * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
                 }
             }
-            renderList(list);
-            const sel = document.getElementById('selected-item');
-            if(sel) sel.scrollIntoView({block: 'nearest'});
-        });
-
-        mhaInput.addEventListener('input', (e) => {
-            const q = e.target.value.toLowerCase();
-            if(q.length > 0) clearBtn.classList.remove('hidden'); else clearBtn.classList.add('hidden');
             
-            mhaDropdown.classList.remove('hidden');
-            let list = [];
-            if(REGION === 'conus') {
-                list = DATA_BAH.filter(i => i.name.toLowerCase().includes(q)).slice(0,50);
+            document.getElementById('est-mortgage-main').textContent = formatCurrency(mortgage) + "/mo";
+            // Homeowners also pay utilities
+            cost = mortgage + utilities;
+        }
+
+        updateResult(amount - cost, amount, cost, true);
+    }
+
+    function updateOHA() {
+        let rentCap = 0, util = 0, miha = 0, rate = 1.0;
+        
+        if (selectedLocation) {
+            const simpleRank = selectedRank.replace(/0/g, ''); 
+            const row = DATA_OHA.find(d => d.country === selectedLocation.country && d.location === selectedLocation.location && d.rank === simpleRank);
+            
+            if (row) {
+                rentCap = hasDependents ? row.rentWith : row.rentWithout;
+                util = row.utility;
+                miha = row.miha;
+                rate = row.rate;
+            }
+        }
+
+        const slider = document.getElementById('rent-slider');
+        const newMax = rentCap > 0 ? rentCap * 2 : 5000;
+        if(Math.abs(slider.max - newMax) > 100) {
+            slider.max = newMax;
+            if(selectedLocation && rent === 0) { 
+                slider.value = rentCap;
+                rent = rentCap;
+            }
+        }
+
+        document.getElementById('bah-display').textContent = formatCurrency(rentCap, 'LOCAL');
+        
+        let usdVal = (rate > 10) ? rentCap / rate : rentCap * rate;
+        document.getElementById('oha-secondary-display').textContent = `≈ ${formatCurrency(usdVal)}`;
+        
+        document.getElementById('info-display').textContent = selectedLocation ? `${selectedLocation.location}, ${selectedLocation.country}` : "Select a location";
+        
+        let utilUSD = (rate > 10) ? util / rate : util * rate;
+        let mihaUSD = (rate > 10) ? miha / rate : miha * rate;
+        
+        document.getElementById('oha-util-disp').textContent = formatCurrency(utilUSD);
+        document.getElementById('oha-miha-disp').textContent = formatCurrency(mihaUSD);
+        document.getElementById('rent-display').textContent = formatCurrency(rent, 'LOCAL');
+
+        let overCapLocal = Math.max(0, rent - rentCap);
+        let overCapUSD = (rate > 10) ? overCapLocal / rate : overCapLocal * rate;
+        
+        updateResult(-overCapUSD, usdVal, overCapUSD, false);
+    }
+
+    function updateResult(diff, allow, cost, isBAH) {
+        const bar = document.getElementById('result-bar');
+        const val = document.getElementById('remaining-display');
+        const label = document.getElementById('remaining-text');
+        const icon = document.getElementById('result-icon-container');
+
+        bar.className = "w-full p-4 rounded-xl flex items-center justify-between border transition-colors";
+        
+        if (diff >= -0.99) { 
+            bar.classList.add('bg-emerald-50', 'dark:bg-emerald-900/10', 'border-emerald-200', 'dark:border-emerald-500/20');
+            val.className = "text-2xl font-bold text-emerald-600 dark:text-emerald-400";
+            label.textContent = isBAH ? "Under Budget" : "Fully Covered";
+            label.className = "text-sm font-medium text-emerald-500";
+            icon.className = "w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600";
+            icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+            val.textContent = isBAH ? formatCurrency(diff) : "$0"; 
+        } else {
+            bar.classList.add('bg-red-50', 'dark:bg-red-900/10', 'border-red-200', 'dark:border-red-500/20');
+            val.className = "text-2xl font-bold text-red-500 dark:text-red-400";
+            label.textContent = "Out of Pocket";
+            label.className = "text-sm font-medium text-red-500";
+            icon.className = "w-10 h-10 rounded-full bg-red-100 dark:bg-red-500/20 flex items-center justify-center text-red-500";
+            icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+            val.textContent = formatCurrency(diff);
+        }
+    }
+
+    const mhaInput = document.getElementById('mha-search-input');
+    const mhaDropdown = document.getElementById('mha-dropdown');
+    const clearBtn = document.getElementById('clear-search-btn');
+
+    function clearSearch() {
+        mhaInput.value = '';
+        selectedLocation = null;
+        mhaDropdown.classList.add('hidden');
+        clearBtn.classList.add('hidden');
+        rent = 0;
+        updateDisplay();
+        mhaInput.focus();
+    }
+
+    mhaInput.addEventListener('focus', () => {
+        mhaDropdown.classList.remove('hidden');
+        let list = [];
+        if(REGION === 'conus') {
+            list = mhaInput.value ? DATA_BAH.filter(i => i.name.toLowerCase().includes(mhaInput.value.toLowerCase())).slice(0,50) : DATA_BAH.slice(0,50);
+        } else {
+            const seen = new Set();
+            if(!mhaInput.value) {
+               list = DATA_OHA.filter(i => { const k = i.location+i.country; if(!seen.has(k)){ seen.add(k); return true;} return false;}).slice(0,50); 
             } else {
-                const seen = new Set();
-                list = DATA_OHA.filter(i => {
+               const q = mhaInput.value.toLowerCase();
+               list = DATA_OHA.filter(i => {
                     const key = i.location + i.country;
                     if(seen.has(key)) return false;
                     if(i.location.toLowerCase().includes(q) || i.country.toLowerCase().includes(q)) { seen.add(key); return true; }
                     return false;
                 }).slice(0,50);
             }
-            renderList(list);
-        });
-
-        function renderList(list) {
-            mhaDropdown.innerHTML = '';
-            if(list.length === 0) {
-                mhaDropdown.innerHTML = '<div class="px-4 py-3 text-sm text-zinc-500">No results found.</div>';
-                return;
-            }
-            list.forEach(item => {
-                const div = document.createElement('div');
-                let isSelected = false;
-                if(selectedLocation) {
-                    if(REGION === 'conus' && item.name === selectedLocation.name) isSelected = true;
-                    if(REGION === 'oconus' && item.location === selectedLocation.location && item.country === selectedLocation.country) isSelected = true;
-                }
-                div.className = `px-4 py-3 cursor-pointer text-sm border-b border-zinc-100 dark:border-zinc-800/50 hover:bg-purple-50 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 ${isSelected ? 'bg-purple-100 dark:bg-purple-900/30 font-bold text-purple-700 dark:text-purple-200' : ''}`;
-                if(isSelected) div.id = 'selected-item';
-
-                if(REGION === 'conus') {
-                    div.textContent = item.name;
-                    div.onclick = () => { selectedLocation = item; mhaInput.value = item.name; finalizeSelection(); };
-                } else {
-                    div.textContent = `${item.location}, ${item.country}`;
-                    div.onclick = () => { selectedLocation = item; mhaInput.value = `${item.location}, ${item.country}`; finalizeSelection(); };
-                }
-                mhaDropdown.appendChild(div);
-            });
         }
+        renderList(list);
+        const sel = document.getElementById('selected-item');
+        if(sel) sel.scrollIntoView({block: 'nearest'});
+    });
 
-        function finalizeSelection() {
-            mhaDropdown.classList.add('hidden');
-            updateDisplay();
-        }
-
-        document.addEventListener('click', (e) => {
-            if (!document.getElementById('dropdown-container').contains(e.target)) {
-                mhaDropdown.classList.add('hidden');
-            }
-        });
-
-        document.getElementById('rank-select').addEventListener('change', (e) => { selectedRank = e.target.value; updateDisplay(); });
-        document.getElementById('rent-slider').addEventListener('input', (e) => { rent = parseFloat(e.target.value); updateDisplay(); });
-        document.getElementById('utilities-slider').addEventListener('input', (e) => { utilities = parseFloat(e.target.value); updateDisplay(); });
+    mhaInput.addEventListener('input', (e) => {
+        const q = e.target.value.toLowerCase();
+        if(q.length > 0) clearBtn.classList.remove('hidden'); else clearBtn.classList.add('hidden');
         
-        document.querySelectorAll('input[type="range"]').forEach(sl => {
-            sl.addEventListener('wheel', e => {
-                if(document.activeElement === sl || sl.matches(':hover')) {
-                    e.preventDefault();
-                    const delta = e.deltaY > 0 ? -1 : 1;
-                    const step = parseFloat(sl.step) || 1;
-                    sl.value = parseFloat(sl.value) + (delta * step);
-                    sl.dispatchEvent(new Event('input'));
-                }
-            }, {passive: false});
-        });
-
-        document.getElementById('dependents-toggle').addEventListener('click', () => {
-            hasDependents = !hasDependents;
-            const s = document.getElementById('dependents-slider');
-            const t = document.getElementById('dependents-toggle');
-            const y = t.querySelector('span:nth-child(2)');
-            const n = t.querySelector('span:nth-child(1)');
-            if(hasDependents) {
-                s.classList.add('translate-x-[100%]'); y.classList.add('dark:text-white', 'text-purple-900'); n.classList.replace('text-zinc-600','text-zinc-400');
-            } else {
-                s.classList.remove('translate-x-[100%]'); y.classList.remove('dark:text-white', 'text-purple-900'); n.classList.replace('text-zinc-400','text-zinc-600');
-            }
-            updateDisplay();
-        });
-
-        function setCalculatorMode(m) {
-            mode = m;
-            const r = document.getElementById('mode-rent');
-            const b = document.getElementById('mode-buy');
-            const ir = document.getElementById('inputs-rent');
-            const ib = document.getElementById('inputs-buy');
-            if(m === 'rent') {
-                r.classList.replace('text-zinc-400', 'text-purple-600'); r.classList.replace('border-transparent', 'border-purple-600');
-                b.classList.replace('text-purple-600', 'text-zinc-400'); b.classList.replace('border-purple-600', 'border-transparent');
-                ir.classList.remove('hidden'); ib.classList.add('hidden');
-            } else {
-                b.classList.replace('text-zinc-400', 'text-purple-600'); b.classList.replace('border-transparent', 'border-purple-600');
-                r.classList.replace('text-purple-600', 'text-zinc-400'); r.classList.replace('border-purple-600', 'border-transparent');
-                ib.classList.remove('hidden'); ir.classList.add('hidden');
-            }
-            updateDisplay();
+        mhaDropdown.classList.remove('hidden');
+        let list = [];
+        if(REGION === 'conus') {
+            list = DATA_BAH.filter(i => i.name.toLowerCase().includes(q)).slice(0,50);
+        } else {
+            const seen = new Set();
+            list = DATA_OHA.filter(i => {
+                const key = i.location + i.country;
+                if(seen.has(key)) return false;
+                if(i.location.toLowerCase().includes(q) || i.country.toLowerCase().includes(q)) { seen.add(key); return true; }
+                return false;
+            }).slice(0,50);
         }
+        renderList(list);
+    });
 
-        (function() {
-            const s = document.getElementById('rank-select');
-            RANKS.forEach(r => { const o = document.createElement('option'); o.value = r.value; o.textContent = r.label; s.appendChild(o); });
-            s.value = selectedRank;
-            document.getElementById('theme-toggle').addEventListener('click', () => {
-                document.documentElement.classList.toggle('dark');
-                const d = document.documentElement.classList.contains('dark');
-                document.getElementById('sun-icon').classList.toggle('hidden', !d);
-                document.getElementById('moon-icon').classList.toggle('hidden', d);
-            });
+    function renderList(list) {
+        mhaDropdown.innerHTML = '';
+        if(list.length === 0) {
+            mhaDropdown.innerHTML = '<div class="px-4 py-3 text-sm text-zinc-500">No results found.</div>';
+            return;
+        }
+        list.forEach(item => {
+            const div = document.createElement('div');
+            let isSelected = false;
+            if(selectedLocation) {
+                if(REGION === 'conus' && item.name === selectedLocation.name) isSelected = true;
+                if(REGION === 'oconus' && item.location === selectedLocation.location && item.country === selectedLocation.country) isSelected = true;
+            }
+            div.className = `px-4 py-3 cursor-pointer text-sm border-b border-zinc-100 dark:border-zinc-800/50 hover:bg-purple-50 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 ${isSelected ? 'bg-purple-100 dark:bg-purple-900/30 font-bold text-purple-700 dark:text-purple-200' : ''}`;
+            if(isSelected) div.id = 'selected-item';
+
+            if(REGION === 'conus') {
+                div.textContent = item.name;
+                div.onclick = () => { selectedLocation = item; mhaInput.value = item.name; finalizeSelection(); };
+            } else {
+                div.textContent = `${item.location}, ${item.country}`;
+                div.onclick = () => { selectedLocation = item; mhaInput.value = `${item.location}, ${item.country}`; finalizeSelection(); };
+            }
+            mhaDropdown.appendChild(div);
+        });
+    }
+
+    function finalizeSelection() {
+        mhaDropdown.classList.add('hidden');
+        updateDisplay();
+    }
+
+    document.addEventListener('click', (e) => {
+        if (!document.getElementById('dropdown-container').contains(e.target)) {
+            mhaDropdown.classList.add('hidden');
+        }
+    });
+
+    document.getElementById('rank-select').addEventListener('change', (e) => { selectedRank = e.target.value; updateDisplay(); });
+    
+    document.getElementById('rent-slider').addEventListener('input', (e) => { 
+        rent = parseFloat(e.target.value); 
+        updateDisplay(); 
+    });
+    
+    document.getElementById('utilities-slider').addEventListener('input', (e) => { 
+        utilities = parseFloat(e.target.value);
+        document.getElementById('utilities-display').textContent = formatCurrency(utilities);
+        updateDisplay(); 
+    });
+
+    document.getElementById('price-slider').addEventListener('input', (e) => { 
+        homePrice = parseFloat(e.target.value);
+        document.getElementById('price-display').textContent = formatCurrency(homePrice);
+        updateDisplay(); 
+    });
+
+    document.getElementById('rate-slider').addEventListener('input', (e) => { 
+        interestRate = parseFloat(e.target.value);
+        document.getElementById('rate-display').textContent = interestRate.toFixed(1) + "%";
+        updateDisplay(); 
+    });
+
+    document.getElementById('down-slider').addEventListener('input', (e) => { 
+        downPayment = parseFloat(e.target.value);
+        document.getElementById('down-display').textContent = formatCurrency(downPayment);
+        updateDisplay(); 
+    });
+    
+    // MOUSE WHEEL LOGIC
+    document.querySelectorAll('input[type="range"]').forEach(sl => {
+        sl.addEventListener('wheel', e => {
+            if(document.activeElement === sl || sl.matches(':hover')) {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? -1 : 1;
+                const step = parseFloat(sl.step) || 1;
+                sl.value = parseFloat(sl.value) + (delta * step);
+                sl.dispatchEvent(new Event('input'));
+            }
+        }, {passive: false});
+    });
+
+    document.getElementById('dependents-toggle').addEventListener('click', () => {
+        hasDependents = !hasDependents;
+        const s = document.getElementById('dependents-slider');
+        const t = document.getElementById('dependents-toggle');
+        const y = t.querySelector('span:nth-child(2)');
+        const n = t.querySelector('span:nth-child(1)');
+        if(hasDependents) {
+            s.classList.add('translate-x-[100%]'); y.classList.add('dark:text-white', 'text-purple-900'); n.classList.replace('text-zinc-600','text-zinc-400');
+        } else {
+            s.classList.remove('translate-x-[100%]'); y.classList.remove('dark:text-white', 'text-purple-900'); n.classList.replace('text-zinc-400','text-zinc-600');
+        }
+        updateDisplay();
+    });
+
+    function setCalculatorMode(m) {
+        mode = m;
+        const r = document.getElementById('mode-rent');
+        const b = document.getElementById('mode-buy');
+        const ir = document.getElementById('inputs-rent');
+        const ib = document.getElementById('inputs-buy');
+        if(m === 'rent') {
+            r.classList.replace('text-zinc-400', 'text-purple-600'); r.classList.replace('border-transparent', 'border-purple-600');
+            b.classList.replace('text-purple-600', 'text-zinc-400'); b.classList.replace('border-purple-600', 'border-transparent');
+            ir.classList.remove('hidden'); ib.classList.add('hidden');
+        } else {
+            b.classList.replace('text-zinc-400', 'text-purple-600'); b.classList.replace('border-transparent', 'border-purple-600');
+            r.classList.replace('text-purple-600', 'text-zinc-400'); r.classList.replace('border-purple-600', 'border-transparent');
+            ib.classList.remove('hidden'); ir.classList.add('hidden');
+        }
+        updateDisplay();
+    }
+
+    (function() {
+        const s = document.getElementById('rank-select');
+        RANKS.forEach(r => { const o = document.createElement('option'); o.value = r.value; o.textContent = r.label; s.appendChild(o); });
+        s.value = selectedRank;
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
             const d = document.documentElement.classList.contains('dark');
             document.getElementById('sun-icon').classList.toggle('hidden', !d);
             document.getElementById('moon-icon').classList.toggle('hidden', d);
-            initializeData();
-        })();
-    </script>
+        });
+        const d = document.documentElement.classList.contains('dark');
+        document.getElementById('sun-icon').classList.toggle('hidden', !d);
+        document.getElementById('moon-icon').classList.toggle('hidden', d);
+        initializeData();
+    })();
+</script>
 </body>
 </html>
