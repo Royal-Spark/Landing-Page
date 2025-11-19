@@ -609,10 +609,6 @@
             return `https://www.google.com/search?q=apartments+for+rent+in+${encodeURIComponent(loc)}+${encodeURIComponent(country)}`;
         }
         
-        function getSiteSpecificSearch(site, query) {
-            return `https://www.google.com/search?q=site:${site}+${encodeURIComponent(query)}`;
-        }
-
         function updateExternalLinks() {
             const containers = document.querySelectorAll('.resource-buttons-container');
             const desktopCard = document.getElementById('resources-card-desktop');
@@ -655,42 +651,46 @@
                 let localName = "Local Site";
                 let localColor = "emerald"; 
 
+                // UPDATE: Link to HOMEPAGE if city cannot be reliably appended
+                
                 if (country === "United Kingdom") {
                     localLink = `https://www.rightmove.co.uk/property-to-rent/search.html?searchLocation=${encodeURIComponent(city)}`;
                     localName = "Rightmove (UK)";
                 } 
                 else if (country === "Germany") {
-                    localLink = getSiteSpecificSearch("immobilienscout24.de", "Mietwohnung " + city);
+                    localLink = "https://www.immobilienscout24.de/";
                     localName = "ImmoScout24 (DE)";
                     localColor = "orange";
                 }
                 else if (country === "Italy") {
-                    localLink = getSiteSpecificSearch("immobiliare.it", "Affitto " + city);
+                    localLink = "https://www.immobiliare.it/";
                     localName = "Immobiliare.it (IT)";
                     localColor = "red";
                 }
                 else if (country === "Spain") {
-                    localLink = getSiteSpecificSearch("idealista.com", "alquiler " + city);
+                    localLink = "https://www.idealista.com/";
                     localName = "Idealista (ES)";
                     localColor = "purple";
                 }
                 else if (country === "Japan") {
+                    // RealEstate.co.jp allows simple keyword search
                     localLink = `https://realestate.co.jp/en/rent/listing?listing_search_form_res[keyword]=${encodeURIComponent(city)}`;
                     localName = "RealEstate.co.jp";
                     localColor = "red";
                 }
                 else if (country === "Bahrain") {
+                     // PropertyFinder allows simple search
                     localLink = `https://www.propertyfinder.bh/en/search?q=${encodeURIComponent(city)}`;
                     localName = "PropertyFinder (BH)";
                     localColor = "pink";
                 }
                 else if (country === "Belgium") {
-                     localLink = getSiteSpecificSearch("immoweb.be", "rent " + city);
+                     localLink = "https://www.immoweb.be/en";
                      localName = "Immoweb (BE)";
                      localColor = "blue";
                 }
                 else if (country === "Netherlands") {
-                     localLink = getSiteSpecificSearch("funda.nl", "huur " + city);
+                     localLink = "https://www.funda.nl/en/";
                      localName = "Funda (NL)";
                      localColor = "orange";
                 }
