@@ -28,14 +28,15 @@
         }
     </script>
     <style>
-        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #3f3f46; border-radius: 20px; }
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #3f3f46; }
+        /* CUSTOM SCROLLBAR */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #d4d4d8; border-radius: 20px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #3f3f46; }
         
+        /* RANGE SLIDER STYLING */
         input[type=range] { -webkit-appearance: none; background: transparent; }
         
-        /* THICKER THUMB (GRABBER) */
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none; 
             height: 24px; 
@@ -49,7 +50,6 @@
         }
         input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.2); }
 
-        /* THICKER TRACK */
         input[type=range]::-webkit-slider-runnable-track {
             width: 100%; 
             height: 10px; 
@@ -62,6 +62,15 @@
         .utility-slider::-webkit-slider-thumb { background: #10b981; }
         .interest-slider::-webkit-slider-thumb { background: #f59e0b; }
         input, select { font-size: 16px !important; }
+
+        /* BESPOKE DROPDOWN STYLING */
+        .dropdown-enter {
+            animation: dropIn 0.1s ease-out forwards;
+        }
+        @keyframes dropIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body class="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-200 font-sans transition-colors duration-300">
@@ -105,16 +114,16 @@
 
                     <div class="relative" id="dropdown-container">
                         <label class="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1.5">Duty Station</label>
-                        <div class="relative">
-                            <input type="text" id="mha-search-input" autocomplete="off" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl pl-4 pr-10 py-3 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all" placeholder="Search base or city..." disabled>
+                        <div class="relative group">
+                            <input type="text" id="mha-search-input" autocomplete="off" class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl pl-4 pr-10 py-3 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all cursor-pointer" placeholder="Search base or city..." disabled>
                             
-                            <button id="clear-search-btn" class="absolute right-8 top-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hidden" onclick="clearSearch()">
+                            <button id="clear-search-btn" class="absolute right-8 top-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hidden" onclick="clearSearch(event)">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                             </button>
 
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute right-2 top-3.5 w-5 h-5 text-zinc-400 dark:text-zinc-600 pointer-events-none"><polyline points="6 9 12 15 18 9"></polyline></svg>
                         </div>
-                        <div id="mha-dropdown" class="absolute left-0 right-0 mt-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl max-h-64 overflow-y-auto z-50 custom-scrollbar hidden"></div>
+                        <div id="mha-dropdown" class="absolute left-0 right-0 mt-2 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl max-h-[300px] overflow-y-auto z-50 custom-scrollbar hidden dropdown-enter"></div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
@@ -402,7 +411,7 @@
                 document.getElementById('calc-mode-tabs').classList.add('hidden');
                 setCalculatorMode('rent');
             }
-            clearSearch();
+            clearSearch(null);
             updateDisplay();
         }
 
@@ -582,12 +591,9 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-fuchsia-400 dark:text-fuchsia-500 group-hover:translate-x-0.5 transition-transform"><polyline points="9 18 15 12 9 6"></polyline></svg>
                     </a>`;
             } else {
-                // OCONUS LOGIC
-                
-                // 1. Define specific resources per country
                 let localLink = null;
                 let localName = "Local Site";
-                let localColor = "emerald"; // default color theme
+                let localColor = "emerald"; 
 
                 if (country === "United Kingdom") {
                     localLink = `https://www.rightmove.co.uk/property-to-rent/search.html?searchLocation=${encodeURIComponent(city)}`;
@@ -609,7 +615,6 @@
                     localColor = "purple";
                 }
                 else if (country === "Japan") {
-                    // RealEstate.co.jp is English friendly
                     localLink = `https://realestate.co.jp/en/rent/listing?listing_search_form_res[keyword]=${encodeURIComponent(city)}`;
                     localName = "RealEstate.co.jp";
                     localColor = "red";
@@ -630,7 +635,6 @@
                      localColor = "orange";
                 }
 
-                // 2. Build Local Button (if exists)
                 if (localLink) {
                      buttonsHTML += `
                     <a href="${localLink}" target="_blank" class="flex items-center justify-between px-4 py-3 rounded-xl bg-${localColor}-50 dark:bg-${localColor}-900/20 border border-${localColor}-100 dark:border-${localColor}-800/30 hover:bg-${localColor}-100 dark:hover:bg-${localColor}-900/40 transition-colors group">
@@ -642,7 +646,6 @@
                     </a>`;
                 }
 
-                // 3. Always add Google Fallback
                 const gLink = getGoogleSearchLink(city, country);
                 buttonsHTML += `
                     <a href="${gLink}" target="_blank" class="flex items-center justify-between px-4 py-3 rounded-xl bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/50 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors group">
@@ -658,11 +661,13 @@
             containers.forEach(c => c.innerHTML = buttonsHTML);
         }
 
+
         const mhaInput = document.getElementById('mha-search-input');
         const mhaDropdown = document.getElementById('mha-dropdown');
         const clearBtn = document.getElementById('clear-search-btn');
 
-        function clearSearch() {
+        function clearSearch(e) {
+            if(e) e.stopPropagation();
             mhaInput.value = '';
             selectedLocation = null;
             mhaDropdown.classList.add('hidden');
@@ -672,28 +677,17 @@
             mhaInput.focus();
         }
 
-        mhaInput.addEventListener('focus', () => {
+        // IMPROVED: AUTO-HIGHLIGHT and FULL LIST ON CLICK
+        mhaInput.addEventListener('click', function() {
+            this.select(); // Highlight text for easy replacement
             mhaDropdown.classList.remove('hidden');
-            let list = [];
-            if(REGION === 'conus') {
-                list = mhaInput.value ? DATA_BAH.filter(i => i.name.toLowerCase().includes(mhaInput.value.toLowerCase())).slice(0,50) : DATA_BAH.slice(0,50);
-            } else {
-                const seen = new Set();
-                if(!mhaInput.value) {
-                   list = DATA_OHA.filter(i => { const k = i.location+i.country; if(!seen.has(k)){ seen.add(k); return true;} return false;}).slice(0,50); 
-                } else {
-                   const q = mhaInput.value.toLowerCase();
-                   list = DATA_OHA.filter(i => {
-                        const key = i.location + i.country;
-                        if(seen.has(key)) return false;
-                        if(i.location.toLowerCase().includes(q) || i.country.toLowerCase().includes(q)) { seen.add(key); return true; }
-                        return false;
-                    }).slice(0,50);
-                }
-            }
-            renderList(list);
-            const sel = document.getElementById('selected-item');
-            if(sel) sel.scrollIntoView({block: 'nearest'});
+            renderList(getDataList(), true); // true = scroll to active
+        });
+
+        mhaInput.addEventListener('focus', function() {
+            this.select();
+            mhaDropdown.classList.remove('hidden');
+            renderList(getDataList(), true);
         });
 
         mhaInput.addEventListener('input', (e) => {
@@ -701,46 +695,79 @@
             if(q.length > 0) clearBtn.classList.remove('hidden'); else clearBtn.classList.add('hidden');
             
             mhaDropdown.classList.remove('hidden');
-            let list = [];
-            if(REGION === 'conus') {
-                list = DATA_BAH.filter(i => i.name.toLowerCase().includes(q)).slice(0,50);
-            } else {
-                const seen = new Set();
-                list = DATA_OHA.filter(i => {
-                    const key = i.location + i.country;
-                    if(seen.has(key)) return false;
-                    if(i.location.toLowerCase().includes(q) || i.country.toLowerCase().includes(q)) { seen.add(key); return true; }
-                    return false;
-                }).slice(0,50);
-            }
-            renderList(list);
+            const list = getDataList().filter(item => {
+                 if(REGION === 'conus') return item.name.toLowerCase().includes(q);
+                 return (item.location + item.country).toLowerCase().includes(q);
+            });
+            renderList(list, false);
         });
 
-        function renderList(list) {
+        function getDataList() {
+            if(REGION === 'conus') {
+                return DATA_BAH;
+            } else {
+                 // Return unique items for OHA
+                 const seen = new Set();
+                 return DATA_OHA.filter(i => {
+                    const key = i.location + i.country;
+                    if(!seen.has(key)) { seen.add(key); return true; }
+                    return false;
+                });
+            }
+        }
+
+        function renderList(list, scrollToActive) {
             mhaDropdown.innerHTML = '';
             if(list.length === 0) {
                 mhaDropdown.innerHTML = '<div class="px-4 py-3 text-sm text-zinc-500">No results found.</div>';
                 return;
             }
+            
+            // Limit rendering to ~500 to prevent freezing if list is massive, 
+            // but BAH list is usually small enough (<400) to render all.
+            // We removed the hard .slice(0,50) here to fix the Colorado bug.
+            
+            const fragment = document.createDocumentFragment();
+            
             list.forEach(item => {
                 const div = document.createElement('div');
                 let isSelected = false;
+                
                 if(selectedLocation) {
                     if(REGION === 'conus' && item.name === selectedLocation.name) isSelected = true;
                     if(REGION === 'oconus' && item.location === selectedLocation.location && item.country === selectedLocation.country) isSelected = true;
                 }
-                div.className = `px-4 py-3 cursor-pointer text-sm border-b border-zinc-100 dark:border-zinc-800/50 hover:bg-purple-50 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 ${isSelected ? 'bg-purple-100 dark:bg-purple-900/30 font-bold text-purple-700 dark:text-purple-200' : ''}`;
+                
+                div.className = `px-4 py-3 cursor-pointer text-sm border-b border-zinc-100 dark:border-zinc-800/50 hover:bg-purple-50 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 transition-colors ${isSelected ? 'bg-purple-100 dark:bg-purple-900/30 font-bold text-purple-700 dark:text-purple-200' : ''}`;
+                
                 if(isSelected) div.id = 'selected-item';
 
                 if(REGION === 'conus') {
                     div.textContent = item.name;
-                    div.onclick = () => { selectedLocation = item; mhaInput.value = item.name; finalizeSelection(); };
+                    div.onclick = () => { 
+                        selectedLocation = item; 
+                        mhaInput.value = item.name; 
+                        finalizeSelection(); 
+                    };
                 } else {
                     div.textContent = `${item.location}, ${item.country}`;
-                    div.onclick = () => { selectedLocation = item; mhaInput.value = `${item.location}, ${item.country}`; finalizeSelection(); };
+                    div.onclick = () => { 
+                        selectedLocation = item; 
+                        mhaInput.value = `${item.location}, ${item.country}`; 
+                        finalizeSelection(); 
+                    };
                 }
-                mhaDropdown.appendChild(div);
+                fragment.appendChild(div);
             });
+            
+            mhaDropdown.appendChild(fragment);
+
+            if(scrollToActive) {
+                const sel = document.getElementById('selected-item');
+                if(sel) {
+                    setTimeout(() => sel.scrollIntoView({block: 'center', behavior: 'smooth'}), 10);
+                }
+            }
         }
 
         function finalizeSelection() {
