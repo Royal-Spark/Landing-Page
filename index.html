@@ -1026,17 +1026,19 @@
                     <div class="tools-list" id="primary-tools">
 						<a class="tool-button" href="https://royal-spark.github.io/USAF-Performance-Statement-Prompt-Generator/">AI Augmented Performance Statements</a>
      					<a class="tool-button" href="https://royal-spark.github.io/File-Forge/">File Forge - AI Document Filler</a>
+                    </div>
+
+                    <div class="tools-list" id="extra-tools-container" style="display: none; margin-top: 1.5rem;">
       					<a class="tool-button" href="https://royal-spark.github.io/Landing-Page/BAHCalculator.html">BAH Calculator</a>
       					<a class="tool-button" href="https://royal-spark.github.io/Hourly-Cost-Calculator/">Personnel Cost Calculator</a>
       					<a class="tool-button" href="https://royal-spark.github.io/Landing-Page/Agenda%20AI.html">Agenda AI - Meeting Summary</a>
       					<a class="tool-button tool-button-long" href="https://royal-spark.github.io/Landing-Page/Acquisition%20Compass.html">Acquisition Compass - What funds?</a>
-						<a class="tool-button" href="https://royal-spark.github.io/Landing-Page/mmc%20generator.html">MCC Generator - Idea to Concept
-						<a class="tool-button" href="https://royal-spark.github.io/Landing-Page/FinanceBuddy.html">FinanceBuddy - Not Online Yet
+						<a class="tool-button" href="https://royal-spark.github.io/Landing-Page/mmc%20generator.html">MCC Generator - Idea to Concept</a>
+						<a class="tool-button" href="https://royal-spark.github.io/Landing-Page/FinanceBuddy.html">FinanceBuddy - Not Online Yet</a>
       					<a class="tool-button" href="https://safe.menlosecurity.com/https://gemini.google.com/share/555f65accc0f">AI SOP Generator - TESTING</a>
       					<a class="tool-button" href="safe.menlosecurity.com/https://gemini.google.com/share/9a48cb140c07">AI AAR Generator - TESTING</a>
       					<a class="tool-button tool-button-long" href="#">Award Analyzer Assistant - TESTING</a>
       					<a class="tool-button" href="https://safe.menlosecurity.com/https://gemini.google.com/share/33ec49e5a6bf">EFDP Record Console - TESTING</a>
-                        </div>
                     </div>
 
                     <div style="text-align: center; margin-top: 2rem;">
@@ -1370,7 +1372,7 @@
                     const isHidden = extraToolsContainer.style.display === 'none';
                     
                     if (isHidden) {
-                        extraToolsContainer.style.display = 'block';
+                        extraToolsContainer.style.display = 'flex'; // Changed from block to flex to fix layout
                         btnText.nodeValue = "Show Less  ";
                         if (btnIcon) btnIcon.style.transform = "rotate(-90deg)";
                     } else {
@@ -1392,8 +1394,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
