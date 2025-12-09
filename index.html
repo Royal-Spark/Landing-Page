@@ -711,6 +711,10 @@
             padding: 5rem 0;
             background-color: var(--color-black);
         }
+        /* New GenAI Section Style to add top padding */
+        .genai-section {
+            padding: 5rem 0;
+        }
         .podcast-section, .cta-section, .footer {
             background-color: var(--color-black);
         }
@@ -1013,8 +1017,16 @@
 			<section id="genai" class="genai-section">
     <div class="section-container genai-container">
         <div class="section-header">
-            <h2 class="section-title">About GenAI.mil</h2>
-            <p class="section-description">The Department of War's premier AI model platform</p>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 1rem;">
+                <a href="https://genai.mil" target="_blank" rel="noopener noreferrer" style="flex-shrink: 0;">
+                    <img src="GenAILogo.png" alt="GenAI.mil logo" style="height: 40px; width: auto; border-radius: 6px;" />
+                </a>
+                <h2 class="section-title" style="margin-bottom: 0;">About GenAI.mil</h2>
+                <a href="https://genai.mil" target="_blank" rel="noopener noreferrer" style="flex-shrink: 0;">
+                    <img src="GenAILogo.png" alt="GenAI.mil logo" style="height: 40px; width: auto; border-radius: 6px;" />
+                </a>
+            </div>
+            <p class="section-description" style="margin-top: 1rem;">The Department of War's premier AI model platform</p>
         </div>
 
         <div class="genai-content" style="display:flex;gap:1.5rem;align-items:flex-start;flex-wrap:wrap;">
@@ -1420,6 +1432,3 @@
     </script>
 </body>
 </html>
-
-
-
