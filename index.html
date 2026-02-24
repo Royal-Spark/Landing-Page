@@ -1,1441 +1,1006 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-	<script async src="https://www.googletagmanager.com/gtag/js?id=G-0M5LC4WGEQ"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0M5LC4WGEQ"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-0M5LC4WGEQ');
 </script>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Royal Spark Innovation Lab</title>
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Royal-Spark/Landing-Page/main/royal-spark-logo.png">
-    <style>
-        :root {
-            --color-black: #000000;
-            --color-white: #ffffff;
-            --color-zinc-200: #e4e4e7;
-            --color-zinc-300: #d4d4d8;
-            --color-zinc-400: #a1a1aa;
-            --color-zinc-500: #71717a;
-            --color-zinc-700: #3f3f46;
-            --color-zinc-800: #27272a;
-            --color-zinc-900: #18181b;
-            --color-zinc-950: #09090b;
-            --color-purple-300: #d8b4fe;
-            --color-purple-400: #c084fc;
-            --color-purple-500: #a855f7;
-            --color-purple-600: #9333ea;
-            --color-purple-700: #7e22ce;
-            --color-purple-900: #581c87;
-            --color-cyan-200: #a5f3fc;
-            --color-cyan-300: #67e8f9;
-            --color-cyan-400: #22d3ee;
-            --color-cyan-500: #06b6d4;
-            --color-cyan-600: #0891b2;
-            --color-cyan-900: #164e63;
-            --color-green-400: #4ade80;
-            --color-green-500: #22c55e;
-            --input-bg: rgba(24, 24, 27, 0.7);
-        }
-		
-        /* --- Styles for the video popup --- */
-        #video-popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(9, 9, 11, 0.8); /* Semi-transparent background */
-            backdrop-filter: blur(8px);
-            z-index: 1000;
-            display: none; /* Hidden by default */
-            align-items: center;
-            justify-content: center;
-        }
-        #video-popup-overlay.is-visible {
-            display: flex;
-        }
-        #video-popup-container {
-            position: relative;
-            padding: 10px;
-            background: var(--color-zinc-900);
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            width: 90%;
-            max-width: 640px; /* Adjust max-width as needed */
-        }
-        #video-popup-container iframe {
-            width: 100%;
-            aspect-ratio: 16 / 9; /* Ensures correct video proportions */
-            border: none;
-            border-radius: 8px;
-            display: block;
-        }
-        #close-popup-btn {
-            position: absolute;
-            top: -15px;
-            right: -15px;
-            width: 34px;
-            height: 34px;
-            background: var(--color-purple-600);
-            color: white;
-            border: 2px solid var(--color-white);
-            border-radius: 50%;
-            font-size: 22px;
-            font-weight: bold;
-            line-height: 30px;
-            text-align: center;
-            cursor: pointer;
-            z-index: 1001;
-            transition: transform 0.2s ease;
-        }
-        #close-popup-btn:hover {
-            transform: scale(1.1);
-        }
-        html[data-theme='light'] {
-            --color-black: #ffffff;
-            --color-white: #000000;
-            --color-zinc-200: #3f3f46;
-            --color-zinc-300: #52525b;
-            --color-zinc-400: #71717a;
-            --color-zinc-500: #a1a1aa;
-            --color-zinc-700: #d4d4d8;
-            --color-zinc-800: #e4e4e7;
-            --color-zinc-900: #f4f4f5;
-            --color-zinc-950: #fafafa;
-            --input-bg: #e4e4e7;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html {
-            scroll-behavior: smooth;
-        }
-        
-                    /* --- Custom Scrollbar --- */
-             ::-webkit-scrollbar {
-             width: 12px;
-             }
-             ::-webkit-scrollbar-track {
-              background: transparent;
-             }
-             ::-webkit-scrollbar-thumb {
-              background: linear-gradient(to bottom, var( --color-purple-300), var(--color-cyan-200));
-             border-radius: 10px;
-             border: 0px solid var(--bg-dark);
-             }
-              html[data-theme='light'] ::-webkit-scrollbar-thumb {
-             border: 0px solid var(--bg-dark);
-             }
-             ::-webkit-scrollbar-thumb:hover {
-               background: linear-gradient(to bottom, var(--color-purple-500), #47e0f1);
-            }
-  
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--color-black);
-            color: var(--color-white);
-            line-height: 1.5;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .container { width: 100%; }
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border-width: 0;
-        }
-        .disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-        .header {
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            width: 100%;
-            border-bottom: 1px solid var(--color-zinc-800);
-            background-color: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(8px);
-        }
-        html[data-theme='light'] .header {
-            background-color: rgba(255, 255, 255, 0.8);
-        }
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-            display: flex;
-            height: 4rem;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .logo {
-            height: 2.5rem;
-            width: auto;
-        }
-        .logo-text {
-            font-size: 1.25rem;
-            font-weight: 700;
-            background: linear-gradient(to right, var(--color-purple-500), var(--color-cyan-400));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        
-        .desktop-nav {
-            display: none;
-            gap: 1.5rem;
-        }
-        @media (min-width: 768px) {
-            .desktop-nav {
-                display: flex;
-            }
-        }
-        @media (max-width: 767px) {
-            .desktop-nav.is-open {
-                display: flex;
-                flex-direction: column;
-                position: absolute;
-                top: 4rem;
-                left: 0;
-                right: 0;
-                background-color: rgba(0, 0, 0, 0.95);
-                backdrop-filter: blur(8px);
-                padding: 1rem;
-                border-bottom: 1px solid var(--color-zinc-800);
-                z-index: 40;
-            }
-            html[data-theme='light'] .desktop-nav.is-open {
-                background-color: rgba(255, 255, 255, 0.95);
-            }
-            .desktop-nav.is-open .nav-link {
-                padding: 0.75rem;
-                text-align: center;
-            }
-            .desktop-nav.is-open .nav-link:hover {
-                background-color: var(--color-zinc-800);
-                border-radius: 0.375rem;
-            }
-        }
-        .nav-link {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--color-zinc-300);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-        .nav-link:hover {
-            color: var(--color-white);
-        }
-        .mobile-menu-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 2.5rem;
-            height: 2.5rem;
-            border: 1px solid var(--color-zinc-700);
-            border-radius: 0.375rem;
-            background-color: transparent;
-            color: var(--color-white);
-            cursor: pointer;
-        }
-        @media (min-width: 768px) {
-            .mobile-menu-button {
-                display: none;
-            }
-        }
-
-        /* Theme Toggle Button */
-        .theme-toggle-btn {
-            background-color: var(--input-bg);
-            border: 1px solid var(--color-zinc-700);
-            color: var(--color-zinc-400);
-            width: 2.5rem;
-            height: 2.5rem;
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            margin-left: 1rem;
-            margin-right: 1rem;
-        }
-        .theme-toggle-btn:hover {
-            border-color: var(--color-purple-500);
-            color: var(--color-white);
-        }
-        .theme-toggle-btn svg {
-            width: 1.25rem;
-            height: 1.25rem;
-        }
-
-        .hero-section {
-            position: relative;
-            overflow: hidden;
-            padding: 5rem 1rem;
-        }
-        @media (min-width: 768px) {
-            .hero-section {
-                padding: 8rem 1rem;
-            }
-        }
-        .hero-background {
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse at center, rgba(168, 85, 247, 0.2), rgba(0, 0, 0, 0));
-            z-index: -2;
-        }
-        html[data-theme='light'] .hero-background {
-            background: radial-gradient(ellipse at center, rgba(168, 85, 247, 0.1), rgba(255, 255, 255, 0));
-        }
-        .hero-glow {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 500px;
-            height: 500px;
-            background-color: rgba(168, 85, 247, 0.3);
-            border-radius: 50%;
-            filter: blur(100px);
-            z-index: -1;
-        }
-        .hero-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            gap: 3rem;
-            position: relative;
-            z-index: 1;
-            justify-items: center;
-        }
-        .hero-content {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            text-align: center;
-            align-items: center;
-        }
-        .hero-logo-container {
-            margin: 0 auto 1rem;
-        }
-        .hero-logo {
-            height: auto;
-            width: 10rem;
-        }
-        @media (min-width: 768px) {
-            .hero-logo {
-                width: 12rem;
-            }
-        }
-        .savings-hero-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2rem;
-            width: 100%;
-        }
-        .savings-trackers {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            align-items: center;
-            width: 100%;
-        }
-        @media (min-width: 768px) {
-            .savings-trackers {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: flex-start;
-                max-width: 1000px;
-            }
-        }
-        .savings-tracker {
-            background: rgba(39, 39, 42, 0.6);
-            border: 1px solid var(--color-zinc-700);
-            border-radius: 1rem;
-            padding: 1.5rem 2rem;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-            min-width: 220px;
-            max-width: 400px;
-            text-align: center;
-            flex: 1 1 0;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        html[data-theme='light'] .savings-tracker {
-            background: rgba(255, 255, 255, 0.6);
-        }
-        .savings-tracker.money { border-color: rgba(34, 197, 94, 0.3); }
-        .savings-tracker.hours { border-color: rgba(6, 182, 212, 0.3); }
-        .savings-icon {
-            width: 2.5rem;
-            height: 2.5rem;
-            margin: 0 auto 1rem;
-        }
-        .savings-icon.money { color: var(--color-green-400); }
-        .savings-icon.hours { color: var(--color-cyan-400); }
-        .savings-amount {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            font-feature-settings: 'tnum';
-            line-height: 1.05;
-            letter-spacing: -0.01em;
-            display: block;
-            overflow: visible;
-            white-space: nowrap;
-            max-width: 100%;
-        }
-        .savings-amount.money { color: var(--color-green-400); }
-        .savings-amount.hours { color: var(--color-cyan-400); }
-        .savings-label {
-            color: var(--color-zinc-300);
-            font-size: 0.875rem;
-            font-weight: 500;
-            margin-bottom: 0.25rem;
-        }
-        .savings-period {
-            color: var(--color-zinc-500);
-            font-size: 0.75rem;
-        }
-        .hero-title-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-        }
-        .hero-title {
-            font-size: 2.25rem;
-            font-weight: 700;
-            line-height: 1.2;
-            letter-spacing: -0.025em;
-            background: linear-gradient(to right, var(--color-white), var(--color-purple-300), var(--color-cyan-200));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        html[data-theme='light'] .hero-title {
-            background: linear-gradient(to right, #18181b, #581c87, #164e63);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        @media (min-width: 640px) { .hero-title { font-size: 3rem; } }
-        @media (min-width: 768px) { .hero-title { font-size: 3.75rem; } }
-        .hero-description {
-            font-size: 1.125rem;
-            color: var(--color-zinc-400);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        @media (min-width: 768px) { .hero-description { font-size: 1.25rem; } }
-        
-        .hero-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            justify-content: center;
-        }
-        @media (min-width: 640px) { .hero-buttons { flex-direction: row; } }
-        
-        /* --- NEW STYLES FOR RESPONSIVE BUTTON PLACEMENT --- */
-        /* Mobile Button (Shown by default, hidden on desktop) */
-        .mobile-hero-btn {
-            display: flex;
-            margin-bottom: 2rem; /* Space below the logo */
-        }
-        
-        /* Desktop Button (Hidden by default, shown on desktop) */
-        .desktop-hero-btn {
-            display: none;
-        }
-        
-        /* At 768px (Tablet/Desktop), swap them */
-        @media (min-width: 768px) {
-            .mobile-hero-btn {
-                display: none;
-            }
-            .desktop-hero-btn {
-                display: flex;
-            }
-        }
-        /* -------------------------------------------------- */
-
-        .primary-button, .tool-button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.75rem 1.5rem;
-            font-size: 1rem;
-            font-weight: 500;
-            border-radius: 0.375rem;
-            background: linear-gradient(to right, var(--color-purple-600), var(--color-cyan-500));
-            color: #ffffff;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-        }
-        .primary-button:hover, .tool-button:hover {
-            background: linear-gradient(to right, var(--color-purple-700), var(--color-cyan-600));
-        }
-     .tool-button {
-    flex: 1 1 220px;
-    min-width: 180px;
-    max-width: 320px;
-    min-height: 3.2rem;
-    height: 3.2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 1.25rem;
-    background: linear-gradient(to right, var(--color-purple-400), var(--color-cyan-400));
-    color: #fff;
-    border: none;
-    border-radius: 0.375rem;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: clamp(1rem, 1.7vw, 1.25rem);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: center;
-    line-height: 1.1;
-    gap: 0.5rem;
-    transition: background 0.2s, font-size 0.2s;
-    box-sizing: border-box;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Royal Spark Innovation Lab</title>
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Royal-Spark/Landing-Page/main/royal-spark-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* =============================================
+   CSS CUSTOM PROPERTIES
+   ============================================= */
+:root {
+  --bg-base:       #030308;
+  --bg-surface:    #07070f;
+  --bg-card:       #0d0d1a;
+  --bg-card-hover: #111120;
+  --bg-input:      rgba(255,255,255,0.04);
+  --accent-indigo: #5c6ef7;
+  --accent-cyan:   #00d4ff;
+  --accent-gold:   #e8b03a;
+  --accent-green:  #00d17a;
+  --accent-red:    #ff4d6d;
+  --grad-primary:  linear-gradient(135deg,#5c6ef7,#00d4ff);
+  --grad-gold:     linear-gradient(135deg,#e8b03a,#ffd980);
+  --text-primary:  #f0f2ff;
+  --text-secondary:#a4a6cc;
+  --text-muted:    #5c5c88;
+  --border-subtle: rgba(255,255,255,0.06);
+  --border-accent: rgba(92,110,247,0.28);
+  --glow-indigo:   0 0 40px rgba(92,110,247,0.25);
+  --glow-cyan:     0 0 40px rgba(0,212,255,0.2);
+  --shadow-card:   0 8px 32px rgba(0,0,0,0.45);
+  --header-bg:     rgba(3,3,8,0.88);
+  --header-border: rgba(92,110,247,0.15);
+  --tr:            0.25s cubic-bezier(0.4,0,0.2,1);
+}
+[data-theme="light"] {
+  --bg-base:       #f4f4ff;
+  --bg-surface:    #ffffff;
+  --bg-card:       #fafaff;
+  --bg-card-hover: #f0f0ff;
+  --bg-input:      rgba(0,0,0,0.04);
+  --text-primary:  #09091c;
+  --text-secondary:#4a4a72;
+  --text-muted:    #8888aa;
+  --border-subtle: rgba(0,0,0,0.08);
+  --border-accent: rgba(92,110,247,0.3);
+  --shadow-card:   0 8px 32px rgba(92,110,247,0.1);
+  --header-bg:     rgba(244,244,255,0.9);
+  --header-border: rgba(92,110,247,0.2);
 }
 
-.tool-button:active, .tool-button:focus {
-    outline: 2px solid var(--color-cyan-500);
-    outline-offset: 2px;
+/* =============================================
+   RESET & BASE
+   ============================================= */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{
+  font-family:'Barlow',sans-serif;
+  background:var(--bg-base);
+  color:var(--text-primary);
+  line-height:1.7;
+  font-size:1.0625rem;
+  overflow-x:hidden;
+  transition:background var(--tr),color var(--tr);
+}
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg-base);}
+::-webkit-scrollbar-thumb{background:var(--accent-indigo);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:var(--accent-cyan);}
+a{color:inherit;text-decoration:none;}
+h1,h2,h3,h4{font-family:'Rajdhani',sans-serif;font-weight:700;line-height:1.1;}
+
+/* =============================================
+   UTILITIES
+   ============================================= */
+.container{max-width:1200px;margin:0 auto;padding:0 1.5rem;}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);}
+.text-gradient{background:var(--grad-primary);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.text-gradient-gold{background:var(--grad-gold);-webkit-background-clip:text;background-clip:text;color:transparent;}
+
+/* Section base */
+section{position:relative;padding:6rem 0;}
+.section-eyebrow{
+  font-family:'JetBrains Mono',monospace;
+  font-size:0.68rem;font-weight:500;
+  text-transform:uppercase;letter-spacing:0.2em;
+  color:var(--accent-cyan);margin-bottom:0.75rem;
+  display:flex;align-items:center;gap:0.5rem;
+}
+.section-eyebrow::before{content:'';display:inline-block;width:2rem;height:1px;background:var(--accent-cyan);}
+.section-title{font-size:clamp(2.2rem,5vw,3.8rem);font-weight:700;margin-bottom:1.25rem;}
+.section-description{font-size:1.1rem;color:var(--text-secondary);max-width:620px;line-height:1.8;font-weight:400;}
+.section-header{margin-bottom:4rem;}
+.section-header-centered{text-align:center;}
+.section-header-centered .section-eyebrow{justify-content:center;}
+.section-header-centered .section-eyebrow::before{display:none;}
+.section-header-centered .section-eyebrow::after{content:'';display:inline-block;width:2rem;height:1px;background:var(--accent-cyan);}
+.section-header-centered .section-description{margin:0 auto;}
+.section-divider{width:50px;height:3px;background:var(--grad-primary);border-radius:2px;margin-bottom:1.5rem;}
+
+/* Noise overlay */
+.noise{position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:0.018;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-@media (max-width: 640px) {
-    .tools-list {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    .tool-button {
-        width: 100%;
-        min-width: 0;
-        max-width: none;
-    }
+/* =============================================
+   HEADER
+   ============================================= */
+.header{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:var(--header-bg);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--header-border);
+  transition:background var(--tr);
 }
-        .chevron-right {
-            width: 1rem;
-            height: 1rem;
-            margin-left: 0.5rem;
-        }
-        /* Section Generic Styles */
-        .section-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-        .section-header {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-        .section-title {
-            font-size: 1.875rem;
-            font-weight: 700;
-            line-height: 1.2;
-            letter-spacing: -0.025em;
-            background: linear-gradient(to right, var(--color-purple-400), var(--color-cyan-300));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 1rem;
-        }
-        @media (min-width: 640px) {
-            .section-title { font-size: 2.25rem; }
-        }
-        @media (min-width: 768px) {
-            .section-title { font-size: 3rem; }
-        }
-        .section-description {
-            color: var(--color-zinc-400);
-            max-width: 700px;
-            margin: 0 auto;
-        }
-        /* About Section */
-        .about-section {
-            padding: 5rem 0;
-            background-color: var(--color-zinc-950);
-        }
-        .about-content {
-            max-width: 800px;
-            margin: 2rem auto 0;
-            color: var(--color-zinc-300);
-        }
-        .about-content h3 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--color-white);
-            margin-top: 2.5rem;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--color-zinc-700);
-        }
-        .about-content p {
-            margin-bottom: 1.5rem;
-            line-height: 1.7;
-        }
-        .about-content ul {
-            list-style: none;
-            padding-left: 0;
-            margin-bottom: 1.5rem;
-        }
-        .about-content ul li {
-            padding-left: 1.75rem;
-            position: relative;
-            margin-bottom: 0.75rem;
-            line-height: 1.7;
-        }
-        .about-content ul li::before {
-            content: "✓";
-            color: var(--color-purple-500);
-            position: absolute;
-            left: 0;
-            top: 2px;
-            font-weight: bold;
-            font-size: 1.1em;
-        }
-        .about-content .about-cta-title {
-            text-align: center;
-            border-bottom: none;
-            color: var(--color-purple-400);
-            font-size: 1.75rem;
-            margin-top: 3rem;
-        }
-        .about-content .about-cta-text {
-            text-align: center;
-            font-size: 1.125rem;
-            color: var(--color-zinc-200);
-        }
-        /* Features Section */
-        .features-section {
-            padding: 5rem 0;
-            background-color: var(--color-zinc-950);
-        }
-        .features-grid {
-            display: grid;
-            gap: 2rem;
-            justify-content: center;
-        }
-        @media (min-width: 768px) {
-            .features-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-        @media (min-width: 1024px) {
-            .features-grid {
-                grid-template-columns: 1fr 1fr 1fr;
-            }
-        }
-        .feature-card {
-            position: relative;
-            overflow: hidden;
-            border-radius: 0.75rem;
-            border: 1px solid var(--color-zinc-800);
-            background-color: rgba(24, 24, 27, 0.5);
-            padding: 1.5rem;
-            transition: all 0.3s;
-        }
-        html[data-theme='light'] .feature-card {
-            background-color: #f3e8ff; /* Light purple */
-        }
-        .feature-card:hover {
-            border-color: rgba(168, 85, 247, 0.5);
-            box-shadow: 0 0 30px 4px rgba(168, 85, 247, 0.1);
-        }
-        html[data-theme='light'] .feature-card:hover {
-            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-        }
-        .feature-icon-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 3rem;
-            height: 3rem;
-            border-radius: 9999px;
-            background-color: rgba(168, 85, 247, 0.2);
-            margin-bottom: 1rem;
-        }
-        .feature-icon-container.lightbulb {
-            background-color: rgba(6, 182, 212, 0.2);
-        }
-        .feature-icon {
-            width: 1.5rem;
-            height: 1.5rem;
-            color: var(--color-purple-500);
-        }
-        .feature-icon-container.lightbulb .feature-icon {
-            color: var(--color-cyan-500);
-        }
-        .feature-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: var(--color-white);
-        }
-        html[data-theme='light'] .feature-title {
-            color: var(--color-white); /* This is black in light mode */
-        }
-        .feature-description {
-            color: var(--color-zinc-400);
-        }
-        /* Digital Tools Section */
-        .tools-section {
-            padding: 5rem 0;
-            background-color: var(--color-black);
-        }
-        /* New GenAI Section Style to add top padding */
-        .genai-section {
-            padding: 5rem 0;
-        }
-        .podcast-section, .cta-section, .footer {
-            background-color: var(--color-black);
-        }
-        .tools-container {
-            max-width: 700px;
-            margin: 0 auto;
-            text-align: center;
-        }
-        .tools-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    justify-content: center;
-    width: 100%;
-        }
-        @media (min-width: 640px) {
-            .tools-list {
-                flex-direction: row;
-                justify-content: center;
-            }
-        }
-        
-        .disclaimer-box {
-            background:rgba(252,211,77,0.08);
-            border:1px solid #fbbf24;
-            padding:1rem 1.25rem;
-            margin-bottom:2rem;
-            border-radius:0.5rem;
-            color:#fde68a;
-        }
-        .notice-box {
-            background:rgba(34,197,94,0.07);
-            border:1px solid #22c55e;
-            padding:1rem 1.25rem;
-            margin-bottom:1.5rem;
-            border-radius:0.5rem;
-            color:#86efac;
-        }
-        html[data-theme='light'] .disclaimer-box,
-        html[data-theme='light'] .notice-box {
-            color: #000000;
-        }
+.header-inner{
+  display:flex;align-items:center;justify-content:space-between;
+  height:60px;padding:0 1.5rem;max-width:1400px;margin:0 auto;
+}
+.logo-link{display:flex;align-items:center;gap:0.6rem;}
+.logo-img{height:30px;width:auto;}
+.logo-name{
+  font-family:'Rajdhani',sans-serif;font-size:1.05rem;font-weight:700;
+  background:var(--grad-primary);-webkit-background-clip:text;background-clip:text;color:transparent;
+  white-space:nowrap;
+}
+.nav-desktop{display:flex;align-items:center;gap:0.2rem;}
+@media(max-width:767px){.nav-desktop{display:none;}}
+.nav-link{
+  font-size:0.875rem;font-weight:500;color:var(--text-secondary);
+  padding:0.4rem 0.8rem;border-radius:6px;
+  transition:color var(--tr),background var(--tr);letter-spacing:0.02em;
+}
+.nav-link:hover{color:var(--text-primary);background:rgba(255,255,255,0.05);}
+.nav-submit{
+  font-family:'Rajdhani',sans-serif;font-size:0.82rem;font-weight:700;letter-spacing:0.06em;
+  color:#fff;background:var(--grad-primary);
+  padding:0.42rem 1.1rem;border-radius:6px;margin-left:0.5rem;
+  transition:opacity var(--tr),transform var(--tr);
+}
+.nav-submit:hover{opacity:0.88;transform:translateY(-1px);}
+.header-controls{display:flex;align-items:center;gap:0.5rem;}
+.btn-icon{
+  background:transparent;border:1px solid var(--border-subtle);
+  border-radius:8px;width:36px;height:36px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--text-secondary);transition:all var(--tr);
+}
+.btn-icon:hover{border-color:var(--border-accent);color:var(--text-primary);background:var(--bg-input);}
+.btn-icon svg{width:16px;height:16px;}
+.mobile-menu{
+  display:none;position:fixed;top:60px;left:0;right:0;
+  background:var(--header-bg);backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--header-border);
+  padding:1rem 1.5rem;z-index:99;flex-direction:column;gap:0.25rem;
+}
+.mobile-menu.is-open{display:flex;}
+.mobile-menu .nav-link{padding:0.75rem 1rem;text-align:center;font-size:1rem;}
+.mobile-menu .nav-submit{text-align:center;padding:0.75rem 1rem;margin-left:0;margin-top:0.25rem;}
+@media(min-width:768px){.btn-hamburger{display:none;}}
 
-        /* CTA Section */
-        .cta-section {
-            padding: 5rem 1rem;
-            background: linear-gradient(to bottom, var(--color-zinc-950), var(--color-black));
-        }
-        .cta-card {
-            position: relative;
-            overflow: hidden;
-            border-radius: 1rem;
-            background: linear-gradient(to right, rgba(88, 28, 135, 0.4), rgba(22, 78, 99, 0.4));
-            padding: 2rem;
-        }
-        @media (min-width: 768px) {
-            .cta-card {
-                padding: 3rem;
-            }
-        }
-        .cta-background {
-            position: absolute;
-            inset: 0;
-            background-size: cover;
-            background-position: center;
-            opacity: 0.1;
-            mix-blend-mode: overlay;
-        }
-        .cta-content {
-            position: relative;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-        .cta-logo-container {
-            margin-bottom: 1.5rem;
-        }
-        .cta-logo {
-            height: auto;
-            width: 6rem;
-        }
-        .cta-title {
-            font-size: 1.875rem;
-            font-weight: 700;
-            line-height: 1.2;
-            letter-spacing: -0.025em;
-            color: var(--color-white);
-        }
-        @media (min-width: 640px) {
-            .cta-title { font-size: 2.25rem; }
-        }
-        @media (min-width: 768px) {
-            .cta-title { font-size: 3rem; }
-        }
-        .cta-description {
-            color: var(--color-zinc-300);
-            max-width: 600px;
-            margin: 0 auto 2rem;
-        }
-        @media (min-width: 768px) {
-            .cta-description { font-size: 1.125rem; }
-        }
-        .cta-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        @media (min-width: 640px) {
-            .cta-buttons { flex-direction: row; }
-        }
-        /* Footer Styles */
-        .footer {
-            border-top: 1px solid var(--color-zinc-800);
-            margin-top: 5rem;
-        }
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.875rem;
-            color: var(--color-zinc-500);
-            gap: 1rem;
-        }
-        @media (min-width: 640px) {
-            .footer-container { flex-direction: row; }
-        }
+/* =============================================
+   HERO
+   ============================================= */
+.hero{min-height:100vh;display:flex;align-items:center;padding-top:60px;position:relative;overflow:hidden;}
+.hero-grid-bg{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(92,110,247,0.045) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(92,110,247,0.045) 1px,transparent 1px);
+  background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 20%,transparent 100%);
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 20%,transparent 100%);
+}
+.hero-glow-1{
+  position:absolute;width:700px;height:700px;border-radius:50%;
+  background:radial-gradient(circle,rgba(92,110,247,0.16) 0%,transparent 70%);
+  top:50%;left:22%;transform:translate(-50%,-50%);
+  animation:glowPulse1 9s ease-in-out infinite;
+}
+.hero-glow-2{
+  position:absolute;width:450px;height:450px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,212,255,0.11) 0%,transparent 70%);
+  top:40%;right:8%;
+  animation:glowPulse2 9s ease-in-out 3s infinite;
+}
+@keyframes glowPulse1{0%,100%{opacity:0.55;transform:translate(-50%,-50%) scale(1);}50%{opacity:1;transform:translate(-50%,-50%) scale(1.18);}}
+@keyframes glowPulse2{0%,100%{opacity:0.5;transform:scale(1);}50%{opacity:1;transform:scale(1.15);}}
+#hero-canvas{position:absolute;inset:0;width:100%;height:100%;opacity:0.55;}
+.hero-content{position:relative;z-index:2;width:100%;padding:4rem 0;}
+.hero-inner{
+  display:grid;grid-template-columns:1fr auto 1fr;
+  gap:2rem;align-items:center;
+}
+@media(max-width:920px){
+  .hero-inner{grid-template-columns:1fr;text-align:center;}
+  .hero-counter-left,.hero-counter-right{justify-self:center!important;}
+}
+.hero-counter-left{grid-column:1;grid-row:2;justify-self:end;}
+.hero-center{
+  grid-column:2;grid-row:1/4;
+  display:flex;flex-direction:column;align-items:center;gap:1.5rem;
+  min-width:380px;
+}
+@media(max-width:920px){
+  .hero-counter-left,.hero-counter-right,.hero-center{grid-column:1;grid-row:auto;min-width:0;width:100%;}
+}
+.hero-counter-right{grid-column:3;grid-row:2;justify-self:start;}
+.hero-logo{
+  width:96px;height:auto;
+  filter:drop-shadow(0 0 24px rgba(92,110,247,0.45));
+  animation:logoFloat 6s ease-in-out infinite;
+}
+@keyframes logoFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-9px);}}
+.hero-title{
+  font-size:clamp(2.6rem,7vw,5rem);font-weight:700;text-align:center;
+  background:linear-gradient(135deg,#fff 0%,#c4caff 45%,#a5f3fc 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  letter-spacing:-0.02em;line-height:1.06;
+}
+[data-theme="light"] .hero-title{
+  background:linear-gradient(135deg,#090920 0%,#3b3cc0 45%,#0e4a5e 100%);
+  -webkit-background-clip:text;background-clip:text;
+}
+.hero-description{font-size:1.05rem;color:var(--text-secondary);text-align:center;max-width:480px;line-height:1.8;font-weight:400;}
+.hero-cta{
+  display:inline-flex;align-items:center;gap:0.5rem;
+  padding:0.875rem 2rem;background:var(--grad-primary);color:#fff;
+  font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:700;
+  letter-spacing:0.06em;border-radius:8px;
+  transition:opacity var(--tr),transform var(--tr),box-shadow var(--tr);
+}
+.hero-cta:hover{opacity:0.88;transform:translateY(-2px);box-shadow:var(--glow-indigo);}
 
-        /* --- CTA QR Code Styles --- */
-        .cta-title-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem; /* Space between title and QR code */
-            flex-wrap: wrap;
-            margin-bottom: 1rem;
-        }
-        .cta-qr-code {
-            height: 48px; /* Makes the QR code smaller */
-            width: 48px;
-            cursor: pointer;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-            /* This creates the "feathered edge" effect with a soft white glow */
-            box-shadow: 0 0 15px 2px rgba(255, 255, 255, 0.15);
-        }
-        .cta-qr-code:hover {
-            transform: scale(1.15);
-            box-shadow: 0 0 20px 5px rgba(216, 180, 254, 0.3); /* Purple glow on hover */
-        }
+/* Metric cards */
+.metric-card{
+  background:var(--bg-card);border:1px solid var(--border-subtle);
+  border-radius:14px;padding:1.5rem;width:220px;
+  position:relative;overflow:hidden;
+  transition:all var(--tr);
+}
+.metric-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.metric-card.green::before{background:linear-gradient(to right,var(--accent-green),#80ffcc);}
+.metric-card.cyan::before{background:linear-gradient(to right,var(--accent-cyan),#80ecff);}
+.metric-card:hover{border-color:var(--border-accent);transform:translateY(-4px);}
+.metric-card.green:hover{box-shadow:0 8px 32px rgba(0,209,122,0.15);}
+.metric-card.cyan:hover{box-shadow:0 8px 32px rgba(0,212,255,0.15);}
+.metric-status{display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem;}
+.metric-dot{width:7px;height:7px;border-radius:50%;animation:mPulse 2s ease-in-out infinite;}
+.metric-card.green .metric-dot{background:var(--accent-green);box-shadow:0 0 8px var(--accent-green);}
+.metric-card.cyan .metric-dot{background:var(--accent-cyan);box-shadow:0 0 8px var(--accent-cyan);}
+@keyframes mPulse{0%,100%{opacity:1;}50%{opacity:0.35;}}
+.metric-live{font-family:'JetBrains Mono',monospace;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-secondary);}
+.metric-icon{width:26px;height:26px;margin-bottom:0.75rem;}
+.metric-card.green .metric-icon{color:var(--accent-green);}
+.metric-card.cyan .metric-icon{color:var(--accent-cyan);}
+.metric-value{font-family:'JetBrains Mono',monospace;font-size:1.75rem;font-weight:700;line-height:1;margin-bottom:0.4rem;letter-spacing:-0.02em;}
+.metric-card.green .metric-value{color:var(--accent-green);}
+.metric-card.cyan .metric-value{color:var(--accent-cyan);}
+.metric-label{font-size:0.9rem;font-weight:600;color:var(--text-primary);letter-spacing:0.02em;}
+.metric-period{font-family:'JetBrains Mono',monospace;font-size:0.64rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.08em;margin-top:0.25rem;}
+/* Scan line */
+.metric-card::after{
+  content:'';position:absolute;top:-100%;left:0;right:0;height:35%;
+  background:linear-gradient(to bottom,transparent,rgba(255,255,255,0.025),transparent);
+  animation:scanLine 5s linear infinite;
+}
+@keyframes scanLine{0%{top:-35%;}100%{top:130%;}}
 
-        /* --- Image Popup Styles (Corrected) --- */
-        #image-popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(9, 9, 11, 0.8);
-            backdrop-filter: blur(8px);
-            z-index: 1000;
-            display: none; /* This is the key rule that hides the popup initially */
-            align-items: center;
-            justify-content: center;
-        }
-        #image-popup-overlay.is-visible {
-            display: flex; /* This rule makes it visible when the class is added by JavaScript */
-        }
-        #image-popup-container {
-            position: relative;
-            padding: 10px;
-            background: var(--color-white);
-            border-radius: 12px;
-            width: 90%;
-            max-width: 320px;
-        }
-        #image-popup-container img {
-            width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 8px;
-        }
-        #close-image-popup-btn {
-            position: absolute;
-            top: -15px;
-            right: -15px;
-            width: 34px;
-            height: 34px;
-            background: var(--color-purple-600);
-            color: white;
-            border: 2px solid var(--color-white);
-            border-radius: 50%;
-            font-size: 22px;
-            font-weight: bold;
-            line-height: 30px;
-            text-align: center;
-            cursor: pointer;
-            z-index: 1001;
-            transition: transform 0.2s ease;
-        }
-        #close-image-popup-btn:hover {
-            transform: scale(1.1);
-        }
-    </style>
+/* =============================================
+   GENAI SECTION
+   ============================================= */
+.genai-section{background:var(--bg-surface);border-top:1px solid var(--border-subtle);border-bottom:1px solid var(--border-subtle);}
+.genai-header{display:flex;align-items:center;justify-content:center;gap:1.5rem;margin-bottom:1rem;flex-wrap:wrap;}
+.genai-logo{height:80px;width:auto;border-radius:8px;transition:transform var(--tr);}
+.genai-logo:hover{transform:scale(1.06);}
+.genai-content{max-width:760px;margin:0 auto;}
+.genai-content p{color:var(--text-secondary);line-height:1.9;margin-bottom:1.5rem;font-size:1.05rem;}
+.genai-content p strong{color:var(--text-primary);font-weight:600;}
+.genai-content p:last-of-type{margin-bottom:0;}
+.genai-cta{display:flex;justify-content:center;margin-top:2rem;}
+
+/* =============================================
+   BUTTONS
+   ============================================= */
+.btn-primary{
+  display:inline-flex;align-items:center;gap:0.5rem;
+  padding:0.78rem 1.75rem;background:var(--grad-primary);color:#fff;
+  font-family:'Rajdhani',sans-serif;font-size:0.95rem;font-weight:700;
+  letter-spacing:0.06em;border-radius:8px;border:none;cursor:pointer;
+  transition:opacity var(--tr),transform var(--tr),box-shadow var(--tr);
+}
+.btn-primary:hover{opacity:0.88;transform:translateY(-2px);box-shadow:var(--glow-indigo);}
+.btn-secondary{
+  display:inline-flex;align-items:center;gap:0.5rem;
+  padding:0.72rem 1.5rem;background:var(--bg-input);color:var(--text-primary);
+  font-family:'Rajdhani',sans-serif;font-size:0.95rem;font-weight:700;
+  letter-spacing:0.06em;border-radius:8px;border:1px solid var(--border-subtle);cursor:pointer;
+  transition:all var(--tr);
+}
+.btn-secondary:hover{border-color:var(--border-accent);background:var(--bg-card-hover);}
+.btn-icon-right{width:15px;height:15px;flex-shrink:0;}
+
+/* =============================================
+   TOOLS SECTION
+   ============================================= */
+.tools-section{background:var(--bg-base);}
+.disclaimer-box{
+  background:rgba(232,176,58,0.06);border:1px solid rgba(232,176,58,0.28);
+  border-radius:8px;padding:1rem 1.25rem;margin-bottom:2.5rem;
+  display:flex;align-items:flex-start;gap:0.75rem;
+  font-size:0.9rem;color:#f5d97c;line-height:1.7;
+}
+[data-theme="light"] .disclaimer-box{color:#5c3e00;background:rgba(232,176,58,0.09);}
+.disclaimer-icon{flex-shrink:0;margin-top:1px;opacity:0.8;}
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;margin-bottom:1.25rem;}
+.tool-card{
+  background:var(--bg-card);border:1px solid var(--border-subtle);
+  border-radius:12px;padding:1.5rem;
+  display:flex;flex-direction:column;gap:0.75rem;
+  position:relative;overflow:hidden;
+  transition:all var(--tr);
+}
+.tool-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:var(--grad-primary);opacity:0;transition:opacity var(--tr);
+}
+.tool-card:hover{
+  border-color:var(--border-accent);background:var(--bg-card-hover);
+  transform:translateY(-4px);
+  box-shadow:var(--shadow-card),var(--glow-indigo);
+}
+.tool-card:hover::before{opacity:1;}
+.tool-card.disabled{opacity:0.45;cursor:not-allowed;pointer-events:none;}
+.tool-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;}
+.tool-icon{
+  width:40px;height:40px;background:rgba(92,110,247,0.1);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;
+  color:var(--accent-indigo);flex-shrink:0;
+}
+.tool-icon svg{width:20px;height:20px;}
+.tool-badge{
+  font-family:'JetBrains Mono',monospace;font-size:0.58rem;font-weight:500;
+  text-transform:uppercase;letter-spacing:0.1em;
+  padding:0.22rem 0.55rem;border-radius:4px;
+}
+.tool-badge.active{background:rgba(0,209,122,0.1);color:var(--accent-green);border:1px solid rgba(0,209,122,0.22);}
+.tool-badge.testing{background:rgba(232,176,58,0.1);color:var(--accent-gold);border:1px solid rgba(232,176,58,0.22);}
+.tool-badge.offline{background:rgba(255,77,109,0.1);color:var(--accent-red);border:1px solid rgba(255,77,109,0.22);}
+.tool-name{font-family:'Rajdhani',sans-serif;font-size:1.1rem;font-weight:600;color:var(--text-primary);letter-spacing:0.01em;line-height:1.3;}
+.tool-arrow{
+  position:absolute;bottom:1.25rem;right:1.25rem;
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(92,110,247,0.1);display:flex;align-items:center;justify-content:center;
+  color:var(--accent-indigo);transition:all var(--tr);
+}
+.tool-card:hover .tool-arrow{background:var(--grad-primary);color:#fff;transform:translate(2px,-2px);}
+.tool-arrow svg{width:13px;height:13px;}
+.tools-category{margin-bottom:3rem;}
+.tools-category:last-child{margin-bottom:0;}
+.tools-category-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:0.68rem;font-weight:500;
+  text-transform:uppercase;letter-spacing:0.18em;
+  color:var(--text-muted);
+  margin-bottom:1.25rem;
+  display:flex;align-items:center;gap:0.75rem;
+}
+.tools-category-label::after{content:'';flex:1;height:1px;background:var(--border-subtle);}
+
+/* =============================================
+   ABOUT SECTION
+   ============================================= */
+.about-section{background:var(--bg-surface);border-top:1px solid var(--border-subtle);}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;}
+@media(max-width:768px){.about-grid{grid-template-columns:1fr;gap:3rem;}}
+.about-mission{
+  padding:1.75rem 2rem;background:var(--bg-card);
+  border:1px solid var(--border-accent);border-radius:12px;
+}
+.about-mission-label{
+  font-family:'JetBrains Mono',monospace;font-size:0.62rem;
+  text-transform:uppercase;letter-spacing:0.2em;color:var(--accent-indigo);margin-bottom:0.85rem;
+}
+.about-mission-text{font-size:1.05rem;color:var(--text-primary);line-height:1.9;font-weight:400;}
+.about-list{list-style:none;display:flex;flex-direction:column;gap:0.75rem;margin:1.5rem 0;}
+.about-list-item{display:flex;align-items:flex-start;gap:0.75rem;font-size:1rem;color:var(--text-secondary);line-height:1.7;}
+.about-list-item::before{content:'◆';color:var(--accent-indigo);font-size:0.48rem;margin-top:0.6rem;flex-shrink:0;}
+.about-cta-box{
+  margin-top:3rem;text-align:center;padding:2rem;border-radius:12px;
+  background:linear-gradient(135deg,rgba(92,110,247,0.07),rgba(0,212,255,0.04));
+  border:1px solid var(--border-accent);
+}
+.about-cta-title{font-size:1.5rem;color:var(--accent-indigo);margin-bottom:0.75rem;}
+.about-cta-text{color:var(--text-secondary);font-size:1rem;line-height:1.8;}
+.about-what-label{
+  font-family:'Rajdhani',sans-serif;font-size:0.85rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.12em;color:var(--text-muted);margin-bottom:1rem;
+}
+
+
+/* =============================================
+   CONTACT SECTION
+   ============================================= */
+.contact-section{background:var(--bg-surface);border-top:1px solid var(--border-subtle);}
+.contact-inner{
+  background:var(--bg-card);border-radius:20px;
+  border:1px solid var(--border-accent);padding:4rem 2rem;
+  text-align:center;position:relative;overflow:hidden;
+}
+.contact-glow{
+  position:absolute;width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(92,110,247,0.09) 0%,transparent 70%);
+  top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;
+}
+.contact-logo{width:68px;height:auto;margin-bottom:1.5rem;filter:drop-shadow(0 0 16px rgba(92,110,247,0.45));}
+.contact-title{font-size:clamp(1.8rem,5vw,3.25rem);margin-bottom:1.25rem;}
+.contact-description{color:var(--text-secondary);font-size:1.1rem;max-width:520px;margin:0 auto 2.5rem;line-height:1.85;}
+.contact-qr-row{display:flex;align-items:center;justify-content:center;gap:1.75rem;margin-bottom:2rem;flex-wrap:wrap;}
+.qr-item{display:flex;flex-direction:column;align-items:center;gap:0.5rem;}
+.qr-code{
+  width:82px;height:82px;border-radius:8px;cursor:pointer;
+  border:2px solid var(--border-subtle);background:#fff;padding:4px;
+  transition:all var(--tr);
+}
+.qr-code:hover{transform:scale(1.12);border-color:var(--border-accent);box-shadow:var(--glow-indigo);}
+.qr-label{font-family:'JetBrains Mono',monospace;font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);}
+.contact-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+
+/* =============================================
+   FOOTER
+   ============================================= */
+.footer{background:var(--bg-base);border-top:1px solid var(--border-subtle);padding:1.5rem 0;}
+.footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.footer-copyright{font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--text-muted);letter-spacing:0.05em;}
+.footer-logo-img{height:22px;opacity:0.45;}
+
+/* =============================================
+   POPUP MODALS
+   ============================================= */
+.popup-overlay{
+  position:fixed;inset:0;background:rgba(3,3,8,0.88);
+  backdrop-filter:blur(14px);z-index:1000;
+  display:none;align-items:center;justify-content:center;
+}
+.popup-overlay.is-visible{display:flex;}
+.popup-container{
+  position:relative;background:var(--bg-card);
+  border:1px solid var(--border-accent);border-radius:16px;padding:1rem;
+  max-width:90vw;
+}
+.popup-close{
+  position:absolute;top:-14px;right:-14px;width:30px;height:30px;
+  border-radius:50%;background:var(--accent-indigo);
+  border:2px solid var(--bg-base);color:#fff;
+  font-size:18px;line-height:26px;text-align:center;cursor:pointer;
+  transition:transform var(--tr);
+}
+.popup-close:hover{transform:scale(1.12);}
+#video-popup .popup-container{width:640px;}
+#video-popup .popup-container iframe{width:100%;aspect-ratio:16/9;border:none;border-radius:8px;display:block;}
+#image-popup .popup-container{width:300px;}
+#image-popup .popup-container img{width:100%;height:auto;display:block;border-radius:8px;}
+
+/* =============================================
+   SCROLL ANIMATIONS
+   ============================================= */
+.fade-up{opacity:0;transform:translateY(22px);transition:opacity 0.6s ease,transform 0.6s ease;}
+.fade-up.visible{opacity:1;transform:translateY(0);}
+.delay-1{transition-delay:0.1s;}
+.delay-2{transition-delay:0.2s;}
+.delay-3{transition-delay:0.3s;}
+
+@media(max-width:480px){
+  section{padding:4rem 0;}
+  .section-title{font-size:2rem;}
+  .hero-title{font-size:2.4rem;}
+  .metric-card{width:100%;}
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <div class="header-container">
-                <div class="logo-container">
-                    <img src="https://raw.githubusercontent.com/Royal-Spark/Landing-Page/main/royal-spark-logo.png" alt="Royal Spark Logo" class="logo">
-                    <span class="logo-text">Royal Spark</span>
-                </div>
-                <div style="display: flex; align-items: center;">
-                    <nav class="desktop-nav" id="mobile-menu">
-                        <a href="https://forms.osi.apps.mil/r/eG12pHbiSQ" class="nav-link" target="_blank" rel="noopener noreferrer">Submit an Idea</a>
-                        <a href="#tools" class="nav-link">Tools</a>
-						<a href="#features" class="nav-link">Features</a>
-						<a href="#about" class="nav-link">About</a>
-                        <a href="#contact" class="nav-link">Contact</a>
-                    </nav>
-                    <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme">
-                        <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.25a.75.75 0 0 1 .75.75v2.25a.75.75 0 0 1-1.5 0V3a.75.75 0 0 1 .75-.75ZM7.5 12a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM18.894 6.106a.75.75 0 0 1 0 1.06l-1.591 1.59a.75.75 0 1 1-1.06-1.06l1.59-1.59a.75.75 0 0 1 1.06 0ZM21.75 12a.75.75 0 0 1-.75.75h-2.25a.75.75 0 0 1 0-1.5h2.25a.75.75 0 0 1 .75.75ZM17.894 17.894a.75.75 0 0 1-1.06 0l-1.59-1.591a.75.75 0 1 1 1.06-1.06l1.59 1.59a.75.75 0 0 1 0 1.061ZM12 18.75a.75.75 0 0 1 .75.75v2.25a.75.75 0 0 1-1.5 0v-2.25a.75.75 0 0 1 .75-.75ZM5.106 17.894a.75.75 0 0 1 0-1.06l1.59-1.591a.75.75 0 1 1 1.06 1.06l-1.59 1.59a.75.75 0 0 1-1.06 0ZM4.5 12a.75.75 0 0 1-.75.75H1.5a.75.75 0 0 1 0-1.5h2.25a.75.75 0 0 1 .75.75ZM6.106 5.106a.75.75 0 0 1 1.06 0l1.59 1.591a.75.75 0 0 1-1.06 1.06l-1.59-1.59a.75.75 0 0 1 0-1.061Z" /></svg>
-                        <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="display: none;"><path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 0 1 .162.819A8.97 8.97 0 0 0 9 6a9 9 0 0 0 9 9 8.97 8.97 0 0 0 3.463-.69.75.75 0 0 1 .981.981A10.503 10.503 0 0 1 18 19.5a10.5 10.5 0 0 1-10.5-10.5A10.503 10.503 0 0 1 9.528 1.718Z" clip-rule="evenodd" /></svg>
-                    </button>
-                    <button class="mobile-menu-button">
-                        <span class="sr-only">Toggle menu</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="4" x2="20" y1="12" y2="12"></line>
-                            <line x1="4" x2="20" y1="6" y2="6"></line>
-                            <line x1="4" x2="20" y1="18" y2="18"></line>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </header>
-        <main>
-            <section id="hero" class="hero-section">
-                <div class="hero-background"></div>
-                <div class="hero-glow"></div>
-                <div class="hero-container">
-                    <div class="hero-content">
-                        <div class="hero-logo-container">
-                            <img src="https://raw.githubusercontent.com/Royal-Spark/Landing-Page/main/royal-spark-logo.png" alt="Royal Spark Logo" class="hero-logo">
-                        </div>
-                         <div class="hero-buttons mobile-hero-btn">
-                            <a href="https://forms.osi.apps.mil/r/eG12pHbiSQ" class="primary-button" target="_blank" rel="noopener noreferrer">
-                                Submit an Idea!
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron-right">
-                                    <polyline points="9 18 15 12 9 6"></polyline>
-                                </svg>
-                            </a>
-                        </div>
-                        <div class="savings-hero-container">
-                            <div class="savings-trackers">
-                                <div class="savings-tracker money">
-                                    <svg class="savings-icon money" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <line x1="12" y1="1" x2="12" y2="23"></line>
-                                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                                    </svg>
-                                    <div class="savings-amount money" id="dollar-counter">$10,944,984</div>
-                                    <div class="savings-label">Cost Savings</div>
-                                    <div class="savings-period">Since Jan 2025</div>
-                                </div>
-                                <div class="hero-title-section">
-                                    <h1 class="hero-title">Igniting Innovation for Tomorrow</h1>
-                                </div>
-                                <div class="savings-tracker hours">
-                                    <svg class="savings-icon hours" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <polyline points="12 6 12 12 16 14"></polyline>
-                                    </svg>
-                                    <div class="savings-amount hours" id="hours-counter">20,746</div>
-                                    <div class="savings-label">Man-Hours Saved</div>
-                                    <div class="savings-period">Since Jan 2025</div>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="hero-description">
-                            Royal Spark Innovation Lab brings cutting-edge technology and creative solutions to shape the future of mission-critical operations for forward-thinking teams.
-                        </p>
-                        
-                        <div class="hero-buttons desktop-hero-btn">
-                            <a href="https://forms.osi.apps.mil/r/eG12pHbiSQ" class="primary-button" target="_blank" rel="noopener noreferrer">
-                                Submit an Idea!
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron-right">
-                                    <polyline points="9 18 15 12 9 6"></polyline>
-                                </svg>
-                            </a>
-                        </div>
+<div class="noise"></div>
 
-<!--  <div class="hero-buttons desktop-hero-btn">
-						<a href="https://raf-mildenhall-continuous-improvement-and-innovat-1063166927399.us-west1.run.app/" class="tool-button" target="_blank" rel="noopener noreferrer">
-        Track ROI
-        <svg class="chevron-right" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-        </svg>
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <a href="#hero" class="logo-link">
+      <img src="https://raw.githubusercontent.com/Royal-Spark/Landing-Page/main/royal-spark-logo.png" alt="Royal Spark Logo" class="logo-img">
+      <span class="logo-name">Royal Spark</span>
     </a>
-</div> 
-
-					-->
-					
-                </div>
-            </section>
-			<section id="genai" class="genai-section">
-    <div class="section-container genai-container">
-        <div class="section-header">
-            <div style="display: flex; align-items: center; justify-content: center; gap: 1rem;">
-                <a href="https://genai.mil" target="_blank" rel="noopener noreferrer" style="flex-shrink: 0;">
-                    <img src="GenAILogo.png" alt="GenAI.mil logo" style="height: 120px; width: auto; border-radius: 6px;" />
-                </a>
-                <h2 class="section-title" style="margin-bottom: 0;">About GenAI.mil</h2>
-                <a href="https://genai.mil" target="_blank" rel="noopener noreferrer" style="flex-shrink: 0;">
-                    <img src="GenAILogo.png" alt="GenAI.mil logo" style="height: 120px; width: auto; border-radius: 6px;" />
-                </a>
-            </div>
-            <p class="section-description" style="margin-top: 1rem;">The Department of War's premier AI model platform</p>
-        </div>
-
-        <div class="genai-content" style="max-width: 800px; margin: 0 auto;">
-            <div class="genai-text">
-                <p><strong>What is GenAI.mil?</strong> GenAI.mil is the Department of War's premier AI model platform, delivering AI models and applications securely across the joint force. The platform powers agentic workflows, enables rapid AI experimentation, and helps field an AI-enabled workforce.</p>
-
-                <p><strong>Purpose.</strong> GenAI.mil exists to achieve decisive cognitive overmatch by integrating AI with operational capabilities and compressing the OODA loop (Observe, Orient, Decide, Act) across echelons—helping commanders out-think, out-decide, and out-pace any adversary.</p>
-
-                <p><strong>Method.</strong> The effort focuses on three converging lines of work: delivering the best American AI to every desktop, integrating AI throughout operations, and forging an AI-ready workforce through training and toolsets.</p>
-
-                <div style="margin-top: 2rem; display: flex; justify-content: center;">
-                    <a class="primary-button" href="https://genai.mil" target="_blank" rel="noopener noreferrer">Visit GenAI.mil</a>
-                </div>
-            </div>
-        </div>
+    <nav class="nav-desktop">
+      <a href="#tools" class="nav-link">Tools</a>
+      <a href="#about" class="nav-link">About</a>
+      <a href="#contact" class="nav-link">Contact</a>
+      <a href="https://forms.osi.apps.mil/r/eG12pHbiSQ" class="nav-submit" target="_blank" rel="noopener noreferrer">Submit an Idea</a>
+    </nav>
+    <div class="header-controls">
+      <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+        <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.106a.75.75 0 010 1.06l-1.591 1.59a.75.75 0 11-1.06-1.06l1.59-1.59a.75.75 0 011.06 0zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5h2.25a.75.75 0 01.75.75zM17.894 17.894a.75.75 0 01-1.06 0l-1.59-1.591a.75.75 0 111.06-1.06l1.59 1.59a.75.75 0 010 1.061zM12 18.75a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0v-2.25a.75.75 0 01.75-.75zM5.106 17.894a.75.75 0 010-1.06l1.59-1.591a.75.75 0 111.06 1.06l-1.59 1.59a.75.75 0 01-1.06 0zM4.5 12a.75.75 0 01-.75.75H1.5a.75.75 0 010-1.5h2.25A.75.75 0 014.5 12zM6.106 5.106a.75.75 0 011.06 0l1.59 1.591a.75.75 0 11-1.06 1.06l-1.59-1.59a.75.75 0 010-1.061z"/></svg>
+        <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.981 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z" clip-rule="evenodd"/></svg>
+      </button>
+      <button class="btn-icon btn-hamburger" id="mobile-menu-btn" aria-label="Toggle navigation">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
     </div>
+  </div>
+</header>
+
+<!-- MOBILE NAV -->
+<nav class="mobile-menu" id="mobile-menu">
+  <a href="#tools" class="nav-link">Tools</a>
+  <a href="#about" class="nav-link">About</a>
+  <a href="#contact" class="nav-link">Contact</a>
+  <a href="https://forms.osi.apps.mil/r/eG12pHbiSQ" class="nav-submit" target="_blank" rel="noopener noreferrer">Submit an Idea</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero" class="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow-1"></div>
+  <div class="hero-glow-2"></div>
+  <canvas id="hero-canvas"></canvas>
+  <div class="container hero-content">
+    <div class="hero-inner">
+
+      <!-- Left metric: Cost Savings -->
+      <div class="hero-counter-left">
+        <div class="metric-card green fade-up delay-1">
+          <div class="metric-status">
+            <div class="metric-dot"></div>
+            <span class="metric-live">Live Tracking</span>
+          </div>
+          <svg class="metric-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          <div class="metric-value" id="dollar-counter">$14,944,984</div>
+          <div class="metric-label">Cost Savings</div>
+          <div class="metric-period">Since Jan 2025</div>
+        </div>
+      </div>
+
+      <!-- Center -->
+      <div class="hero-center fade-up">
+        <img src="https://raw.githubusercontent.com/Royal-Spark/Landing-Page/main/royal-spark-logo.png" alt="Royal Spark Logo" class="hero-logo">
+        <!-- Mobile CTA (shown only on mobile, hidden on desktop via JS) -->
+        <a href="https://forms.osi.apps.mil/r/eG12pHbiSQ" class="hero-cta" id="mobile-hero-cta" style="display:none;" target="_blank" rel="noopener noreferrer">
+          Submit an Idea
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="btn-icon-right"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <h1 class="hero-title">Igniting Innovation<br>for Tomorrow</h1>
+        <p class="hero-description">Royal Spark Innovation Lab brings cutting-edge technology and creative solutions to shape the future of mission-critical operations for forward-thinking teams.</p>
+        <!-- Desktop CTA -->
+        <a href="https://forms.osi.apps.mil/r/eG12pHbiSQ" class="hero-cta" id="desktop-hero-cta" target="_blank" rel="noopener noreferrer">
+          Submit an Idea
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="btn-icon-right"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </div>
+
+      <!-- Right metric: Man-Hours -->
+      <div class="hero-counter-right">
+        <div class="metric-card cyan fade-up delay-2">
+          <div class="metric-status">
+            <div class="metric-dot"></div>
+            <span class="metric-live">Live Tracking</span>
+          </div>
+          <svg class="metric-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <div class="metric-value" id="hours-counter">0</div>
+          <div class="metric-label">Man-Hours Saved</div>
+          <div class="metric-period">Since Jan 2025</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </section>
-            <section id="tools" class="tools-section">
-                <div class="section-container tools-container">
-                    <div class="section-header">
-                        <h2 class="section-title">Digital Innovation Tools</h2>
-                        <p class="section-description">
-                            Access the latest digital tools to enhance your workflow and spark creativity. Click a button to launch each resource.
-                        </p>
-                    </div>
 
-                    <div class="disclaimer-box">
-                        <strong>Disclaimer:</strong> The web tools provided below are hosted online and must <b>not</b> be used with any Personally Identifiable Information (PII), Controlled Unclassified Information (CUI), or classified data. Please use only for general or unclassified workflows.
-                    </div>
-                    
-                    <div class="tools-list" id="primary-tools">
-						<a class="tool-button" href="https://royal-spark.github.io/USAF-Performance-Statement-Prompt-Generator/">AI Augmented Performance Statements</a>
-     					<a class="tool-button" href="https://royal-spark.github.io/File-Forge/">File Forge - AI Document Filler</a>
-                    </div>
-
-                    <div class="tools-list" id="extra-tools-container" style="display: none; margin-top: 1.5rem;">
-      					<a class="tool-button" href="https://royal-spark.github.io/Landing-Page/BAHCalculator.html">BAH Calculator</a>
-      					<a class="tool-button" href="https://royal-spark.github.io/Hourly-Cost-Calculator/">Personnel Cost Calculator</a>
-      					<a class="tool-button" href="https://royal-spark.github.io/Landing-Page/Agenda%20AI.html">Agenda AI - Meeting Summary</a>
-      					<a class="tool-button tool-button-long" href="https://royal-spark.github.io/Landing-Page/Acquisition%20Compass.html">Acquisition Compass - What funds?</a>
-						<a class="tool-button" href="https://royal-spark.github.io/Landing-Page/mmc%20generator.html">MCC Generator - Idea to Concept</a>
-						<a class="tool-button" href="https://royal-spark.github.io/Landing-Page/FinanceBuddy.html">FinanceBuddy - Not Online Yet</a>
-      					<a class="tool-button" href="https://safe.menlosecurity.com/https://gemini.google.com/share/555f65accc0f">AI SOP Generator - TESTING</a>
-      					<a class="tool-button" href="safe.menlosecurity.com/https://gemini.google.com/share/9a48cb140c07">AI AAR Generator - TESTING</a>
-      					<a class="tool-button tool-button-long" href="https://safe.menlosecurity.com/https://gemini.google.com/share/4f4b090a5faf">Award Analyzer Assistant - TESTING</a>
-      					<a class="tool-button" href="https://safe.menlosecurity.com/https://gemini.google.com/share/7aa53370fedd">EFDP Record Console - TESTING</a>
-                    </div>
-
-                    <div style="text-align: center; margin-top: 2rem;">
-                        <button id="show-more-tools-btn" class="primary-button" style="background: var(--color-zinc-800); border: 1px solid var(--color-zinc-700);">
-                            Show More Tools
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron-right" style="transform: rotate(90deg); transition: transform 0.3s;">
-                                <polyline points="9 18 15 12 9 6"></polyline>
-                            </svg>
-                        </button>
-                    </div>
-
-                    </div>
-            </section>
-            <section id="about" class="about-section">
-                <div class="section-container">
-                    <div class="section-header">
-                        <h2 class="section-title">About Royal Spark</h2>
-                        <p class="section-description">Igniting Innovation. Empowering Problem Solvers.</p>
-                    </div>
-                    <div class="about-content">
-                        <p>Royal Spark is a dedicated innovation cell serving as the launchpad for next-generation ideas across our organization and mission partners.</p>
-                        <h3>Our Mission</h3>
-                        <p>To drive mission-focused innovation that strengthens readiness, enhances operational effectiveness, and supports our teams through cutting-edge solutions, cross-functional partnerships, and resourceful thinking.</p>
-                        <h3>What We Do</h3>
-                        <ul>
-                            <li>Manage Innovation Funding & Resources</li>
-                            <li>Develop rapid prototypes in our 3D printing lab</li>
-                            <li>Host design sprints, workshops, and pitch events</li>
-                            <li>Forge partnerships with industry, academia, and strategic allies</li>
-                            <li>Support fielding of new tech, software, and workflows</li>
-                        </ul>
-                        <h3 class="about-cta-title">Let's Build the Future – Together</h3>
-                        <p class="about-cta-text">Got an idea to improve the mission? Visit our lab, pitch your concept, or just stop by to collaborate. Innovation is a team sport—and everyone has a part to play!</p>
-                    </div>
-                </div>
-            </section>
-            <section id="features" class="features-section">
-                <div class="section-container">
-                    <div class="section-header">
-                        <h2 class="section-title">Cutting-Edge Features</h2>
-                        <p class="section-description">
-                            Discover how Royal Spark Innovation Lab is revolutionizing technology and innovation.
-                        </p>
-                    </div>
-                    <div class="features-grid">
-                        <div class="feature-card">
-                            <div class="feature-icon-container">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feature-icon">
-                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                                </svg>
-                            </div>
-                            <h3 class="feature-title">Advanced AI Integration</h3>
-                            <p class="feature-description">
-                                Leverage cutting-edge artificial intelligence to automate processes and gain valuable insights from your organizational data.
-                            </p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-icon-container lightbulb">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feature-icon">
-                                    <line x1="9" y1="18" x2="15" y2="18"></line>
-                                    <line x1="10" y1="22" x2="14" y2="22"></line>
-                                    <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"></path>
-                                </svg>
-                            </div>
-                            <h3 class="feature-title">Innovation Workshops</h3>
-                            <p class="feature-description">
-                                Collaborative sessions designed to spark creativity and develop groundbreaking solutions to complex problems.
-                            </p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-icon-container">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feature-icon">
-                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                                    <polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline>
-                                    <polyline points="7.5 19.79 7.5 14.6 3 12"></polyline>
-                                    <polyline points="21 12 16.5 14.6 16.5 19.79"></polyline>
-                                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                                </svg>
-                            </div>
-                            <h3 class="feature-title">Digital Transformation</h3>
-                            <p class="feature-description">
-                                Comprehensive strategies to help teams evolve and thrive in the digital age through technology adoption.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-			
-            <section id="contact" class="cta-section">
-                <div class="section-container">
-                     <div class="cta-card">
-                        <div class="cta-background" style="background-image: url(&#39;https://placehold.co/1200x600/18181b/FFFFFF?text=Innovation&#39;);"></div>
-                        <div class="cta-content">
-                            <div class="cta-logo-container">
-                                <img src="https://raw.githubusercontent.com/Royal-Spark/Landing-Page/main/royal-spark-logo.png" alt="Royal Spark Logo" class="cta-logo">
-                            </div>
-                            <div class="cta-title-wrapper">
-                                <img src="https://raw.githubusercontent.com/Royal-Spark/Landing-Page/main/QRCode%20for%20Royal%20Spark%20Idea%20Submission.png" alt="Submit Idea QR Code" class="cta-qr-code js-qr-trigger">
-                                
-                                <h2 class="cta-title">Ready to Spark Innovation?</h2>
-                                
-                                <img src="https://raw.githubusercontent.com/Royal-Spark/Landing-Page/refs/heads/main/SparkQRCode.png" alt="Royal Spark QR Code" class="cta-qr-code js-qr-trigger">
-                            </div>
-                            <p class="cta-description">
-                                Join Royal Spark Innovation Lab and be part of the future. Let's create groundbreaking solutions together.
-                            </p>
-                            <div class="cta-email" style="margin-top:1.5rem;">
-                                <a href="mailto:100ARW.RoyalSpark@us.af.mil" class="primary-button" style="background: var(--color-zinc-800); font-size:1.1rem;">
-                                    Contact Us Via Email
-                                </a>
-                          </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-        <footer class="footer">
-            <div class="footer-container">
-                <p>© 2025 Royal Spark Innovation Lab. All rights reserved.</p>
-            </div>
-        </footer>
-    </div>
-    
-    <div id="video-popup-overlay">
-        <div id="video-popup-container">
-            <button id="close-popup-btn">&times;</button>
-            <iframe id="youtube-player" 
-                    width="560" 
-                    height="315" 
-                    src="" 
-                    title="YouTube video player" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen>
-            </iframe>
+<!-- GENAI SECTION -->
+<section id="genai" class="genai-section">
+  <div class="container">
+    <div class="section-header section-header-centered">
+      <div class="genai-header">
+        <a href="https://genai.mil" target="_blank" rel="noopener noreferrer">
+          <img src="GenAILogo.png" alt="GenAI.mil logo" class="genai-logo">
+        </a>
+        <div>
+          <div class="section-eyebrow" style="justify-content:center;">Department of War</div>
+          <h2 class="section-title text-gradient">About GenAI.mil</h2>
         </div>
+        <a href="https://genai.mil" target="_blank" rel="noopener noreferrer">
+          <img src="GenAILogo.png" alt="GenAI.mil logo" class="genai-logo">
+        </a>
+      </div>
+      <p class="section-description" style="margin:0 auto;">The Department of War's premier AI model platform</p>
+    </div>
+    <div class="genai-content">
+      <p><strong>What is GenAI.mil?</strong> GenAI.mil is the Department of War's premier AI model platform, delivering AI models and applications securely across the joint force. The platform powers agentic workflows, enables rapid AI experimentation, and helps field an AI-enabled workforce.</p>
+      <p><strong>Purpose.</strong> GenAI.mil exists to achieve decisive cognitive overmatch by integrating AI with operational capabilities and compressing the OODA loop (Observe, Orient, Decide, Act) across echelons—helping commanders out-think, out-decide, and out-pace any adversary.</p>
+      <p><strong>Method.</strong> The effort focuses on three converging lines of work: delivering the best American AI to every desktop, integrating AI throughout operations, and forging an AI-ready workforce through training and toolsets.</p>
+      <div class="genai-cta">
+        <a href="https://genai.mil" class="btn-primary" target="_blank" rel="noopener noreferrer">
+          Visit GenAI.mil
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon-right"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS SECTION -->
+<section id="tools" class="tools-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">Mission Resources</div>
+      <h2 class="section-title" id="tools-title">Digital Innovation Tools</h2>
+      <p class="section-description">Access the latest digital tools to enhance your workflow and spark creativity. Double-click the title above for a video walkthrough.</p>
     </div>
 
-    <div id="image-popup-overlay">
-        <div id="image-popup-container">
-            <button id="close-image-popup-btn">&times;</button>
-            <img id="popup-target-image" src="" alt="Royal Spark QR Code Large">
+    <div class="disclaimer-box">
+      <svg class="disclaimer-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span><strong>Disclaimer:</strong> The web tools provided below are hosted online and must <strong>not</strong> be used with any Personally Identifiable Information (PII), Controlled Unclassified Information (CUI), or classified data. Please use only for general or unclassified workflows.</span>
+    </div>
+
+    <!-- Category: AI Writing & Documents -->
+    <div class="tools-category">
+      <div class="tools-category-label">AI Writing &amp; Documents</div>
+      <div class="tools-grid">
+        <a class="tool-card" href="https://royal-spark.github.io/USAF-Performance-Statement-Prompt-Generator/" target="_blank" rel="noopener noreferrer">
+          <div class="tool-card-header"><div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><span class="tool-badge active">Active</span></div>
+          <div class="tool-name">AI Augmented Performance Statements</div>
+          <div class="tool-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </a>
+        <a class="tool-card" href="https://royal-spark.github.io/File-Forge/" target="_blank" rel="noopener noreferrer">
+          <div class="tool-card-header"><div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><span class="tool-badge active">Active</span></div>
+          <div class="tool-name">File Forge — AI Document Filler</div>
+          <div class="tool-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </a>
+        <a class="tool-card" href="https://safe.menlosecurity.com/https://gemini.google.com/share/555f65accc0f" target="_blank" rel="noopener noreferrer">
+          <div class="tool-card-header"><div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/><path d="M9 12h6M9 16h4"/></svg></div><span class="tool-badge testing">Testing</span></div>
+          <div class="tool-name">AI SOP Generator</div>
+          <div class="tool-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </a>
+        <a class="tool-card" href="https://safe.menlosecurity.com/https://gemini.google.com/share/9a48cb140c07" target="_blank" rel="noopener noreferrer">
+          <div class="tool-card-header"><div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg></div><span class="tool-badge testing">Testing</span></div>
+          <div class="tool-name">AI AAR Generator</div>
+          <div class="tool-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </a>
+        <a class="tool-card" href="https://safe.menlosecurity.com/https://gemini.google.com/share/4f4b090a5faf" target="_blank" rel="noopener noreferrer">
+          <div class="tool-card-header"><div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg></div><span class="tool-badge testing">Testing</span></div>
+          <div class="tool-name">Award Analyzer Assistant</div>
+          <div class="tool-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Category: Finance & Budgeting -->
+    <div class="tools-category">
+      <div class="tools-category-label">Finance &amp; Budgeting</div>
+      <div class="tools-grid">
+        <a class="tool-card" href="https://royal-spark.github.io/Landing-Page/BAHCalculator.html" target="_blank" rel="noopener noreferrer">
+          <div class="tool-card-header"><div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><span class="tool-badge active">Active</span></div>
+          <div class="tool-name">BAH Calculator</div>
+          <div class="tool-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </a>
+        <a class="tool-card" href="https://royal-spark.github.io/Hourly-Cost-Calculator/" target="_blank" rel="noopener noreferrer">
+          <div class="tool-card-header"><div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div><span class="tool-badge active">Active</span></div>
+          <div class="tool-name">Personnel Cost Calculator</div>
+          <div class="tool-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </a>
+        <a class="tool-card" href="https://royal-spark.github.io/Landing-Page/Acquisition%20Compass.html" target="_blank" rel="noopener noreferrer">
+          <div class="tool-card-header"><div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg></div><span class="tool-badge active">Active</span></div>
+          <div class="tool-name">Acquisition Compass — What Funds?</div>
+          <div class="tool-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </a>
+        <div class="tool-card disabled">
+          <div class="tool-card-header"><div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><span class="tool-badge offline">Offline</span></div>
+          <div class="tool-name">FinanceBuddy</div>
         </div>
+      </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
+    <!-- Category: Planning & Innovation -->
+    <div class="tools-category">
+      <div class="tools-category-label">Planning &amp; Innovation</div>
+      <div class="tools-grid">
+        <a class="tool-card" href="https://royal-spark.github.io/Landing-Page/Agenda%20AI.html" target="_blank" rel="noopener noreferrer">
+          <div class="tool-card-header"><div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><span class="tool-badge active">Active</span></div>
+          <div class="tool-name">Agenda AI — Meeting Summary</div>
+          <div class="tool-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </a>
+        <a class="tool-card" href="https://royal-spark.github.io/Landing-Page/mmc%20generator.html" target="_blank" rel="noopener noreferrer">
+          <div class="tool-card-header"><div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0018 8 6 6 0 006 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 018.91 14"/></svg></div><span class="tool-badge active">Active</span></div>
+          <div class="tool-name">MCC Generator — Idea to Concept</div>
+          <div class="tool-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </a>
+        <a class="tool-card" href="https://safe.menlosecurity.com/https://gemini.google.com/share/7aa53370fedd" target="_blank" rel="noopener noreferrer">
+          <div class="tool-card-header"><div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div><span class="tool-badge testing">Testing</span></div>
+          <div class="tool-name">EFDP Record Console</div>
+          <div class="tool-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ABOUT -->
+<section id="about" class="about-section">
+  <div class="container">
+    <div class="about-grid">
+      <div>
+        <div class="section-eyebrow">Who We Are</div>
+        <h2 class="section-title">About <span class="text-gradient">Royal Spark</span></h2>
+        <div class="section-divider" style="margin-top:1rem;"></div>
+        <p class="section-description" style="margin-top:1.25rem;">Royal Spark is a dedicated innovation cell serving as the launchpad for next-generation ideas across our organization and mission partners.</p>
+        <div class="about-cta-box">
+          <h3 class="about-cta-title">Let's Build the Future – Together</h3>
+          <p class="about-cta-text">Got an idea to improve the mission? Visit our lab, pitch your concept, or just stop by to collaborate. Innovation is a team sport—and everyone has a part to play!</p>
+        </div>
+      </div>
+      <div>
+        <div class="about-mission">
+          <div class="about-mission-label">Our Mission</div>
+          <p class="about-mission-text">To drive mission-focused innovation that strengthens readiness, enhances operational effectiveness, and supports our teams through cutting-edge solutions, cross-functional partnerships, and resourceful thinking.</p>
+        </div>
+        <div style="margin-top:2rem;">
+          <div class="about-what-label">What We Do</div>
+          <ul class="about-list">
+            <li class="about-list-item">Manage Innovation Funding &amp; Resources</li>
+            <li class="about-list-item">Develop rapid prototypes in our 3D printing lab</li>
+            <li class="about-list-item">Host design sprints, workshops, and pitch events</li>
+            <li class="about-list-item">Forge partnerships with industry, academia, and strategic allies</li>
+            <li class="about-list-item">Support fielding of new tech, software, and workflows</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-            // --- START: Global Variables ---
-            const SUPABASE_FUNCTION_URL = 'https://<project-ref>.supabase.co/functions/v1/finance-ai';
-            const SAVINGS_DATA = {
-                dollarsSaved: 10944984,
-                hoursSaved: 20746
-            };
 
-            // --- START: Function Definitions ---
-            function animateCounter(element, start, end, duration, prefix = '', suffix = '') {
-                const startTime = performance.now();
-                function updateCounter(currentTime) {
-                    const elapsed = currentTime - startTime;
-                    const progress = Math.min(elapsed / duration, 1);
-                    const easeOut = 1 - Math.pow(1 - progress, 3);
-                    const currentValue = Math.floor(start + (end - start) * easeOut);
-                    const formattedValue = currentValue.toLocaleString();
-                    element.textContent = prefix + formattedValue + suffix;
-                    if (progress < 1) requestAnimationFrame(updateCounter);
-                }
-                requestAnimationFrame(updateCounter);
-            }
+<!-- CONTACT / CTA -->
+<section id="contact" class="contact-section">
+  <div class="container">
+    <div class="contact-inner">
+      <div class="contact-glow"></div>
+      <img src="https://raw.githubusercontent.com/Royal-Spark/Landing-Page/main/royal-spark-logo.png" alt="Royal Spark Logo" class="contact-logo">
+      <div class="contact-qr-row">
+        <div class="qr-item">
+          <img src="https://raw.githubusercontent.com/Royal-Spark/Landing-Page/main/QRCode%20for%20Royal%20Spark%20Idea%20Submission.png" alt="Submit Idea QR Code" class="qr-code js-qr-trigger">
+          <span class="qr-label">Submit Idea</span>
+        </div>
+        <div>
+          <h2 class="contact-title">Ready to <span class="text-gradient">Spark</span><br>Innovation?</h2>
+        </div>
+        <div class="qr-item">
+          <img src="https://raw.githubusercontent.com/Royal-Spark/Landing-Page/refs/heads/main/SparkQRCode.png" alt="Royal Spark QR Code" class="qr-code js-qr-trigger">
+          <span class="qr-label">Royal Spark</span>
+        </div>
+      </div>
+      <p class="contact-description">Join Royal Spark Innovation Lab and be part of the future. Let's create groundbreaking solutions together.</p>
+      <div class="contact-actions">
+        <a href="https://forms.osi.apps.mil/r/eG12pHbiSQ" class="btn-primary" target="_blank" rel="noopener noreferrer">
+          Submit an Idea
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="btn-icon-right"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a href="mailto:100ARW.RoyalSpark@us.af.mil" class="btn-secondary">Contact Us Via Email</a>
+      </div>
+    </div>
+  </div>
+</section>
 
-            function initializeCounters() {
-                const dollarCounter = document.getElementById('dollar-counter');
-                const hoursCounter = document.getElementById('hours-counter');
-                if (dollarCounter && hoursCounter) {
-                    const observer = new IntersectionObserver((entries) => {
-                        if (entries[0].isIntersecting) {
-                            animateCounter(dollarCounter, 0, SAVINGS_DATA.dollarsSaved, 2000, '$');
-                            animateCounter(hoursCounter, 0, SAVINGS_DATA.hoursSaved, 2000);
-                            observer.disconnect();
-                        }
-                    }, { threshold: 0.1 });
-                    observer.observe(dollarCounter);
-                }
-            }
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <img src="https://raw.githubusercontent.com/Royal-Spark/Landing-Page/main/royal-spark-logo.png" alt="Royal Spark" class="footer-logo-img">
+      <p class="footer-copyright">© 2025 Royal Spark Innovation Lab. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
 
-            function handleAudioError(audio) {
-                const errorDiv = audio.parentElement.querySelector('.audio-error');
-                if (errorDiv) {
-                    errorDiv.style.display = 'block';
-                }
-            }
+<!-- VIDEO POPUP -->
+<div class="popup-overlay" id="video-popup">
+  <div class="popup-container">
+    <button class="popup-close" id="close-video-popup">&times;</button>
+    <iframe id="youtube-player" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+</div>
 
-            function fitToolButtons() {
-                document.querySelectorAll('.tool-button').forEach(btn => {
-                    if (btn.offsetParent === null) return;
-                    let fontSize = 1.15;
-                    btn.style.fontSize = fontSize + 'rem';
-                    while (btn.scrollWidth > btn.clientWidth && fontSize > 0.7) {
-                        fontSize -= 0.02;
-                        btn.style.fontSize = fontSize + 'rem';
-                    }
-                });
-            }
+<!-- IMAGE POPUP -->
+<div class="popup-overlay" id="image-popup">
+  <div class="popup-container">
+    <button class="popup-close" id="close-image-popup">&times;</button>
+    <img id="popup-image-src" src="" alt="QR Code enlarged">
+  </div>
+</div>
 
-            // --- Theme Switcher Logic ---
-            const themeToggleBtn = document.getElementById('theme-toggle');
-            const sunIcon = document.getElementById('sun-icon');
-            const moonIcon = document.getElementById('moon-icon');
+<script>
+document.addEventListener('DOMContentLoaded', function() {
 
-            function applyTheme(theme) {
-                if (theme === 'light') {
-                    document.documentElement.setAttribute('data-theme', 'light');
-                    sunIcon.style.display = 'none';
-                    moonIcon.style.display = 'block';
-                } else {
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                    sunIcon.style.display = 'block';
-                    moonIcon.style.display = 'none';
-                }
-            }
-            const savedTheme = localStorage.getItem('theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            let initialTheme = savedTheme ? savedTheme : (prefersDark ? 'dark' : 'light');
-            applyTheme(initialTheme);
+  /* ── THEME TOGGLE ── */
+  const themeToggle = document.getElementById('theme-toggle');
+  const sunIcon     = document.getElementById('sun-icon');
+  const moonIcon    = document.getElementById('moon-icon');
 
-            themeToggleBtn.addEventListener('click', () => {
-                const currentTheme = document.documentElement.getAttribute('data-theme');
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                localStorage.setItem('theme', newTheme);
-                applyTheme(newTheme);
-            });
+  function applyTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    sunIcon.style.display  = t === 'dark'  ? 'block' : 'none';
+    moonIcon.style.display = t === 'light' ? 'block' : 'none';
+  }
+  const saved = localStorage.getItem('theme');
+  const sys   = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  applyTheme(saved || sys);
+  themeToggle.addEventListener('click', () => {
+    const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('theme', next);
+    applyTheme(next);
+  });
 
-            // --- Mobile Menu Toggle Logic ---
-            const menuButton = document.querySelector('.mobile-menu-button');
-            const mobileMenu = document.querySelector('#mobile-menu');
+  /* ── MOBILE MENU ── */
+  const mobileBtn  = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  mobileBtn.addEventListener('click', () => mobileMenu.classList.toggle('is-open'));
+  mobileMenu.addEventListener('click', e => {
+    if (e.target.classList.contains('nav-link') || e.target.classList.contains('nav-submit'))
+      mobileMenu.classList.remove('is-open');
+  });
 
-            if (menuButton && mobileMenu) {
-                menuButton.addEventListener('click', () => {
-                    mobileMenu.classList.toggle('is-open');
-                });
-                mobileMenu.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('nav-link')) {
-                        mobileMenu.classList.remove('is-open');
-                    }
-                });
-            }
+  /* ── SMOOTH SCROLL ── */
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', function(e) {
+      const id = this.getAttribute('href');
+      if (id === '#') return;
+      const el = document.querySelector(id);
+      if (el) {
+        e.preventDefault();
+        window.scrollTo({ top: el.getBoundingClientRect().top + scrollY - 68, behavior: 'smooth' });
+      }
+    });
+  });
 
-            // --- Smooth Scrolling Logic ---
-            const navLinks = document.querySelectorAll('a.nav-link[href^="#"]');
-            navLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href');
-                    const targetSection = document.querySelector(targetId);
-                    if (targetSection) {
-                        targetSection.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                });
-            });
+  /* ── MOBILE/DESKTOP HERO CTA SWAP ── */
+  function syncCTAs() {
+    const mob = document.getElementById('mobile-hero-cta');
+    const dsk = document.getElementById('desktop-hero-cta');
+    const m   = innerWidth < 920;
+    if (mob) mob.style.display = m ? 'inline-flex' : 'none';
+    if (dsk) dsk.style.display = m ? 'none' : 'inline-flex';
+  }
+  syncCTAs();
+  window.addEventListener('resize', syncCTAs);
 
-            // --- Video Popup Logic ---
-            const titleTrigger = document.querySelector('#tools .section-title');
-            const videoOverlay = document.getElementById('video-popup-overlay');
-            const closeBtn = document.getElementById('close-popup-btn');
-            const youtubePlayer = document.getElementById('youtube-player');
-            const videoSrc = 'https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&rel=0';
+  /* ── ANIMATED COUNTERS ── */
+  function animateCounter(el, end, duration, prefix) {
+    const start = performance.now();
+    function tick(now) {
+      const p = Math.min((now - start) / duration, 1);
+      const v = Math.floor((1 - Math.pow(1 - p, 4)) * end);
+      el.textContent = prefix + v.toLocaleString();
+      if (p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+  const dollarEl = document.getElementById('dollar-counter');
+  const hoursEl  = document.getElementById('hours-counter');
+  let countersRan = false;
+  const cObs = new IntersectionObserver(([e]) => {
+    if (e.isIntersecting && !countersRan) {
+      countersRan = true;
+      animateCounter(dollarEl, 14944984, 2200, '$');
+      animateCounter(hoursEl,  20746,    2000, '');
+      cObs.disconnect();
+    }
+  }, { threshold: 0.2 });
+  if (dollarEl) cObs.observe(dollarEl);
 
-            if (titleTrigger && videoOverlay && closeBtn && youtubePlayer) {
-                const openPopup = () => {
-                    window.getSelection().removeAllRanges();
-                    youtubePlayer.src = videoSrc;
-                    videoOverlay.classList.add('is-visible');
-                };
-                const closePopup = () => {
-                    youtubePlayer.src = ''; // Stop the video
-                    videoOverlay.classList.remove('is-visible');
-                };
+  /* ── HERO PARTICLE CANVAS ── */
+  const canvas = document.getElementById('hero-canvas');
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let pts = [];
 
-                titleTrigger.addEventListener('dblclick', openPopup);
-                closeBtn.addEventListener('click', closePopup);
-                videoOverlay.addEventListener('click', (e) => {
-                    if (e.target === videoOverlay) { 
-                        closePopup();
-                    }
-                });
-            }
-            
-            // --- Image Popup Logic (Updated for Multiple QRs) ---
-            // Select all elements with the class 'js-qr-trigger'
-            const qrTriggers = document.querySelectorAll('.js-qr-trigger');
-            const imagePopupOverlay = document.getElementById('image-popup-overlay');
-            const closeImagePopupBtn = document.getElementById('close-image-popup-btn');
-            const popupTargetImage = document.getElementById('popup-target-image');
+    function resize() {
+      canvas.width  = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    }
+    function init() {
+      pts = [];
+      const n = Math.floor(canvas.width * canvas.height / 16000);
+      for (let i = 0; i < n; i++) pts.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.38,
+        vy: (Math.random() - 0.5) * 0.38,
+        r: Math.random() * 1.4 + 0.4,
+        a: Math.random() * 0.45 + 0.15
+      });
+    }
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const light = document.documentElement.getAttribute('data-theme') === 'light';
+      const dc = light ? '60,80,180' : '130,148,255';
+      const lc = light ? '80,100,210' : '92,110,247';
+      for (let i = 0; i < pts.length; i++) {
+        for (let j = i + 1; j < pts.length; j++) {
+          const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
+          const d = Math.sqrt(dx*dx + dy*dy);
+          if (d < 115) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(${lc},${(1-d/115)*0.14})`;
+            ctx.lineWidth = 0.5;
+            ctx.moveTo(pts[i].x, pts[i].y);
+            ctx.lineTo(pts[j].x, pts[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+      pts.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(${dc},${p.a})`;
+        ctx.fill();
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+      });
+      requestAnimationFrame(draw);
+    }
+    resize(); init(); draw();
+    window.addEventListener('resize', () => { resize(); init(); });
+  }
 
-            if (qrTriggers.length > 0 && imagePopupOverlay && closeImagePopupBtn && popupTargetImage) {
-                
-                // Loop through each trigger and add the click event
-                qrTriggers.forEach(trigger => {
-                    trigger.addEventListener('click', function() {
-                        // Set the source of the popup image to the source of the clicked image
-                        popupTargetImage.src = this.src;
-                        imagePopupOverlay.classList.add('is-visible');
-                    });
-                });
+  /* ── VIDEO POPUP (double-click tools title) ── */
+  const toolsTitle   = document.getElementById('tools-title');
+  const videoPopup   = document.getElementById('video-popup');
+  const ytPlayer     = document.getElementById('youtube-player');
+  const closeVideoBtn= document.getElementById('close-video-popup');
+  const videoSrc     = 'https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&rel=0';
 
-                const closeImagePopup = () => {
-                    imagePopupOverlay.classList.remove('is-visible');
-                };
+  if (toolsTitle && videoPopup) {
+    toolsTitle.style.cursor = 'default';
+    toolsTitle.addEventListener('dblclick', () => {
+      window.getSelection().removeAllRanges();
+      ytPlayer.src = videoSrc;
+      videoPopup.classList.add('is-visible');
+    });
+    function closeVideo() { ytPlayer.src = ''; videoPopup.classList.remove('is-visible'); }
+    closeVideoBtn.addEventListener('click', closeVideo);
+    videoPopup.addEventListener('click', e => { if (e.target === videoPopup) closeVideo(); });
+  }
 
-                closeImagePopupBtn.addEventListener('click', closeImagePopup);
-                imagePopupOverlay.addEventListener('click', (e) => {
-                    if (e.target === imagePopupOverlay) {
-                        closeImagePopup();
-                    }
-                });
-            }
-            
-            // --- Show More Tools Logic ---
-            const showMoreBtn = document.getElementById('show-more-tools-btn');
-            const extraToolsContainer = document.getElementById('extra-tools-container');
-            
-            if (showMoreBtn && extraToolsContainer) {
-                const btnText = showMoreBtn.childNodes[0]; // The text node
-                const btnIcon = showMoreBtn.querySelector('svg');
-                
-                showMoreBtn.addEventListener('click', () => {
-                    const isHidden = extraToolsContainer.style.display === 'none';
-                    
-                    if (isHidden) {
-                        extraToolsContainer.style.display = 'flex'; // Changed from block to flex to fix layout
-                        btnText.nodeValue = "Show Less  ";
-                        if (btnIcon) btnIcon.style.transform = "rotate(-90deg)";
-                    } else {
-                        extraToolsContainer.style.display = 'none';
-                        btnText.nodeValue = "Show More Tools  ";
-                         if (btnIcon) btnIcon.style.transform = "rotate(90deg)";
-                         // Optional: scroll back up slightly if needed
-                         document.getElementById('primary-tools').scrollIntoView({behavior: 'smooth', block: 'center'});
-                    }
-                });
-            }
+  /* ── IMAGE (QR) POPUP ── */
+  const imagePopup   = document.getElementById('image-popup');
+  const popupImg     = document.getElementById('popup-image-src');
+  const closeImgBtn  = document.getElementById('close-image-popup');
 
-            // --- Initial Function Calls & Event Listeners ---
-            initializeCounters();
-            fitToolButtons();
-            window.addEventListener('resize', fitToolButtons);
+  document.querySelectorAll('.js-qr-trigger').forEach(img => {
+    img.addEventListener('click', function() {
+      popupImg.src = this.src;
+      imagePopup.classList.add('is-visible');
+    });
+  });
+  closeImgBtn.addEventListener('click', () => imagePopup.classList.remove('is-visible'));
+  imagePopup.addEventListener('click', e => { if (e.target === imagePopup) imagePopup.classList.remove('is-visible'); });
 
-        });
-    </script>
+  /* ── SHOW MORE TOOLS ── */
+  const showMoreBtn  = document.getElementById('show-more-btn');
+  const extraTools   = document.getElementById('extra-tools');
+  const showMoreText = document.getElementById('show-more-text');
+
+  showMoreBtn.addEventListener('click', () => {
+    const open = extraTools.classList.contains('is-visible');
+    if (open) {
+      extraTools.classList.remove('is-visible');
+      showMoreText.textContent = 'Show More Tools';
+      showMoreBtn.classList.remove('is-expanded');
+      document.getElementById('primary-tools').scrollIntoView({ behavior:'smooth', block:'center' });
+    } else {
+      extraTools.classList.add('is-visible');
+      showMoreText.textContent = 'Show Fewer Tools';
+      showMoreBtn.classList.add('is-expanded');
+    }
+  });
+
+  /* ── SCROLL FADE-IN ANIMATIONS ── */
+  const fadeObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); fadeObs.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fade-up').forEach(el => fadeObs.observe(el));
+
+});
+</script>
 </body>
 </html>
-
