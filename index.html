@@ -482,11 +482,32 @@ section{position:relative;padding:6rem 0;}
 .delay-2{transition-delay:0.2s;}
 .delay-3{transition-delay:0.3s;}
 
-@media(max-width:480px){
-  section{padding:4rem 0;}
-  .section-title{font-size:2rem;}
-  .hero-title{font-size:2.4rem;}
-  .metric-card{width:100%;}
+/* =============================================
+   MOBILE RESPONSIVENESS OVERRIDES
+   ============================================= */
+@media (max-width: 920px) {
+  .hero-inner { display: flex; flex-direction: column; gap: 2.5rem; text-align: center; }
+  .hero-center { order: -1; width: 100%; }
+  .hero-counter-left, .hero-counter-right { width: 100%; display: flex; justify-content: center; }
+  .metric-card { width: 100%; max-width: 340px; }
+}
+
+@media (max-width: 768px) {
+  section { padding: 4rem 0; }
+  .hero { padding-top: 100px; padding-bottom: 2rem; min-height: auto; }
+  .genai-header { flex-direction: column; text-align: center; }
+  .about-grid { gap: 2.5rem; }
+  .contact-inner { padding: 2.5rem 1.5rem; }
+  .footer-inner { flex-direction: column; justify-content: center; text-align: center; }
+}
+
+@media (max-width: 480px) {
+  .hero-title { font-size: 2.25rem; }
+  .section-title { font-size: 1.85rem; }
+  .contact-title { font-size: 1.85rem; }
+  .tools-grid { grid-template-columns: 1fr; }
+  .contact-qr-row { flex-direction: column; gap: 2rem; }
+  .about-mission { padding: 1.5rem; }
 }
 </style>
 </head>
@@ -1005,4 +1026,5 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
+
 
