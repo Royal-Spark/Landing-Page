@@ -973,24 +973,25 @@ document.addEventListener('DOMContentLoaded', function() {
   closeImgBtn.addEventListener('click', () => imagePopup.classList.remove('is-visible'));
   imagePopup.addEventListener('click', e => { if (e.target === imagePopup) imagePopup.classList.remove('is-visible'); });
 
-  /* ── SHOW MORE TOOLS ── */
   const showMoreBtn  = document.getElementById('show-more-btn');
   const extraTools   = document.getElementById('extra-tools');
   const showMoreText = document.getElementById('show-more-text');
 
-  showMoreBtn.addEventListener('click', () => {
-    const open = extraTools.classList.contains('is-visible');
-    if (open) {
-      extraTools.classList.remove('is-visible');
-      showMoreText.textContent = 'Show More Tools';
-      showMoreBtn.classList.remove('is-expanded');
-      document.getElementById('primary-tools').scrollIntoView({ behavior:'smooth', block:'center' });
-    } else {
-      extraTools.classList.add('is-visible');
-      showMoreText.textContent = 'Show Fewer Tools';
-      showMoreBtn.classList.add('is-expanded');
-    }
-  });
+  if (showMoreBtn && extraTools && showMoreText) {
+    showMoreBtn.addEventListener('click', () => {
+      const open = extraTools.classList.contains('is-visible');
+      if (open) {
+        extraTools.classList.remove('is-visible');
+        showMoreText.textContent = 'Show More Tools';
+        showMoreBtn.classList.remove('is-expanded');
+        document.getElementById('primary-tools').scrollIntoView({ behavior:'smooth', block:'center' });
+      } else {
+        extraTools.classList.add('is-visible');
+        showMoreText.textContent = 'Show Fewer Tools';
+        showMoreBtn.classList.add('is-expanded');
+      }
+    });
+  }
 
   /* ── SCROLL FADE-IN ANIMATIONS ── */
   const fadeObs = new IntersectionObserver(entries => {
@@ -1004,3 +1005,4 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
+
