@@ -509,7 +509,7 @@ section{position:relative;padding:6rem 0;}
             <span class="metric-live">Live Tracking</span>
           </div>
           <svg class="metric-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-          <div class="metric-value" id="dollar-counter">$14,944,984</div>
+          <div class="metric-value" id="dollar-counter">$20,944,984</div>
           <div class="metric-label">Cost Savings</div>
           <div class="metric-period">Since Jan 2025</div>
         </div>
@@ -759,8 +759,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const cObs = new IntersectionObserver(([e]) => {
     if (e.isIntersecting && !countersRan) {
       countersRan = true;
-      animateCounter(dollarEl, 14944984, 2200, '$');
-      animateCounter(hoursEl,  20746,    2000, '');
+      animateCounter(dollarEl, 20944984, 2200, '$');
+      animateCounter(hoursEl,  35746,    2000, '');
       cObs.disconnect();
     }
   }, { threshold: 0.2 });
