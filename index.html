@@ -313,73 +313,6 @@ section{position:relative;padding:6rem 0;}
 .btn-icon-right{width:15px;height:15px;flex-shrink:0;}
 
 /* =============================================
-   TOOLS SECTION
-   ============================================= */
-.tools-section{background:var(--bg-base);}
-.disclaimer-box{
-  background:rgba(232,176,58,0.06);border:1px solid rgba(232,176,58,0.28);
-  border-radius:8px;padding:1rem 1.25rem;margin-bottom:2.5rem;
-  display:flex;align-items:flex-start;gap:0.75rem;
-  font-size:0.9rem;color:#f5d97c;line-height:1.7;
-}
-[data-theme="light"] .disclaimer-box{color:#5c3e00;background:rgba(232,176,58,0.09);}
-.disclaimer-icon{flex-shrink:0;margin-top:1px;opacity:0.8;}
-.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;margin-bottom:1.25rem;}
-.tool-card{
-  background:var(--bg-card);border:1px solid var(--border-subtle);
-  border-radius:12px;padding:1.5rem;
-  display:flex;flex-direction:column;gap:0.75rem;
-  position:relative;overflow:hidden;
-  transition:all var(--tr);
-}
-.tool-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:var(--grad-primary);opacity:0;transition:opacity var(--tr);
-}
-.tool-card:hover{
-  border-color:var(--border-accent);background:var(--bg-card-hover);
-  transform:translateY(-4px);
-  box-shadow:var(--shadow-card),var(--glow-indigo);
-}
-.tool-card:hover::before{opacity:1;}
-.tool-card.disabled{opacity:0.45;cursor:not-allowed;pointer-events:none;}
-.tool-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;}
-.tool-icon{
-  width:40px;height:40px;background:rgba(92,110,247,0.1);
-  border-radius:8px;display:flex;align-items:center;justify-content:center;
-  color:var(--accent-indigo);flex-shrink:0;
-}
-.tool-icon svg{width:20px;height:20px;}
-.tool-badge{
-  font-family:'JetBrains Mono',monospace;font-size:0.58rem;font-weight:500;
-  text-transform:uppercase;letter-spacing:0.1em;
-  padding:0.22rem 0.55rem;border-radius:4px;
-}
-.tool-badge.active{background:rgba(0,209,122,0.1);color:var(--accent-green);border:1px solid rgba(0,209,122,0.22);}
-.tool-badge.testing{background:rgba(232,176,58,0.1);color:var(--accent-gold);border:1px solid rgba(232,176,58,0.22);}
-.tool-badge.offline{background:rgba(255,77,109,0.1);color:var(--accent-red);border:1px solid rgba(255,77,109,0.22);}
-.tool-name{font-family:'Rajdhani',sans-serif;font-size:1.1rem;font-weight:600;color:var(--text-primary);letter-spacing:0.01em;line-height:1.3;}
-.tool-arrow{
-  position:absolute;bottom:1.25rem;right:1.25rem;
-  width:28px;height:28px;border-radius:50%;
-  background:rgba(92,110,247,0.1);display:flex;align-items:center;justify-content:center;
-  color:var(--accent-indigo);transition:all var(--tr);
-}
-.tool-card:hover .tool-arrow{background:var(--grad-primary);color:#fff;transform:translate(2px,-2px);}
-.tool-arrow svg{width:13px;height:13px;}
-.tools-category{margin-bottom:3rem;}
-.tools-category:last-child{margin-bottom:0;}
-.tools-category-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:0.68rem;font-weight:500;
-  text-transform:uppercase;letter-spacing:0.18em;
-  color:var(--text-muted);
-  margin-bottom:1.25rem;
-  display:flex;align-items:center;gap:0.75rem;
-}
-.tools-category-label::after{content:'';flex:1;height:1px;background:var(--border-subtle);}
-
-/* =============================================
    ABOUT SECTION
    ============================================= */
 .about-section{background:var(--bg-surface);border-top:1px solid var(--border-subtle);}
@@ -505,7 +438,6 @@ section{position:relative;padding:6rem 0;}
   .hero-title { font-size: 2.25rem; }
   .section-title { font-size: 1.85rem; }
   .contact-title { font-size: 1.85rem; }
-  .tools-grid { grid-template-columns: 1fr; }
   .contact-qr-row { flex-direction: column; gap: 2rem; }
   .about-mission { padding: 1.5rem; }
 }
@@ -522,7 +454,6 @@ section{position:relative;padding:6rem 0;}
       <span class="logo-name">Royal Spark</span>
     </a>
     <nav class="nav-desktop">
-      <a href="#tools" class="nav-link">Tools</a>
       <a href="#about" class="nav-link">About</a>
       <a href="#contact" class="nav-link">Contact</a>
       <a href="https://forms.osi.apps.mil/r/eG12pHbiSQ" class="nav-submit" target="_blank" rel="noopener noreferrer">Submit an Idea</a>
@@ -541,7 +472,6 @@ section{position:relative;padding:6rem 0;}
 
 <!-- MOBILE NAV -->
 <nav class="mobile-menu" id="mobile-menu">
-  <a href="#tools" class="nav-link">Tools</a>
   <a href="#about" class="nav-link">About</a>
   <a href="#contact" class="nav-link">Contact</a>
   <a href="https://forms.osi.apps.mil/r/eG12pHbiSQ" class="nav-submit" target="_blank" rel="noopener noreferrer">Submit an Idea</a>
@@ -637,101 +567,6 @@ section{position:relative;padding:6rem 0;}
   </div>
 </section>
 
-<!-- TOOLS SECTION -->
-<section id="tools" class="tools-section">
-  <div class="container">
-    <div class="section-header">
-      <div class="section-eyebrow">Mission Resources</div>
-      <h2 class="section-title" id="tools-title">Digital Innovation Tools</h2>
-      <p class="section-description">Access the latest digital tools to enhance your workflow and spark creativity. Double-click the title above for a video walkthrough.</p>
-    </div>
-
-    <div class="disclaimer-box">
-      <svg class="disclaimer-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-      <span><strong>Disclaimer:</strong> The web tools provided below are hosted online and must <strong>not</strong> be used with any Personally Identifiable Information (PII), Controlled Unclassified Information (CUI), or classified data. Please use only for general or unclassified workflows.</span>
-    </div>
-
-    <!-- Category: AI Writing & Documents -->
-    <div class="tools-category">
-      <div class="tools-category-label">AI Writing &amp; Documents</div>
-      <div class="tools-grid">
-        <a class="tool-card" href="https://royal-spark.github.io/USAF-Performance-Statement-Prompt-Generator/" target="_blank" rel="noopener noreferrer">
-          <div class="tool-card-header"><div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><span class="tool-badge active">Active</span></div>
-          <div class="tool-name">AI Augmented Performance Statements</div>
-          <div class="tool-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
-        </a>
-        <a class="tool-card" href="https://royal-spark.github.io/File-Forge/" target="_blank" rel="noopener noreferrer">
-          <div class="tool-card-header"><div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><span class="tool-badge active">Active</span></div>
-          <div class="tool-name">File Forge — AI Document Filler</div>
-          <div class="tool-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
-        </a>
-        <a class="tool-card" href="https://safe.menlosecurity.com/https://gemini.google.com/share/555f65accc0f" target="_blank" rel="noopener noreferrer">
-          <div class="tool-card-header"><div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/><path d="M9 12h6M9 16h4"/></svg></div><span class="tool-badge testing">Testing</span></div>
-          <div class="tool-name">AI SOP Generator</div>
-          <div class="tool-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
-        </a>
-        <a class="tool-card" href="https://safe.menlosecurity.com/https://gemini.google.com/share/9a48cb140c07" target="_blank" rel="noopener noreferrer">
-          <div class="tool-card-header"><div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg></div><span class="tool-badge testing">Testing</span></div>
-          <div class="tool-name">AI AAR Generator</div>
-          <div class="tool-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
-        </a>
-        <a class="tool-card" href="https://safe.menlosecurity.com/https://gemini.google.com/share/4f4b090a5faf" target="_blank" rel="noopener noreferrer">
-          <div class="tool-card-header"><div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg></div><span class="tool-badge testing">Testing</span></div>
-          <div class="tool-name">Award Analyzer Assistant</div>
-          <div class="tool-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
-        </a>
-      </div>
-    </div>
-
-    <!-- Category: Finance & Budgeting -->
-    <div class="tools-category">
-      <div class="tools-category-label">Finance &amp; Budgeting</div>
-      <div class="tools-grid">
-        <a class="tool-card" href="https://royal-spark.github.io/Landing-Page/BAHCalculator.html" target="_blank" rel="noopener noreferrer">
-          <div class="tool-card-header"><div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><span class="tool-badge active">Active</span></div>
-          <div class="tool-name">BAH Calculator</div>
-          <div class="tool-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
-        </a>
-        <a class="tool-card" href="https://royal-spark.github.io/Hourly-Cost-Calculator/" target="_blank" rel="noopener noreferrer">
-          <div class="tool-card-header"><div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div><span class="tool-badge active">Active</span></div>
-          <div class="tool-name">Personnel Cost Calculator</div>
-          <div class="tool-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
-        </a>
-        <a class="tool-card" href="https://royal-spark.github.io/Landing-Page/Acquisition%20Compass.html" target="_blank" rel="noopener noreferrer">
-          <div class="tool-card-header"><div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg></div><span class="tool-badge active">Active</span></div>
-          <div class="tool-name">Acquisition Compass — What Funds?</div>
-          <div class="tool-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
-        </a>
-        <div class="tool-card disabled">
-          <div class="tool-card-header"><div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><span class="tool-badge offline">Offline</span></div>
-          <div class="tool-name">FinanceBuddy</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Category: Planning & Innovation -->
-    <div class="tools-category">
-      <div class="tools-category-label">Planning &amp; Innovation</div>
-      <div class="tools-grid">
-        <a class="tool-card" href="https://royal-spark.github.io/Landing-Page/Agenda%20AI.html" target="_blank" rel="noopener noreferrer">
-          <div class="tool-card-header"><div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><span class="tool-badge active">Active</span></div>
-          <div class="tool-name">Agenda AI — Meeting Summary</div>
-          <div class="tool-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
-        </a>
-        <a class="tool-card" href="https://royal-spark.github.io/Landing-Page/mmc%20generator.html" target="_blank" rel="noopener noreferrer">
-          <div class="tool-card-header"><div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0018 8 6 6 0 006 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 018.91 14"/></svg></div><span class="tool-badge active">Active</span></div>
-          <div class="tool-name">MCC Generator — Idea to Concept</div>
-          <div class="tool-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
-        </a>
-        <a class="tool-card" href="https://safe.menlosecurity.com/https://gemini.google.com/share/7aa53370fedd" target="_blank" rel="noopener noreferrer">
-          <div class="tool-card-header"><div class="tool-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div><span class="tool-badge testing">Testing</span></div>
-          <div class="tool-name">EFDP Record Console</div>
-          <div class="tool-arrow"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
 <!-- ABOUT -->
 <section id="about" class="about-section">
   <div class="container">
